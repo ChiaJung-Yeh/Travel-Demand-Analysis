@@ -1,0 +1,2641 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Exercise 1 Linear Regression | Travel Demand Analysis Exercise</title>
+  <meta name="description" content="Exercise 1 Linear Regression | Travel Demand Analysis Exercise" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Exercise 1 Linear Regression | Travel Demand Analysis Exercise" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Exercise 1 Linear Regression | Travel Demand Analysis Exercise" />
+  <meta name="github-repo" content="ChiaJung-Yeh/Travel-Demand-Analysis" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Exercise 1 Linear Regression | Travel Demand Analysis Exercise" />
+  
+  <meta name="twitter:description" content="Exercise 1 Linear Regression | Travel Demand Analysis Exercise" />
+  
+
+<meta name="author" content="Chia Jung, Yeh///n National Yang Ming Chiao Tung University (NYCU), Taiwan" />
+
+
+<meta name="date" content="2022-03-24" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link rel="next" href="logistic-poisson-regression.html"/>
+<script src="libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.21/datatables.js"></script>
+<link href="libs/dt-core-1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.11.3/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.11.3/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.2.0.9000/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.2.0.9000/js/crosstalk.min.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="lib/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="lib/css/style.css" type="text/css" />
+<link rel="stylesheet" href="lib/css/lesson.css" type="text/css" />
+<link rel="stylesheet" href="stylebox.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Travel Demand Analysis Exercise</a></li>
+
+<li class="divider"></li>
+<li><a href="index.html#preface">Preface<span></span></a></li>
+<li class="chapter" data-level="1" data-path="linear-regression.html"><a href="linear-regression.html"><i class="fa fa-check"></i><b>1</b> Linear Regression<span></span></a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="linear-regression.html"><a href="linear-regression.html#import-and-transform-the-data"><i class="fa fa-check"></i><b>1.1</b> Import and transform the data<span></span></a></li>
+<li class="chapter" data-level="1.2" data-path="linear-regression.html"><a href="linear-regression.html#summarize-the-trip-distance"><i class="fa fa-check"></i><b>1.2</b> Summarize the trip distance<span></span></a></li>
+<li class="chapter" data-level="1.3" data-path="linear-regression.html"><a href="linear-regression.html#effect-of-age-on-trip-distance"><i class="fa fa-check"></i><b>1.3</b> Effect of age on trip distance<span></span></a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="linear-regression.html"><a href="linear-regression.html#naive-model"><i class="fa fa-check"></i><b>1.3.1</b> Naive model<span></span></a></li>
+<li class="chapter" data-level="1.3.2" data-path="linear-regression.html"><a href="linear-regression.html#log-linear-model"><i class="fa fa-check"></i><b>1.3.2</b> Log-linear model<span></span></a></li>
+<li class="chapter" data-level="1.3.3" data-path="linear-regression.html"><a href="linear-regression.html#polynomial-model"><i class="fa fa-check"></i><b>1.3.3</b> Polynomial model<span></span></a></li>
+<li class="chapter" data-level="1.3.4" data-path="linear-regression.html"><a href="linear-regression.html#dummy-regression"><i class="fa fa-check"></i><b>1.3.4</b> Dummy Regression<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="linear-regression.html"><a href="linear-regression.html#average-trip-distance-for-each-district"><i class="fa fa-check"></i><b>1.4</b> Average trip distance for each district<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html"><i class="fa fa-check"></i><b>2</b> Logistic &amp; Poisson Regression<span></span></a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#collider-bias"><i class="fa fa-check"></i><b>2.1</b> Collider Bias<span></span></a></li>
+<li class="chapter" data-level="2.2" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#poisson-regression"><i class="fa fa-check"></i><b>2.2</b> Poisson regression<span></span></a></li>
+<li class="chapter" data-level="2.3" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#logistic-regression"><i class="fa fa-check"></i><b>2.3</b> Logistic regression<span></span></a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Travel Demand Analysis Exercise</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="linear-regression" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Exercise 1</span> Linear Regression<a href="linear-regression.html#linear-regression" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div class="problem">
+<p><font size="4"><strong><svg aria-hidden="true" role="img" viewBox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z"/></svg> PROBLEM</strong></font><br />
+Based on the provided survey data (南臺區域運輸規劃-高雄市), answer the following questions.</p>
+<ol style="list-style-type: decimal">
+<li><p>Summarize the trip distance variable using figures or/and tables. Briefly explain your result.</p></li>
+<li><p>Linear regression (LR)</p>
+<ul>
+<li>Develop LR models for identifying the effect of age on trip distance.<br />
+</li>
+<li>Develop LR models for predicting the average trip distance for each district of the Kaohsiung City.</li>
+</ul>
+<p>Briefly explain your results. Remember to check the residuals.<br />
+Note: the goal is not to develop a ‘perfect’ regression model but to show that you know the information provided by the model developed.</p></li>
+</ol>
+</div>
+<div id="import-and-transform-the-data" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Import and transform the data<a href="linear-regression.html#import-and-transform-the-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Since the provided data is recorded under the code number, the first task required to do is to match the attributes corresponding to each columns. The following code reads the data as well as the code book first, and then transform the data into a readable format. Note that the code book has been reshaped to a comma separated files in advance, in order to reference the code and its name more easily. Also, some of time information are in numeric type, and hence, should transform the time into “hour:minute” format.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="linear-regression.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import data</span></span>
+<span id="cb1-2"><a href="linear-regression.html#cb1-2" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks<span class="ot">=</span><span class="fu">read.csv</span>(<span class="st">&quot;./data/01-Exercise_1/dat_southtw_ks.csv&quot;</span>, <span class="at">encoding=</span><span class="st">&quot;UTF-8&quot;</span>)</span>
+<span id="cb1-3"><a href="linear-regression.html#cb1-3" aria-hidden="true" tabindex="-1"></a>code_book<span class="ot">=</span><span class="fu">read.csv</span>(<span class="st">&quot;./data/01-Exercise_1/code_book.csv&quot;</span>)</span>
+<span id="cb1-4"><a href="linear-regression.html#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="linear-regression.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># transform the data and set the factor</span></span>
+<span id="cb1-6"><a href="linear-regression.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">unique</span>(code_book<span class="sc">$</span>variable)){</span>
+<span id="cb1-7"><a href="linear-regression.html#cb1-7" aria-hidden="true" tabindex="-1"></a>  code_book_temp<span class="ot">=</span>code_book[code_book<span class="sc">$</span>variable<span class="sc">==</span>i,]</span>
+<span id="cb1-8"><a href="linear-regression.html#cb1-8" aria-hidden="true" tabindex="-1"></a>  col_id<span class="ot">=</span><span class="fu">which</span>(<span class="fu">colnames</span>(dat_southtw_ks)<span class="sc">==</span>i)</span>
+<span id="cb1-9"><a href="linear-regression.html#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (i<span class="sc">!=</span><span class="st">&quot;hh_pop&quot;</span>){</span>
+<span id="cb1-10"><a href="linear-regression.html#cb1-10" aria-hidden="true" tabindex="-1"></a>    dat_southtw_ks[,col_id]<span class="ot">=</span>code_book_temp<span class="sc">$</span>name[<span class="fu">match</span>(dat_southtw_ks[,col_id], code_book_temp<span class="sc">$</span>code)]</span>
+<span id="cb1-11"><a href="linear-regression.html#cb1-11" aria-hidden="true" tabindex="-1"></a>    dat_southtw_ks[,col_id]<span class="ot">=</span><span class="fu">factor</span>(dat_southtw_ks[,col_id], code_book_temp<span class="sc">$</span>name)</span>
+<span id="cb1-12"><a href="linear-regression.html#cb1-12" aria-hidden="true" tabindex="-1"></a>  }<span class="cf">else</span> <span class="cf">if</span> (i<span class="sc">==</span><span class="st">&quot;hh_pop&quot;</span>){</span>
+<span id="cb1-13"><a href="linear-regression.html#cb1-13" aria-hidden="true" tabindex="-1"></a>    dat_southtw_ks[,col_id]<span class="ot">=</span><span class="fu">ifelse</span>(dat_southtw_ks[,col_id]<span class="sc">&gt;</span><span class="dv">90</span>,</span>
+<span id="cb1-14"><a href="linear-regression.html#cb1-14" aria-hidden="true" tabindex="-1"></a>                                   code_book_temp<span class="sc">$</span>name[<span class="fu">match</span>(dat_southtw_ks[,col_id], code_book_temp<span class="sc">$</span>code)],</span>
+<span id="cb1-15"><a href="linear-regression.html#cb1-15" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">as.numeric</span>(dat_southtw_ks[,col_id]))</span>
+<span id="cb1-16"><a href="linear-regression.html#cb1-16" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-17"><a href="linear-regression.html#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rm</span>(code_book_temp, col_id)</span>
+<span id="cb1-18"><a href="linear-regression.html#cb1-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-19"><a href="linear-regression.html#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="linear-regression.html#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="linear-regression.html#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># time transformation</span></span>
+<span id="cb1-22"><a href="linear-regression.html#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">c</span>(<span class="st">&quot;origin_time&quot;</span>, <span class="st">&quot;dest_time&quot;</span>)){</span>
+<span id="cb1-23"><a href="linear-regression.html#cb1-23" aria-hidden="true" tabindex="-1"></a>  col_id<span class="ot">=</span><span class="fu">which</span>(<span class="fu">colnames</span>(dat_southtw_ks)<span class="sc">==</span>i)</span>
+<span id="cb1-24"><a href="linear-regression.html#cb1-24" aria-hidden="true" tabindex="-1"></a>  dat_southtw_ks[,col_id]<span class="ot">=</span><span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">&quot;:&quot;</span>, dat_southtw_ks[,col_id]), dat_southtw_ks[,col_id],</span>
+<span id="cb1-25"><a href="linear-regression.html#cb1-25" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">paste0</span>((<span class="fu">as.numeric</span>(dat_southtw_ks[,col_id])<span class="sc">*</span><span class="dv">1440</span>) <span class="sc">%/%</span> <span class="dv">60</span>, <span class="st">&quot;:&quot;</span>, (<span class="fu">ceiling</span>(<span class="fu">as.numeric</span>(dat_southtw_ks[,col_id])<span class="sc">*</span><span class="dv">1440</span>)) <span class="sc">%%</span> <span class="dv">60</span>))</span>
+<span id="cb1-26"><a href="linear-regression.html#cb1-26" aria-hidden="true" tabindex="-1"></a>  dat_southtw_ks[,col_id]<span class="ot">=</span><span class="fu">gsub</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;&quot;</span>, dat_southtw_ks[,col_id])</span>
+<span id="cb1-27"><a href="linear-regression.html#cb1-27" aria-hidden="true" tabindex="-1"></a>  dat_southtw_ks[,col_id]<span class="ot">=</span><span class="fu">as.POSIXct</span>(<span class="fu">format</span>(dat_southtw_ks[,col_id], <span class="at">format=</span><span class="st">&quot;%H:%M&quot;</span>), <span class="at">format=</span><span class="st">&quot;%H:%M&quot;</span>)</span>
+<span id="cb1-28"><a href="linear-regression.html#cb1-28" aria-hidden="true" tabindex="-1"></a>  dat_southtw_ks[,col_id]<span class="ot">=</span><span class="fu">paste0</span>(<span class="fu">ifelse</span>(<span class="fu">nchar</span>(<span class="fu">hour</span>(dat_southtw_ks[,col_id]))<span class="sc">==</span><span class="dv">1</span>, <span class="fu">str_pad</span>(<span class="fu">hour</span>(dat_southtw_ks[,col_id]), <span class="dv">2</span>, <span class="st">&quot;left&quot;</span>, <span class="dv">0</span>), <span class="fu">hour</span>(dat_southtw_ks[,col_id])), <span class="st">&quot;:&quot;</span>,</span>
+<span id="cb1-29"><a href="linear-regression.html#cb1-29" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">ifelse</span>(<span class="fu">nchar</span>(<span class="fu">minute</span>(dat_southtw_ks[,col_id]))<span class="sc">==</span><span class="dv">1</span>, <span class="fu">str_pad</span>(<span class="fu">minute</span>(dat_southtw_ks[,col_id]), <span class="dv">2</span>, <span class="st">&quot;left&quot;</span>, <span class="dv">0</span>), <span class="fu">minute</span>(dat_southtw_ks[,col_id])))</span>
+<span id="cb1-30"><a href="linear-regression.html#cb1-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>After converting the code to the attributes, part of data is shown below.</p>
+<div id="htmlwidget-08af94a98f35af0c40bb" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-08af94a98f35af0c40bb">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],[40001,40002,40003,40004,40005,40006,40007,40009,40010,40011,40012,40013,40014,40015,40016,40017,40018,40019,40020,40021],["高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市","高雄市"],["鹽埕區","前鎮區","鳳山區","鳳山區","三民區","前鎮區","前鎮區","前金區","鹽埕區","苓雅區","新興區","三民區","楠梓區","三民區","左營區","新興區","苓雅區","前金區","鳳山區","前金區"],["60至89萬","60至89萬","90至119萬","120至149萬","60至89萬","90至119萬","90至119萬","60至89萬","90至119萬","90至119萬","120至149萬","90至119萬","60至89萬","120至149萬","90至119萬","90至119萬","90至119萬","30至59萬","90至119萬","120至149萬"],["30至59萬","無個人收入","30萬以下","60至89萬","30至59萬","無個人收入","無個人收入","30至59萬","30至59萬","60至89萬","60至89萬","無個人收入","30至59萬","60至89萬","60至89萬","30至59萬","30至59萬","30至59萬","30至59萬","60至89萬"],["4","4","4","4","4","4","4","4","4","3","3","4","4","4","4","3","4","2","4","4"],[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[2,2,4,4,3,2,2,2,3,2,2,2,3,3,2,3,2,1,2,4],[50,14,19,52,45,11,10,43,56,33,63,11,28,45,40,20,46,78,45,30],["男生","男生","女生","女生","女生","男生","女生","女生","男生","男生","女生","男生","女生","男生","男生","女生","男生","男生","男生","女生"],["大學","國中","大學","高中職","大學","國小","國小","大學","專科","大學","國中","國小","大學","專科","大學","大學","大學","國中","研究所以上","研究所以上"],["皆有","皆無","機車","機車","皆有","皆無","皆無","皆有","機車","皆有","機車","皆無","機車","皆有","皆有","機車","皆有","機車","皆有","皆有"],["已畢業","在學中(包含進修)","在學中(包含進修)","已畢業","已畢業","在學中(包含進修)","在學中(包含進修)","已畢業","已畢業","已畢業","已畢業","在學中(包含進修)","已畢業","已畢業","已畢業","在學中(包含進修)","已畢業","已畢業","已畢業","已畢業"],["資訊及通訊傳播業","學生","學生","公共行政及國防","公共行政及國防","學生","學生","不動產業","營造業","醫療保健/社會工作服務業","批發及零售業","學生","專業、科學及技術服務業","製造業","資訊及通訊傳播業","學生","金融及保險業","醫療保健/社會工作服務業","公共行政及國防","教育服務業"],["機車","步行","機車","機車","機車","步行","步行","機車","機車","機車","機車","步行","機車","自用小客車","機車","機車","機車","機車","機車","機車"],["是","是","是","是","是","否","否","否","是","否","否","否","是","否","否","是","是","否","是","是"],["第1段旅次","第1段旅次","第1段旅次","第1段旅次","第1段旅次","第3段旅次","第2段旅次","第4段旅次","第1段旅次","第3段旅次","第2段旅次","第2段旅次","第1段旅次","第2段旅次","第2段旅次","第1段旅次","第1段旅次","第2段旅次","第1段旅次","第1段旅次"],["07:30","06:50","07:20","07:30","07:40","16:00","16:21","22:01","08:00","18:30","11:20","16:21","06:40","16:00","09:20","07:20","08:10","10:01","07:10","07:20"],["07:40","07:00","07:50","07:50","07:55","17:06","16:30","22:10","08:10","18:41","11:40","16:30","07:00","17:40","09:50","07:40","08:25","10:15","07:40","07:50"],["上班","上學","上學","上班","上班","住家(返家)","購物(含加油、送洗衣物、租還商品、買菜","住家(返家)","用餐/買餐點","接送","用餐/買餐點","補習進修","上班","用餐/買餐點","上班","上學","上班","住家(返家)","上班","上班"],["機車(自騎)","步行","機車(自騎)","機車(自騎)","機車(自騎)","步行","步行","機車(自騎)","機車(自騎)","機車(自騎)","機車(乘客)","步行","機車(自騎)","汽車(駕駛)","機車(自騎)","機車(自騎)","機車(自騎)","機車(自騎)","機車(自騎)","機車(自騎)"],[1002,410,6045,2271,1579,879,607,2460,818,2052,2837,221,2818,12666,4372,2248,970,1088,6849,5893]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>ID<\/th>\n      <th>quota<\/th>\n      <th>district<\/th>\n      <th>hh_income<\/th>\n      <th>p_income<\/th>\n      <th>hh_pop<\/th>\n      <th>pc_no<\/th>\n      <th>truck_no<\/th>\n      <th>scooter_no<\/th>\n      <th>age<\/th>\n      <th>gender<\/th>\n      <th>education<\/th>\n      <th>license<\/th>\n      <th>school<\/th>\n      <th>occu<\/th>\n      <th>mode_weekday<\/th>\n      <th>HB<\/th>\n      <th>trip_no<\/th>\n      <th>origin_time<\/th>\n      <th>dest_time<\/th>\n      <th>trip_purp<\/th>\n      <th>mode_class<\/th>\n      <th>trip_dis<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"scrollX":true,"headerCallback":"function(thead) {\n  $(thead).css('font-size', '0.7em');\n}","columnDefs":[{"className":"dt-right","targets":[1,7,8,9,10,23]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[5,10,25,50,100],"rowCallback":"function(row, data, displayNum, displayIndex, dataIndex) {\nvar value=data[1]; $(this.api().cell(row, 1).node()).css({'font-size':'80%'});\nvar value=data[2]; $(this.api().cell(row, 2).node()).css({'font-size':'80%'});\nvar value=data[3]; $(this.api().cell(row, 3).node()).css({'font-size':'80%'});\nvar value=data[4]; $(this.api().cell(row, 4).node()).css({'font-size':'80%'});\nvar value=data[5]; $(this.api().cell(row, 5).node()).css({'font-size':'80%'});\nvar value=data[6]; $(this.api().cell(row, 6).node()).css({'font-size':'80%'});\nvar value=data[7]; $(this.api().cell(row, 7).node()).css({'font-size':'80%'});\nvar value=data[8]; $(this.api().cell(row, 8).node()).css({'font-size':'80%'});\nvar value=data[9]; $(this.api().cell(row, 9).node()).css({'font-size':'80%'});\nvar value=data[10]; $(this.api().cell(row, 10).node()).css({'font-size':'80%'});\nvar value=data[11]; $(this.api().cell(row, 11).node()).css({'font-size':'80%'});\nvar value=data[12]; $(this.api().cell(row, 12).node()).css({'font-size':'80%'});\nvar value=data[13]; $(this.api().cell(row, 13).node()).css({'font-size':'80%'});\nvar value=data[14]; $(this.api().cell(row, 14).node()).css({'font-size':'80%'});\nvar value=data[15]; $(this.api().cell(row, 15).node()).css({'font-size':'80%'});\nvar value=data[16]; $(this.api().cell(row, 16).node()).css({'font-size':'80%'});\nvar value=data[17]; $(this.api().cell(row, 17).node()).css({'font-size':'80%'});\nvar value=data[18]; $(this.api().cell(row, 18).node()).css({'font-size':'80%'});\nvar value=data[19]; $(this.api().cell(row, 19).node()).css({'font-size':'80%'});\nvar value=data[20]; $(this.api().cell(row, 20).node()).css({'font-size':'80%'});\nvar value=data[21]; $(this.api().cell(row, 21).node()).css({'font-size':'80%'});\nvar value=data[22]; $(this.api().cell(row, 22).node()).css({'font-size':'80%'});\nvar value=data[23]; $(this.api().cell(row, 23).node()).css({'font-size':'80%'});\n}"}},"evals":["options.headerCallback","options.rowCallback"],"jsHooks":[]}</script>
+<p>Some variables should be converted, in order to formulate the model easily. Here we convert the household population (hh_pop) to the numeric form, and define the unknown data as 1. As for the age, classifying the ages into three intervals, that is, aged under 18, age between 19 to 64, and age over 65. The transport mode is refined as well, car driver and car passenger is unified as “car,” and the sames goes for “scooter.”</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="linear-regression.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#---mutate the new columns for model use---#</span></span>
+<span id="cb2-2"><a href="linear-regression.html#cb2-2" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="ot">=</span><span class="fu">mutate</span>(dat_southtw_ks, <span class="at">hh_pop_rev=</span><span class="fu">case_when</span>(</span>
+<span id="cb2-3"><a href="linear-regression.html#cb2-3" aria-hidden="true" tabindex="-1"></a>  hh_pop<span class="sc">==</span><span class="st">&quot;為房客不知道&quot;</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb2-4"><a href="linear-regression.html#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(hh_pop)</span>
+<span id="cb2-5"><a href="linear-regression.html#cb2-5" aria-hidden="true" tabindex="-1"></a>), <span class="at">age_group=</span><span class="fu">case_when</span>(</span>
+<span id="cb2-6"><a href="linear-regression.html#cb2-6" aria-hidden="true" tabindex="-1"></a>  age<span class="sc">&lt;=</span><span class="dv">18</span> <span class="sc">~</span> <span class="st">&quot;&lt;=18&quot;</span>,</span>
+<span id="cb2-7"><a href="linear-regression.html#cb2-7" aria-hidden="true" tabindex="-1"></a>  age<span class="sc">&lt;=</span><span class="dv">64</span> <span class="sc">~</span> <span class="st">&quot;19-64&quot;</span>,</span>
+<span id="cb2-8"><a href="linear-regression.html#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;&gt;=65&quot;</span></span>
+<span id="cb2-9"><a href="linear-regression.html#cb2-9" aria-hidden="true" tabindex="-1"></a>), <span class="at">mode_class=</span><span class="fu">case_when</span>(</span>
+<span id="cb2-10"><a href="linear-regression.html#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grepl</span>(<span class="st">&quot;機車&quot;</span>, mode_class) <span class="sc">~</span> <span class="st">&quot;機車&quot;</span>,</span>
+<span id="cb2-11"><a href="linear-regression.html#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grepl</span>(<span class="st">&quot;汽車&quot;</span>, mode_class) <span class="sc">~</span> <span class="st">&quot;汽車&quot;</span>,</span>
+<span id="cb2-12"><a href="linear-regression.html#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> mode_class</span>
+<span id="cb2-13"><a href="linear-regression.html#cb2-13" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb2-14"><a href="linear-regression.html#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="linear-regression.html#cb2-15" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="sc">$</span>mode_class<span class="ot">=</span><span class="fu">factor</span>(dat_southtw_ks_model<span class="sc">$</span>mode_class, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;步行&quot;</span>,<span class="st">&quot;自行車&quot;</span>,<span class="st">&quot;機車&quot;</span>,<span class="st">&quot;汽車&quot;</span>))</span>
+<span id="cb2-16"><a href="linear-regression.html#cb2-16" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="sc">$</span>age_group<span class="ot">=</span><span class="fu">factor</span>(dat_southtw_ks_model<span class="sc">$</span>age_group, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;&lt;=18&quot;</span>,<span class="st">&quot;19-64&quot;</span>,<span class="st">&quot;&gt;=65&quot;</span>))</span></code></pre></div>
+</div>
+<div id="summarize-the-trip-distance" class="section level2 hasAnchor" number="1.2">
+<h2><span class="header-section-number">1.2</span> Summarize the trip distance<a href="linear-regression.html#summarize-the-trip-distance" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The histogram and density plot of trip distance is shown in Figure <a href="linear-regression.html#fig:trip-distance">1.1</a> Note that the bin width is set at 1, which means that the frequency is counted by 1 kilometer interval of trip distance. And the density is calculated under Gaussian kernel density function in the figure. From the result, we can find out that most of the surveyees have a trip distance in 1~2 kilometer(s) long. Also, the figure illustrates that the distribution of trip distance is right skewed, which indicates that the mean of trip distance (5.03 km) is higher than the median (2.73 km). This phenomenon is very common in most of the cities, that is, most people travel in a short distance, while there indeed occurs some extremely long travel distance due to the specific economic activities or personal needs.</p>
+<div class="figure"><span style="display:block;" id="fig:trip-distance"></span>
+<img src="series_files/figure-html/trip-distance-1.png" alt="Histogram of trip distance" width="100%" />
+<p class="caption">
+Figure 1.1: Histogram of trip distance
+</p>
+</div>
+<p>A practical issue we should address is that over half of the travelers do not travel over 3 kilometers in a sub-trip, and it implies that the major trips in Kaohsiung is composed of short distance trip. In addition, to clearly understand the trip distance of each transport mode, the calculation is shown in Table <a href="linear-regression.html#tab:trip-distance-mode-table">1.1</a>.</p>
+<table>
+<caption>
+<span id="tab:trip-distance-mode-table">Table 1.1: </span>Trip Distance Summary (All and by mode)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+n
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
+<th style="text-align:right;">
+median
+</th>
+<th style="text-align:right;">
+min
+</th>
+<th style="text-align:right;">
+max
+</th>
+<th style="text-align:right;">
+skew
+</th>
+<th style="text-align:right;">
+kurtosis
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+所有運具
+</td>
+<td style="text-align:right;">
+4156
+</td>
+<td style="text-align:right;">
+5030.74
+</td>
+<td style="text-align:right;">
+6731.46
+</td>
+<td style="text-align:right;">
+2732.0
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+74795
+</td>
+<td style="text-align:right;">
+3.54
+</td>
+<td style="text-align:right;">
+18.72
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+步行
+</td>
+<td style="text-align:right;">
+306
+</td>
+<td style="text-align:right;">
+770.58
+</td>
+<td style="text-align:right;">
+1738.79
+</td>
+<td style="text-align:right;">
+397.5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+23681
+</td>
+<td style="text-align:right;">
+8.96
+</td>
+<td style="text-align:right;">
+103.58
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+自行車
+</td>
+<td style="text-align:right;">
+114
+</td>
+<td style="text-align:right;">
+1454.87
+</td>
+<td style="text-align:right;">
+1622.56
+</td>
+<td style="text-align:right;">
+1058.5
+</td>
+<td style="text-align:right;">
+94
+</td>
+<td style="text-align:right;">
+12632
+</td>
+<td style="text-align:right;">
+4.12
+</td>
+<td style="text-align:right;">
+22.04
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+機車
+</td>
+<td style="text-align:right;">
+3199
+</td>
+<td style="text-align:right;">
+4274.67
+</td>
+<td style="text-align:right;">
+4590.22
+</td>
+<td style="text-align:right;">
+2706.0
+</td>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:right;">
+49586
+</td>
+<td style="text-align:right;">
+2.56
+</td>
+<td style="text-align:right;">
+10.91
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+汽車
+</td>
+<td style="text-align:right;">
+537
+</td>
+<td style="text-align:right;">
+12721.53
+</td>
+<td style="text-align:right;">
+12145.67
+</td>
+<td style="text-align:right;">
+9343.0
+</td>
+<td style="text-align:right;">
+313
+</td>
+<td style="text-align:right;">
+74795
+</td>
+<td style="text-align:right;">
+1.88
+</td>
+<td style="text-align:right;">
+4.01
+</td>
+</tr>
+</tbody>
+</table>
+<p>Here we can figure out that there are totally 4156 samples in the survey, and the major transport mode is scooter, which accounts for approximately 77%. The average travel distance of all modes is 5.03 kilometers, while the maximum distance can be up to 74.8 kilometers. As for different type of mode, we can find that the average distance of personal car is the highest among the four modes, which is 12.7 kilometers. And the second place is scooter, only 4.27 kilometers, much lower than the car is. The absolute value of skew and kurtosis of personal car is the lowest, indicating that the travel distance distribution of this mode is more likely to have no peaks and the value of median as well as mean is closer compared to other modes. In terms of walking, the standard deviation is low, which means that the travel distance of walking does not differ a lot. The skew and kurtosis of walking are the highest among all the modes, it again implies that most people walk only for a small range of distance.</p>
+<p>The violin plot which is used to visualize the distribution of numerical data is shown in Figure <a href="linear-regression.html#fig:trip-distance-mode-figure">1.2</a>. It can prove what we summarize above. The trip distance of the highest density for each mode is very short, especially for walking, bike and scooter. It again says that most people have a short trip for these modes in Kaohsiung.</p>
+<div class="figure"><span style="display:block;" id="fig:trip-distance-mode-figure"></span>
+<img src="series_files/figure-html/trip-distance-mode-figure-1.png" alt="Violin Plot of Trip Distance" width="100%" />
+<p class="caption">
+Figure 1.2: Violin Plot of Trip Distance
+</p>
+</div>
+</div>
+<div id="effect-of-age-on-trip-distance" class="section level2 hasAnchor" number="1.3">
+<h2><span class="header-section-number">1.3</span> Effect of age on trip distance<a href="linear-regression.html#effect-of-age-on-trip-distance" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To identify the effect of age on trip distance, four models are introduced to test whether the model is reasonable and then interpret the result.</p>
+<div id="naive-model" class="section level3 hasAnchor" number="1.3.1">
+<h3><span class="header-section-number">1.3.1</span> Naive model<a href="linear-regression.html#naive-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The naive regression model to evaluate the effect of age on trip distance is let the dependent variable be trip distance, while let the independent variable be ages. The model can be formulated as below.</p>
+<p><span class="math display">\[TripDistance=\beta_{age}*x_{age}\]</span></p>
+<p>The result of naive model and residual plots are shown in Table <a href="linear-regression.html#tab:naive-model">1.2</a> and Figure <a href="linear-regression.html#fig:naive-model">1.3</a> respectively. The coefficient of age is −23.025 (significant), which means the trip distance would approximately decrease 23 meters as the age increases by 1. From the figures, the mean of residuals are less than 0 for any given fitted values, indicating that the model may be biased. Also, the residual is apparently not under normal distribution. The adjusted R square of the model is only 0.0037. And hence, it is definitely not a good model. Since we found that the residuals have an exponential growth, we can then try to test the log-linear model.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="linear-regression.html#cb3-1" aria-hidden="true" tabindex="-1"></a>lm_age_1<span class="ot">=</span><span class="fu">lm</span>(trip_dis <span class="sc">~</span> age, <span class="at">data=</span>dat_southtw_ks_model)</span>
+<span id="cb3-2"><a href="linear-regression.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_age_1)</span>
+<span id="cb3-3"><a href="linear-regression.html#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lm_age_1)</span></code></pre></div>
+<table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;color: #000000;border-top: 2px solid #000000;">
+<caption>
+<span id="tab:naive-model">Table 1.2: </span>Naive Model of Age and Trip Distance
+</caption>
+<thead>
+<tr>
+<th style="padding-left: 5px;padding-right: 5px;">
+ 
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Naive
+</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+(Intercept)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+6004.324<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(261.837)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-23.025<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(5.681)
+</td>
+</tr>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.004
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Adj. R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.004
+</td>
+</tr>
+<tr style="border-bottom: 2px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+Num. obs.
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4156
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="font-size: 0.8em;" colspan="2">
+<sup>***</sup>p &lt; 0.001; <sup>**</sup>p &lt; 0.01; <sup>*</sup>p &lt; 0.05
+</td>
+</tr>
+</tfoot>
+</table>
+<div class="figure"><span style="display:block;" id="fig:naive-model"></span>
+<img src="series_files/figure-html/naive-model-1.png" alt="Residual Plot of Naive Model" width="672" />
+<p class="caption">
+Figure 1.3: Residual Plot of Naive Model
+</p>
+</div>
+</div>
+<div id="log-linear-model" class="section level3 hasAnchor" number="1.3.2">
+<h3><span class="header-section-number">1.3.2</span> Log-linear model<a href="linear-regression.html#log-linear-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The log-linear regression model uses natural log values for dependent variable (trip distance) and keep the independent variables (age) in original scale. The model can be formulated as below.</p>
+<p><span class="math display">\[ln(TripDistance)=\beta_{age}*x_{age}\]</span></p>
+<p>The result of log-linear model and residual plots are shown in Table <a href="linear-regression.html#tab:log-linear-model">1.3</a> and Figure <a href="linear-regression.html#fig:log-linear-model">1.4</a> respectively. The coefficient of age is -0.0113, which means the trip distance would approximately decrease <span class="math inline">\(|exp(-0.0113)-1|=1.1\%\)</span> (significant) as the age increases by 1. From the figures, the residuals are equally spread around the horizontal line, indicating that the model is not biased. The residual is likely to be normally distributed. Also, from the scale-location plot, we can find that the variance of residuals are equal for any fitted values. Thus, the results show that the linear regression assumption is met. Though the adjusted R square of the model is only 0.0256, it is much better than the previous model.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="linear-regression.html#cb4-1" aria-hidden="true" tabindex="-1"></a>lm_age_2<span class="ot">=</span><span class="fu">lm</span>(<span class="fu">log</span>(trip_dis) <span class="sc">~</span> age, <span class="at">data=</span>dat_southtw_ks_model)</span>
+<span id="cb4-2"><a href="linear-regression.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_age_2)</span>
+<span id="cb4-3"><a href="linear-regression.html#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lm_age_2)</span></code></pre></div>
+<table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;color: #000000;border-top: 2px solid #000000;">
+<caption>
+<span id="tab:log-linear-model">Table 1.3: </span>Log-linear Model of Age and Trip Distance
+</caption>
+<thead>
+<tr>
+<th style="padding-left: 5px;padding-right: 5px;">
+ 
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Log-linear
+</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+(Intercept)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+8.298<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.050)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.011<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.001)
+</td>
+</tr>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.026
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Adj. R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.026
+</td>
+</tr>
+<tr style="border-bottom: 2px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+Num. obs.
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4156
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="font-size: 0.8em;" colspan="2">
+<sup>***</sup>p &lt; 0.001; <sup>**</sup>p &lt; 0.01; <sup>*</sup>p &lt; 0.05
+</td>
+</tr>
+</tfoot>
+</table>
+<div class="figure"><span style="display:block;" id="fig:log-linear-model"></span>
+<img src="series_files/figure-html/log-linear-model-1.png" alt="Residual Plot of Log-linear Model" width="672" />
+<p class="caption">
+Figure 1.4: Residual Plot of Log-linear Model
+</p>
+</div>
+</div>
+<div id="polynomial-model" class="section level3 hasAnchor" number="1.3.3">
+<h3><span class="header-section-number">1.3.3</span> Polynomial model<a href="linear-regression.html#polynomial-model" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Based on the prior knowledge, the trip distance would be long for the youngsters and youth, while the kids and aged population may have a shorter trip distance. Thus, the relationship between trip distance and age might not be linear. Here, the polynomial model is introduced to verify our observations. The model resembles the log linear model in the former, while adding a quadratic term of age. The model is formulated as follows.</p>
+<p><span class="math display">\[ln(TripDistance)=\beta_{age}*x_{age}+\beta_{age^2}*x_{age^2}\]</span></p>
+<p>The result of polynomial model and residual plots are shown in Table <a href="linear-regression.html#tab:polynomial-model">1.4</a> and Figure <a href="linear-regression.html#fig:polynomial-model">1.5</a> respectively. The coefficient of age is 0.0815 (significant), and the coefficient of quadratic term is -1.064e-03 (significant). The result indicates that the function of trip distance is concave, and thus, the trip distance would increase in the initial stage, while reach a peak, and decrease after a specific age. From the figures, the residuals bounce randomly around the horizontal line, indicating that the model is not biased. Also, the variance of residuals are equal for any fitted values. The adjusted R square of the model is improved to be 0.1129, better than the two former models.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="linear-regression.html#cb5-1" aria-hidden="true" tabindex="-1"></a>lm_age_3<span class="ot">=</span><span class="fu">lm</span>(<span class="fu">log</span>(trip_dis) <span class="sc">~</span> age<span class="sc">+</span><span class="fu">I</span>(age<span class="sc">^</span><span class="dv">2</span>), <span class="at">data=</span>dat_southtw_ks_model)</span>
+<span id="cb5-2"><a href="linear-regression.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_age_3)</span>
+<span id="cb5-3"><a href="linear-regression.html#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lm_age_3)</span></code></pre></div>
+<table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;color: #000000;border-top: 2px solid #000000;">
+<caption>
+<span id="tab:polynomial-model">Table 1.4: </span>Polynomial Model of Age and Trip Distance
+</caption>
+<thead>
+<tr>
+<th style="padding-left: 5px;padding-right: 5px;">
+ 
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Polynomial
+</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+(Intercept)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+6.630<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.095)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.082<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.005)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age^2
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.001<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.000)
+</td>
+</tr>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.113
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Adj. R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.113
+</td>
+</tr>
+<tr style="border-bottom: 2px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+Num. obs.
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4156
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="font-size: 0.8em;" colspan="2">
+<sup>***</sup>p &lt; 0.001; <sup>**</sup>p &lt; 0.01; <sup>*</sup>p &lt; 0.05
+</td>
+</tr>
+</tfoot>
+</table>
+<div class="figure"><span style="display:block;" id="fig:polynomial-model"></span>
+<img src="series_files/figure-html/polynomial-model-1.png" alt="Residual Plot of Polynomial Model" width="672" />
+<p class="caption">
+Figure 1.5: Residual Plot of Polynomial Model
+</p>
+</div>
+</div>
+<div id="dummy-regression" class="section level3 hasAnchor" number="1.3.4">
+<h3><span class="header-section-number">1.3.4</span> Dummy Regression<a href="linear-regression.html#dummy-regression" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The relationship between age and trip distance might not simply be linear form. The trip distance may be different under the specific age interval. To classify the age group, we should first dig out the boundary of each group in the original data. As Table <a href="linear-regression.html#tab:age-dist">1.5</a> shows, there are a huge gap between 18 to 19 years old, probably because the group turned out to be adults, and thus have a higher mobility. And, there is also a large gap between 64 to 65 years old, mainly because the adults are retired. Based on these observations, we can separate all the ages into 3 groups, namely, “&lt;=18,” “19-64,” and “&gt;=65.” The model can be formulated as the followings, note that the variable used is dummy.</p>
+<p><span class="math display">\[\begin{align*}
+ln(TripDistance)=\beta_{AgeGroup}*x_{AgeGroup}\\
+AgeGroup\in[\le18, 19-64, \ge65]
+\end{align*}\]</span></p>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:age-dist">Table 1.5: </span>Trip Distance for Each Ages
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+Age
+</th>
+<th style="text-align:left;">
+Trip Distance
+</th>
+<th style="text-align:left;">
+Age
+</th>
+<th style="text-align:left;">
+Trip Distance
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">14</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">1695</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">61</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">4288</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">15</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">1635</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">62</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">2587</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">16</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">3437</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">63</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">4096</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">17</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">3147</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">64</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">5239</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">18</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">4950</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">65</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">1963</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">19</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">7771</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">66</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">3119</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">20</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">8412</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">67</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">1459</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">21</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">6624</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">68</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">3170</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">22</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">7647</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">69</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">2265</span>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The regression results by using dummy variables is shown in Table <a href="linear-regression.html#tab:dummy-model">1.6</a> and the residual plot is shown in Figure <a href="linear-regression.html#fig:dummy-model">1.6</a>. Note that the base dummy is age “&lt;=18” in the result. The coefficient of age 19-64 dummy variable is 1.026, and the t-test tells to reject the null hypothesis. We can conclude that age between 19-64 has a significant longer trip distance than age under 18 by <span class="math inline">\(|exp(1.026)-1|=179\%\)</span>. The coefficient of age over 65 cannot reject to be 0, and hence we can say that the trip distance of age over 65 and under 18 have no significant difference. From the residual plot, we can find that it indeed randomly distributed around the horizontal line, and it is under normal distribution. They indicate that the model is not biased and the variance is equal. The adjusted R square of the model is 0.1239, the highest among four regression models.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="linear-regression.html#cb6-1" aria-hidden="true" tabindex="-1"></a>lm_age_4<span class="ot">=</span><span class="fu">lm</span>(<span class="fu">log</span>(trip_dis) <span class="sc">~</span> age_group, <span class="at">data=</span>dat_southtw_ks_model)</span>
+<span id="cb6-2"><a href="linear-regression.html#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_age_4)</span>
+<span id="cb6-3"><a href="linear-regression.html#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lm_age_4)</span></code></pre></div>
+<table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;color: #000000;border-top: 2px solid #000000;">
+<caption>
+<span id="tab:dummy-model">Table 1.6: </span>Dummy Model of Age and Trip Distance
+</caption>
+<thead>
+<tr>
+<th style="padding-left: 5px;padding-right: 5px;">
+ 
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Dummy
+</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+(Intercept)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+7.060<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.058)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age_group19-64
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.026<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.062)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age_group&gt;=65
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.029
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.075)
+</td>
+</tr>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.124
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Adj. R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.124
+</td>
+</tr>
+<tr style="border-bottom: 2px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+Num. obs.
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4156
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="font-size: 0.8em;" colspan="2">
+<sup>***</sup>p &lt; 0.001; <sup>**</sup>p &lt; 0.01; <sup>*</sup>p &lt; 0.05
+</td>
+</tr>
+</tfoot>
+</table>
+<div class="figure"><span style="display:block;" id="fig:dummy-model"></span>
+<img src="series_files/figure-html/dummy-model-1.png" alt="Residual Plot of Dummy Model" width="672" />
+<p class="caption">
+Figure 1.6: Residual Plot of Dummy Model
+</p>
+</div>
+<p>The four models above are summarized in Table <a href="linear-regression.html#tab:all-model">1.7</a> and the prediction of trip distance for each model is shown in Figure <a href="linear-regression.html#fig:all-model-plot">1.7</a></p>
+<table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;color: #000000;border-top: 2px solid #000000;">
+<caption>
+<span id="tab:all-model">Table 1.7: </span>Dummy Model of Age and Trip Distance
+</caption>
+<thead>
+<tr>
+<th style="padding-left: 5px;padding-right: 5px;">
+ 
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Naive
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Log-linear
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Polynomial
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Dummy
+</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+(Intercept)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+6004.324<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+8.298<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+6.630<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+7.060<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(261.837)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.050)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.095)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.058)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-23.025<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.011<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.082<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(5.681)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.001)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.005)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age^2
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.001<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.000)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age_group19-64
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.026<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.062)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age_group&gt;=65
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.029
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.075)
+</td>
+</tr>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.004
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.026
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.113
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.124
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Adj. R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.004
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.026
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.113
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.124
+</td>
+</tr>
+<tr style="border-bottom: 2px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+Num. obs.
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4156
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4156
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4156
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4156
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="font-size: 0.8em;" colspan="5">
+<sup>***</sup>p &lt; 0.001; <sup>**</sup>p &lt; 0.01; <sup>*</sup>p &lt; 0.05
+</td>
+</tr>
+</tfoot>
+</table>
+<div class="figure"><span style="display:block;" id="fig:all-model-plot"></span>
+<img src="series_files/figure-html/all-model-plot-1.png" alt="Prediction Plot of Dummy Model" width="672" />
+<p class="caption">
+Figure 1.7: Prediction Plot of Dummy Model
+</p>
+</div>
+</div>
+</div>
+<div id="average-trip-distance-for-each-district" class="section level2 hasAnchor" number="1.4">
+<h2><span class="header-section-number">1.4</span> Average trip distance for each district<a href="linear-regression.html#average-trip-distance-for-each-district" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>To first observe the mean trip distance of each district in Kaohsiung, it is essential to plot the visualization map, shown in Figure <a href="linear-regression.html#fig:Kaohsiung-map">1.8</a>. The top three highest mean trip distance is distributed in 田寮區, 六龜區 and 內門區, which are located in the mountainous part of Kaohsiung, and far from the city center. And hence, people should ride for a longer distance. In the contrary, the center of the city such as 三民區, 前金區, 苓雅區 and so forth, which are located in the “舊高雄市,” have the relatively lower travel distance, mainly because the accessibility of vital POIs regarding essential lives are much higher. But surprisingly, 甲仙區, 茂林區, 那瑪夏區, 桃源區, etc., where are also located in the remote area have the lowest trip distance. This may result from the socioeconomic features of those districts. The fact that people are not willing to go outside might because the road network is not operated well, or since the population is aged, and has no frequent need to travel for a long distance.</p>
+<div class="figure"><span style="display:block;" id="fig:Kaohsiung-map"></span>
+<img src="series_files/figure-html/Kaohsiung-map-1.png" alt="Average Trip Distance of Each District in Kaohsiung" width="100%" />
+<p class="caption">
+Figure 1.8: Average Trip Distance of Each District in Kaohsiung
+</p>
+</div>
+<p>To predict the average trip distance for each district of the Kaohsiung City by regression model, it can be formulated as below.</p>
+<p><span class="math display">\[TripDistance=\beta_{district}*x_{district}\]</span></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="linear-regression.html#cb7-1" aria-hidden="true" tabindex="-1"></a>lm_district<span class="ot">=</span><span class="fu">lm</span>(trip_dis <span class="sc">~</span> district, <span class="at">data=</span>dat_southtw_ks_model)</span>
+<span id="cb7-2"><a href="linear-regression.html#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lm_district)</span></code></pre></div>
+<p>Note that the district variable is dummy. Since there are 38 districts in Kaohsiung, the model would use 37 dummies. The result is shown in Table <a href="linear-regression.html#tab:district-model">1.8</a> and here we use 旗津區 as the base. The red and bold font in table indicates the coefficient is significantly different from the base. The adjusted R-squared of the model is 0.0798. In addition, the residual plot is shown in Figure <a href="linear-regression.html#fig:district-model">1.9</a>.</p>
+<table>
+<caption>
+<span id="tab:district-model">Table 1.8: </span>Regression Model of District and Trip Distance
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+District
+</th>
+<th style="text-align:left;">
+Coefficients
+</th>
+<th style="text-align:left;">
+p_value
+</th>
+<th style="text-align:left;">
+District
+</th>
+<th style="text-align:left;">
+Coefficients
+</th>
+<th style="text-align:left;">
+p_value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">(Intercept)</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">3172.25</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style=" font-weight: bold;    color: red !important;">0.00</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">茄萣區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">8387.47</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.00</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">小港區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">2071.97</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.05</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">永安區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">2430.46</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">0.08</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">鳳山區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">1297.23</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.23</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">彌陀區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">1458.41</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">0.29</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">鹽埕區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">332.05</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.77</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">梓官區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">2718.57</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.05</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">鼓山區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">1040.88</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.35</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">大樹區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">3109.72</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.01</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">三民區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">1035.16</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.35</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">大社區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">2967.26</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.02</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">新興區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">213.72</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.85</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">仁武區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">1687.69</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">0.18</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">前金區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">620.43</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.58</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">燕巢區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">4155.64</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.00</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">苓雅區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">515.3</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.64</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">阿蓮區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">5383.55</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.00</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">前鎮區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">502.14</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.65</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">田寮區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">12339.92</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.00</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">左營區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">973.38</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.37</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">旗山區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">3228.93</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.01</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">楠梓區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">1470.81</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.18</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">美濃區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">7521.55</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.00</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">林園區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">4603.34</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style=" font-weight: bold;    color: red !important;">0.00</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">六龜區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">8900.24</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.00</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">大寮區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">3123.67</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style=" font-weight: bold;    color: red !important;">0.01</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">甲仙區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">-2825.08</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">0.32</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">鳥松區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">2167.11</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.07</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">杉林區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">667.58</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">0.81</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">岡山區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">247.55</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.85</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">內門區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">9236.42</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">0.00</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">橋頭區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">1796.97</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.17</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">茂林區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">-2890.25</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">0.35</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style="     color: black !important;">路竹區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">-58.54</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style="     color: black !important;">0.96</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">桃源區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">44.08</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">0.99</span>
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">湖內區</span>
+</td>
+<td style="text-align:left;">
+<span style=" font-weight: bold;    color: red !important;">5979.09</span>
+</td>
+<td style="text-align:left;border-right:1px solid;">
+<span style=" font-weight: bold;    color: red !important;">0.00</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">那瑪夏區</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">-1013.92</span>
+</td>
+<td style="text-align:left;">
+<span style="     color: black !important;">0.72</span>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="figure"><span style="display:block;" id="fig:district-model"></span>
+<img src="series_files/figure-html/district-model-1.png" alt="Residual Plot of District Model" width="672" />
+<p class="caption">
+Figure 1.9: Residual Plot of District Model
+</p>
+</div>
+<p>The result shows that the intercept is 3172.25, it is exactly the average trip distance of the base district (旗津區). And coefficient of each dummy variables represent the difference between that district and 旗津區. For instance, the trip distance of 林園區 is significantly higher than that of 旗津區 by 4603.34 meters. From the residuals and fitted values plot, we can find that the regression is severely biased, and the heterogeneity exists, which indicates that there are other more vital variables we do not consider in the model. Also, the Q-Q plot tells that the residual is not normally distributed, violating the fundamental assumption of linear regression. Though the model performs not well, it indeed explain the difference of average trip distance for each district.</p>
+<p>However, the regression above is not about “prediction,” it is only used to prove that when the dependent variable is trip distance, and the independent variable is district, the intercept would be the “average trip distance” of the district which is the base of dummy variable, and the slope would be the difference between the base and each district.</p>
+<p>To predict the average trip distance of each district by using regression, the first task is to construct a regression model, whose independent variable is the socioeconomic factors from the provided data. In order to formulate the model easily, some variables should be cleaned or condensed into fewer attributes. The age is categorized into three groups as the former problem, namely, “&lt;=18,” “19-24” and “&gt;=65.” The mode is classified into “機車” and “汽車,” no matter the respondent is passenger or driver. The trip purpose is condensed into six types, that is, “上班/學旅次,” “出差旅次,” “返家旅次,” “購物旅次,” “個人事務與休閒旅次,” and “其他.” Income is simply labeled as “30萬以下” and “30萬以上,” which indicates whether low income group or not. Occupation is categorized into “第一級產業,” “第二級產業,” “第三級產業,” and “無職業(含學生/退休/家管).” Last, create a new variable that separate the districts into two parts, “舊高雄市” and “舊高雄縣.” The model result is shown in Table <a href="linear-regression.html#tab:lm-all-model">1.9</a>. Also the residual plot is shown in Figure <a href="linear-regression.html#fig:lm-all-model">1.10</a>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="linear-regression.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># rename the variables</span></span>
+<span id="cb8-2"><a href="linear-regression.html#cb8-2" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="ot">=</span><span class="fu">mutate</span>(<span class="fu">filter</span>(dat_southtw_ks, p_income<span class="sc">!=</span><span class="st">&quot;不知道/拒答&quot;</span>), <span class="at">hh_pop_rev=</span><span class="fu">case_when</span>(</span>
+<span id="cb8-3"><a href="linear-regression.html#cb8-3" aria-hidden="true" tabindex="-1"></a>  hh_pop<span class="sc">==</span><span class="st">&quot;為房客不知道&quot;</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb8-4"><a href="linear-regression.html#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(hh_pop)</span>
+<span id="cb8-5"><a href="linear-regression.html#cb8-5" aria-hidden="true" tabindex="-1"></a>), <span class="at">age_group=</span><span class="fu">case_when</span>(</span>
+<span id="cb8-6"><a href="linear-regression.html#cb8-6" aria-hidden="true" tabindex="-1"></a>  age<span class="sc">&lt;=</span><span class="dv">18</span> <span class="sc">~</span> <span class="st">&quot;&lt;=18&quot;</span>,</span>
+<span id="cb8-7"><a href="linear-regression.html#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># age&lt;=24 ~ &quot;19-24&quot;,</span></span>
+<span id="cb8-8"><a href="linear-regression.html#cb8-8" aria-hidden="true" tabindex="-1"></a>  age<span class="sc">&lt;=</span><span class="dv">64</span> <span class="sc">~</span> <span class="st">&quot;19-64&quot;</span>,</span>
+<span id="cb8-9"><a href="linear-regression.html#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;&gt;=65&quot;</span></span>
+<span id="cb8-10"><a href="linear-regression.html#cb8-10" aria-hidden="true" tabindex="-1"></a>), <span class="at">mode_class=</span><span class="fu">case_when</span>(</span>
+<span id="cb8-11"><a href="linear-regression.html#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grepl</span>(<span class="st">&quot;機車&quot;</span>, mode_class) <span class="sc">~</span> <span class="st">&quot;機車&quot;</span>,</span>
+<span id="cb8-12"><a href="linear-regression.html#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grepl</span>(<span class="st">&quot;汽車&quot;</span>, mode_class) <span class="sc">~</span> <span class="st">&quot;汽車&quot;</span>,</span>
+<span id="cb8-13"><a href="linear-regression.html#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> mode_class</span>
+<span id="cb8-14"><a href="linear-regression.html#cb8-14" aria-hidden="true" tabindex="-1"></a>), <span class="at">trip_purp_rev=</span><span class="fu">case_when</span>(</span>
+<span id="cb8-15"><a href="linear-regression.html#cb8-15" aria-hidden="true" tabindex="-1"></a>  trip_purp <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;上班&quot;</span>,<span class="st">&quot;上學&quot;</span>,<span class="st">&quot;補習進修&quot;</span>) <span class="sc">~</span> <span class="st">&quot;上班/學旅次&quot;</span>,</span>
+<span id="cb8-16"><a href="linear-regression.html#cb8-16" aria-hidden="true" tabindex="-1"></a>  trip_purp <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;洽公出差&quot;</span>) <span class="sc">~</span> <span class="st">&quot;出差旅次&quot;</span>,</span>
+<span id="cb8-17"><a href="linear-regression.html#cb8-17" aria-hidden="true" tabindex="-1"></a>  trip_purp <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;住家(返家)&quot;</span>) <span class="sc">~</span> <span class="st">&quot;返家旅次&quot;</span>,</span>
+<span id="cb8-18"><a href="linear-regression.html#cb8-18" aria-hidden="true" tabindex="-1"></a>  trip_purp <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;用餐/買餐點&quot;</span>,<span class="st">&quot;購物(含加油、送洗衣物、租還商品、買菜&quot;</span>) <span class="sc">~</span> <span class="st">&quot;購物旅次&quot;</span>,</span>
+<span id="cb8-19"><a href="linear-regression.html#cb8-19" aria-hidden="true" tabindex="-1"></a>  trip_purp <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;探訪親友&quot;</span>,<span class="st">&quot;接送&quot;</span>,<span class="st">&quot;處理個人事務(含看醫生、去郵局銀行、宗教活動)&quot;</span>,<span class="st">&quot;休閒娛樂(含運動、溜狗)&quot;</span>) <span class="sc">~</span> <span class="st">&quot;個人事務與休閒旅次&quot;</span>,</span>
+<span id="cb8-20"><a href="linear-regression.html#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;其他&quot;</span></span>
+<span id="cb8-21"><a href="linear-regression.html#cb8-21" aria-hidden="true" tabindex="-1"></a>), <span class="at">license_rev=</span><span class="fu">case_when</span>(</span>
+<span id="cb8-22"><a href="linear-regression.html#cb8-22" aria-hidden="true" tabindex="-1"></a>  license <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;汽車&quot;</span>,<span class="st">&quot;機車&quot;</span>,<span class="st">&quot;皆有&quot;</span>) <span class="sc">~</span> <span class="st">&quot;有駕照&quot;</span>,</span>
+<span id="cb8-23"><a href="linear-regression.html#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;無駕照&quot;</span></span>
+<span id="cb8-24"><a href="linear-regression.html#cb8-24" aria-hidden="true" tabindex="-1"></a>), <span class="at">p_income_rev=</span><span class="fu">case_when</span>(</span>
+<span id="cb8-25"><a href="linear-regression.html#cb8-25" aria-hidden="true" tabindex="-1"></a>  p_income <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;無個人收入&quot;</span>,<span class="st">&quot;30萬以下&quot;</span>) <span class="sc">~</span> <span class="st">&quot;30萬以下&quot;</span>,</span>
+<span id="cb8-26"><a href="linear-regression.html#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># p_income %in% c(&quot;30至59萬&quot;) ~ &quot;30至59萬&quot;,</span></span>
+<span id="cb8-27"><a href="linear-regression.html#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># p_income %in% c(&quot;60至89萬&quot;) ~ &quot;60至89萬&quot;,</span></span>
+<span id="cb8-28"><a href="linear-regression.html#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;30萬以上&quot;</span></span>
+<span id="cb8-29"><a href="linear-regression.html#cb8-29" aria-hidden="true" tabindex="-1"></a>), <span class="at">occu_rev=</span><span class="fu">case_when</span>(</span>
+<span id="cb8-30"><a href="linear-regression.html#cb8-30" aria-hidden="true" tabindex="-1"></a>  occu <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;農林漁牧業&quot;</span>) <span class="sc">~</span> <span class="st">&quot;第一級產業&quot;</span>,</span>
+<span id="cb8-31"><a href="linear-regression.html#cb8-31" aria-hidden="true" tabindex="-1"></a>  occu <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;營造業&quot;</span>,<span class="st">&quot;製造業&quot;</span>,<span class="st">&quot;電力及燃氣供應業&quot;</span>,<span class="st">&quot;用水供應及污染整治業&quot;</span>,<span class="st">&quot;礦業及土石採取業&quot;</span>) <span class="sc">~</span> <span class="st">&quot;第二級產業&quot;</span>,</span>
+<span id="cb8-32"><a href="linear-regression.html#cb8-32" aria-hidden="true" tabindex="-1"></a>  occu <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;資訊及通訊傳播業&quot;</span>,<span class="st">&quot;公共行政及國防&quot;</span>,<span class="st">&quot;不動產業&quot;</span>,<span class="st">&quot;醫療保健/社會工作服務業&quot;</span>,<span class="st">&quot;批發及零售業&quot;</span>,<span class="st">&quot;專業、科學及技術服務業&quot;</span>,</span>
+<span id="cb8-33"><a href="linear-regression.html#cb8-33" aria-hidden="true" tabindex="-1"></a>              <span class="st">&quot;金融及保險業&quot;</span>,<span class="st">&quot;教育服務業&quot;</span>,<span class="st">&quot;藝術、娛樂及休閒服務業&quot;</span>,<span class="st">&quot;住宿及餐飲業&quot;</span>,<span class="st">&quot;其他服務業&quot;</span>,<span class="st">&quot;支援服務業&quot;</span>,<span class="st">&quot;運輸及倉儲業&quot;</span>) <span class="sc">~</span> <span class="st">&quot;第三級產業&quot;</span>,</span>
+<span id="cb8-34"><a href="linear-regression.html#cb8-34" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;無職業(含學生/退休/家管)&quot;</span></span>
+<span id="cb8-35"><a href="linear-regression.html#cb8-35" aria-hidden="true" tabindex="-1"></a>), <span class="at">mode_own=</span><span class="fu">case_when</span>(</span>
+<span id="cb8-36"><a href="linear-regression.html#cb8-36" aria-hidden="true" tabindex="-1"></a>  (scooter_no<span class="sc">!=</span><span class="dv">0</span> <span class="sc">|</span> pc_no<span class="sc">!=</span><span class="dv">0</span> <span class="sc">|</span> truck_no<span class="sc">!=</span><span class="dv">0</span>) <span class="sc">~</span> <span class="st">&quot;有車&quot;</span>,</span>
+<span id="cb8-37"><a href="linear-regression.html#cb8-37" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;無車&quot;</span></span>
+<span id="cb8-38"><a href="linear-regression.html#cb8-38" aria-hidden="true" tabindex="-1"></a>), <span class="at">city=</span><span class="fu">case_when</span>(</span>
+<span id="cb8-39"><a href="linear-regression.html#cb8-39" aria-hidden="true" tabindex="-1"></a>  district <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;楠梓區&quot;</span>,<span class="st">&quot;前金區&quot;</span>,<span class="st">&quot;左營區&quot;</span>,<span class="st">&quot;新興區&quot;</span>,<span class="st">&quot;鼓山區&quot;</span>,<span class="st">&quot;苓雅區&quot;</span>,<span class="st">&quot;三民區&quot;</span>,<span class="st">&quot;前鎮區&quot;</span>,<span class="st">&quot;鹽埕區&quot;</span>,<span class="st">&quot;旗津區&quot;</span>,<span class="st">&quot;小港區&quot;</span>) <span class="sc">~</span> <span class="st">&quot;原高雄市&quot;</span>,</span>
+<span id="cb8-40"><a href="linear-regression.html#cb8-40" aria-hidden="true" tabindex="-1"></a>  <span class="cn">TRUE</span> <span class="sc">~</span> <span class="st">&quot;原高雄縣&quot;</span></span>
+<span id="cb8-41"><a href="linear-regression.html#cb8-41" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb8-42"><a href="linear-regression.html#cb8-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-43"><a href="linear-regression.html#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="co"># set the factor of each variables </span></span>
+<span id="cb8-44"><a href="linear-regression.html#cb8-44" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="sc">$</span>mode_class<span class="ot">=</span><span class="fu">factor</span>(dat_southtw_ks_model<span class="sc">$</span>mode_class, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;步行&quot;</span>,<span class="st">&quot;自行車&quot;</span>,<span class="st">&quot;機車&quot;</span>,<span class="st">&quot;汽車&quot;</span>))</span>
+<span id="cb8-45"><a href="linear-regression.html#cb8-45" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="sc">$</span>age_group<span class="ot">=</span><span class="fu">factor</span>(dat_southtw_ks_model<span class="sc">$</span>age_group, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;&lt;=18&quot;</span>,<span class="st">&quot;19-64&quot;</span>,<span class="st">&quot;&gt;=65&quot;</span>))</span>
+<span id="cb8-46"><a href="linear-regression.html#cb8-46" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="sc">$</span>trip_purp_rev<span class="ot">=</span><span class="fu">factor</span>(dat_southtw_ks_model<span class="sc">$</span>trip_purp_rev, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;上班/學旅次&quot;</span>,<span class="st">&quot;出差旅次&quot;</span>,<span class="st">&quot;返家旅次&quot;</span>,<span class="st">&quot;購物旅次&quot;</span>,<span class="st">&quot;個人事務與休閒旅次&quot;</span>))</span>
+<span id="cb8-47"><a href="linear-regression.html#cb8-47" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="sc">$</span>p_income_rev<span class="ot">=</span><span class="fu">factor</span>(dat_southtw_ks_model<span class="sc">$</span>p_income_rev, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;30萬以下&quot;</span>,<span class="st">&quot;30萬以上&quot;</span>))</span>
+<span id="cb8-48"><a href="linear-regression.html#cb8-48" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="sc">$</span>occu_rev<span class="ot">=</span><span class="fu">factor</span>(dat_southtw_ks_model<span class="sc">$</span>occu_rev, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;無職業(含學生/退休/家管)&quot;</span>,<span class="st">&quot;第一級產業&quot;</span>,<span class="st">&quot;第二級產業&quot;</span>,<span class="st">&quot;第三級產業&quot;</span>))</span>
+<span id="cb8-49"><a href="linear-regression.html#cb8-49" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="sc">$</span>mode_own<span class="ot">=</span><span class="fu">factor</span>(dat_southtw_ks_model<span class="sc">$</span>mode_own, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;無車&quot;</span>,<span class="st">&quot;有車&quot;</span>))</span>
+<span id="cb8-50"><a href="linear-regression.html#cb8-50" aria-hidden="true" tabindex="-1"></a>dat_southtw_ks_model<span class="sc">$</span>city<span class="ot">=</span><span class="fu">factor</span>(dat_southtw_ks_model<span class="sc">$</span>city, <span class="at">levels=</span><span class="fu">c</span>(<span class="st">&quot;原高雄縣&quot;</span>,<span class="st">&quot;原高雄市&quot;</span>))</span>
+<span id="cb8-51"><a href="linear-regression.html#cb8-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-52"><a href="linear-regression.html#cb8-52" aria-hidden="true" tabindex="-1"></a><span class="co"># formulate the regression model</span></span>
+<span id="cb8-53"><a href="linear-regression.html#cb8-53" aria-hidden="true" tabindex="-1"></a>lm_all<span class="ot">=</span><span class="fu">lm</span>(<span class="fu">log</span>(trip_dis) <span class="sc">~</span> hh_pop_rev<span class="sc">+</span>mode_class<span class="sc">+</span>age_group<span class="sc">+</span>scooter_no<span class="sc">+</span>gender<span class="sc">+</span>trip_purp_rev<span class="sc">+</span>HB<span class="sc">+</span>p_income_rev<span class="sc">+</span>occu_rev<span class="sc">+</span>city, <span class="at">data=</span>dat_southtw_ks_model)</span>
+<span id="cb8-54"><a href="linear-regression.html#cb8-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-55"><a href="linear-regression.html#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(lm_all)</span>
+<span id="cb8-56"><a href="linear-regression.html#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(lm_all)</span></code></pre></div>
+<table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;color: #000000;border-top: 2px solid #000000;">
+<caption>
+<span id="tab:lm-all-model">Table 1.9: </span>Model Result of Trip Distance
+</caption>
+<thead>
+<tr>
+<th style="padding-left: 5px;padding-right: 5px;">
+ 
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Model 1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+(Intercept)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+6.085<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.103)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+hh_pop_rev
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.071<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.018)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+mode_class自行車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.984<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.114)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+mode_class機車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.394<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.065)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+mode_class汽車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.477<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.078)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age_group19-64
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.656<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.068)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age_group&gt;=65
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.300<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.072)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+scooter_no
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.113<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.022)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+gender女生
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.105<sup>**</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.033)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+trip_purp_rev出差旅次
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.043
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.257)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+trip_purp_rev返家旅次
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.253<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.064)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+trip_purp_rev購物旅次
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.723<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.051)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+trip_purp_rev個人事務與休閒旅次
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.493<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.058)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+HB否
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.321<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.056)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+p_income_rev30萬以上
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.223<sup>**</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.072)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+occu_rev第一級產業
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.162
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.172)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+occu_rev第二級產業
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.037
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.089)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+occu_rev第三級產業
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.247<sup>**</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.078)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+city原高雄市
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.134<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.032)
+</td>
+</tr>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.390
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Adj. R<sup>2</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.387
+</td>
+</tr>
+<tr style="border-bottom: 2px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+Num. obs.
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4155
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="font-size: 0.8em;" colspan="2">
+<sup>***</sup>p &lt; 0.001; <sup>**</sup>p &lt; 0.01; <sup>*</sup>p &lt; 0.05
+</td>
+</tr>
+</tfoot>
+</table>
+<div class="figure"><span style="display:block;" id="fig:lm-all-model"></span>
+<img src="series_files/figure-html/lm-all-model-1.png" alt="Residual Plot of Regression Model" width="672" />
+<p class="caption">
+Figure 1.10: Residual Plot of Regression Model
+</p>
+</div>
+<p>The interpretation of the model result is as the followings. First we can find that the household population has a significant effect on the trip distance. As for the transport mode, all other modes (自行車, 機車, 汽車) has a significant longer trip distance than walking. Age over 19 has also a significantly longer trip distance than the age under 18. The more scooter owns, the longer trip distance occurs. Female is inclined to have a lower trip distance than male, which is approximately <span class="math inline">\(exp(-0.105)=90\%\)</span> of the trip distance of male. For the trip purpose, we can find that 返家旅次, 購物旅次, 個人事務與休閒旅次 have a significant shorter travel distance compared to 上班/學旅次. If the trip is not from home, the trip distance would increase by <span class="math inline">\(exp(0.321)-1=37.9\%\)</span>. If the income is over 300 thousand NTD per year, the trip distance is significantly longer. As for the industry category, the tertiary sector of the economy has a significant short distance compared to the one who has no job. But the primary and secondary industry has no obvious difference. Last, if the district is 原高雄市, the trip distance would drop <span class="math inline">\(1-exp(-0.134)=12.5\%\)</span> compared to the one is 原高雄縣. From the residual plot, we can find that the residual bounce randomly around the horizontal line, indicating that the model is not biased, and it is nearly normally distributed. The adjusted R square of the model is 0.387.</p>
+<p>By using the linear regression model, we can calculate the average fitted values of each district, to predict the average trip distance of each district in Kaohsiung. The result is shown in Table <a href="linear-regression.html#tab:pred-model">1.10</a>. And the relationship between the real value and prediction value of average trip distance for each district is shown in Figure <a href="linear-regression.html#fig:pred-model">1.11</a>. Here we define the 20% is acceptable, marked green in the figure. And most of the prediction is underestimated, which is marked blue. Few of prediction is overestimated, marked red.</p>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:pred-model">Table 1.10: </span>Prediction of Average Trip Distance for Each District
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+District
+</th>
+<th style="text-align:right;">
+Trip Distance
+</th>
+<th style="text-align:right;">
+Prediction of Trip Distance
+</th>
+<th style="text-align:left;">
+District
+</th>
+<th style="text-align:right;">
+Trip Distance
+</th>
+<th style="text-align:right;">
+Prediction of Trip Distance
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+旗津區
+</td>
+<td style="text-align:right;">
+3172.25
+</td>
+<td style="text-align:right;border-right:1px solid;">
+2056.53
+</td>
+<td style="text-align:left;">
+茄萣區
+</td>
+<td style="text-align:right;">
+11559.72
+</td>
+<td style="text-align:right;">
+4343.65
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+小港區
+</td>
+<td style="text-align:right;">
+5244.22
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3331.59
+</td>
+<td style="text-align:left;">
+永安區
+</td>
+<td style="text-align:right;">
+5602.71
+</td>
+<td style="text-align:right;">
+3644.98
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+鳳山區
+</td>
+<td style="text-align:right;">
+4469.48
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3476.83
+</td>
+<td style="text-align:left;">
+彌陀區
+</td>
+<td style="text-align:right;">
+4630.66
+</td>
+<td style="text-align:right;">
+3955.28
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+鹽埕區
+</td>
+<td style="text-align:right;">
+3504.30
+</td>
+<td style="text-align:right;border-right:1px solid;">
+2605.15
+</td>
+<td style="text-align:left;">
+梓官區
+</td>
+<td style="text-align:right;">
+5890.82
+</td>
+<td style="text-align:right;">
+4169.51
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+鼓山區
+</td>
+<td style="text-align:right;">
+4213.13
+</td>
+<td style="text-align:right;border-right:1px solid;">
+2973.87
+</td>
+<td style="text-align:left;">
+大樹區
+</td>
+<td style="text-align:right;">
+6232.64
+</td>
+<td style="text-align:right;">
+3378.13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+三民區
+</td>
+<td style="text-align:right;">
+4207.41
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3094.16
+</td>
+<td style="text-align:left;">
+大社區
+</td>
+<td style="text-align:right;">
+6139.51
+</td>
+<td style="text-align:right;">
+3933.37
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+新興區
+</td>
+<td style="text-align:right;">
+3385.97
+</td>
+<td style="text-align:right;border-right:1px solid;">
+2943.92
+</td>
+<td style="text-align:left;">
+仁武區
+</td>
+<td style="text-align:right;">
+4859.94
+</td>
+<td style="text-align:right;">
+3693.87
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+前金區
+</td>
+<td style="text-align:right;">
+3792.68
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3135.65
+</td>
+<td style="text-align:left;">
+燕巢區
+</td>
+<td style="text-align:right;">
+7327.89
+</td>
+<td style="text-align:right;">
+4428.88
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+苓雅區
+</td>
+<td style="text-align:right;">
+3687.55
+</td>
+<td style="text-align:right;border-right:1px solid;">
+2903.99
+</td>
+<td style="text-align:left;">
+阿蓮區
+</td>
+<td style="text-align:right;">
+8555.80
+</td>
+<td style="text-align:right;">
+3890.11
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+前鎮區
+</td>
+<td style="text-align:right;">
+3674.39
+</td>
+<td style="text-align:right;border-right:1px solid;">
+2892.84
+</td>
+<td style="text-align:left;">
+田寮區
+</td>
+<td style="text-align:right;">
+15512.17
+</td>
+<td style="text-align:right;">
+5101.91
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+左營區
+</td>
+<td style="text-align:right;">
+4145.63
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3174.85
+</td>
+<td style="text-align:left;">
+旗山區
+</td>
+<td style="text-align:right;">
+6401.18
+</td>
+<td style="text-align:right;">
+3379.49
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+楠梓區
+</td>
+<td style="text-align:right;">
+4643.06
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3191.22
+</td>
+<td style="text-align:left;">
+美濃區
+</td>
+<td style="text-align:right;">
+10693.80
+</td>
+<td style="text-align:right;">
+4044.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+林園區
+</td>
+<td style="text-align:right;">
+7775.59
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3904.71
+</td>
+<td style="text-align:left;">
+六龜區
+</td>
+<td style="text-align:right;">
+12072.49
+</td>
+<td style="text-align:right;">
+3582.05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+大寮區
+</td>
+<td style="text-align:right;">
+6295.92
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3499.49
+</td>
+<td style="text-align:left;">
+甲仙區
+</td>
+<td style="text-align:right;">
+347.17
+</td>
+<td style="text-align:right;">
+1354.45
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+鳥松區
+</td>
+<td style="text-align:right;">
+5339.36
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3532.43
+</td>
+<td style="text-align:left;">
+杉林區
+</td>
+<td style="text-align:right;">
+3839.83
+</td>
+<td style="text-align:right;">
+3885.19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+岡山區
+</td>
+<td style="text-align:right;">
+3419.80
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3231.33
+</td>
+<td style="text-align:left;">
+內門區
+</td>
+<td style="text-align:right;">
+12408.67
+</td>
+<td style="text-align:right;">
+5884.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+橋頭區
+</td>
+<td style="text-align:right;">
+4969.22
+</td>
+<td style="text-align:right;border-right:1px solid;">
+4141.29
+</td>
+<td style="text-align:left;">
+茂林區
+</td>
+<td style="text-align:right;">
+282.00
+</td>
+<td style="text-align:right;">
+2006.99
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+路竹區
+</td>
+<td style="text-align:right;">
+3113.71
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3144.37
+</td>
+<td style="text-align:left;">
+桃源區
+</td>
+<td style="text-align:right;">
+3216.33
+</td>
+<td style="text-align:right;">
+1989.94
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+湖內區
+</td>
+<td style="text-align:right;">
+9151.34
+</td>
+<td style="text-align:right;border-right:1px solid;">
+3783.67
+</td>
+<td style="text-align:left;">
+那瑪夏區
+</td>
+<td style="text-align:right;">
+2158.33
+</td>
+<td style="text-align:right;">
+1033.09
+</td>
+</tr>
+</tbody>
+</table>
+<div class="figure"><span style="display:block;" id="fig:pred-model"></span>
+<img src="series_files/figure-html/pred-model-1.png" alt="Plot of Prediction and Real Trip Ditance" width="672" />
+<p class="caption">
+Figure 1.11: Plot of Prediction and Real Trip Ditance
+</p>
+</div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="logistic-poisson-regression.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "serif",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/ChiaJung-Yeh/Travel-Demand-Analysis/tree/master/01-Exercise_1.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["series.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+},
+"toolbar": {
+"position": "fixed",
+"download": "series.pdf",
+"search": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

@@ -1,0 +1,524 @@
+--- 
+title: "Travel Demand Analysis Exercise"
+author: "Chia Jung, Yeh///n National Yang Ming Chiao Tung University (NYCU), Taiwan"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output:
+  bookdown::html_document2: default
+  bookdown::pdf_document2: default
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: ChiaJung-Yeh/Travel-Demand-Analysis
+description: "Travel Demand Analysis Exercise"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(kableExtra)
+library(dplyr)
+library(texreg)
+library(data.table)
+library(lubridate)
+library(stringr)
+library(ggplot2)
+library(fontawesome)
+library(DT)
+library(texreg)
+library(TWspdata)
+library(sf)
+library(ggsflabel)
+library(ggrepel)
+
+windowsFonts(A=windowsFont("Times New Roman"))
+windowsFonts(B=windowsFont("標楷體"))
+```
+
+
+# Linear Regression
+
+:::problem
+<font size="4">**`r fa(name="question-circle")`  PROBLEM**</font>  
+Based on the provided survey data (南臺區域運輸規劃-高雄市), answer the following questions.  
+
+1. Summarize the trip distance variable using figures or/and tables. Briefly explain your result.  
+
+2. Linear regression (LR)  
+    + Develop LR models for identifying the effect of age on trip distance.  
+    + Develop LR models for predicting the average trip distance for each district of the Kaohsiung City.  
+    
+    Briefly explain your results. Remember to check the residuals.  
+    Note: the goal is not to develop a ‘perfect’ regression model but to show that you know the information provided by the model developed.
+:::
+
+## Import and transform the data  
+Since the provided data is recorded under the code number, the first task required to do is to match the attributes corresponding to each columns. The following code reads the data as well as the code book first, and then transform the data into a readable format. Note that the code book has been reshaped to a comma separated files in advance, in order to reference the code and its name more easily. Also, some of time information are in numeric type, and hence, should transform the time into "hour:minute" format.  
+
+```{r data_variable, echo=T, eval=T, warning=F}
+# import data
+dat_southtw_ks=read.csv("./data/01-Exercise_1/dat_southtw_ks.csv", encoding="UTF-8")
+code_book=read.csv("./data/01-Exercise_1/code_book.csv")
+
+# transform the data and set the factor
+for (i in unique(code_book$variable)){
+  code_book_temp=code_book[code_book$variable==i,]
+  col_id=which(colnames(dat_southtw_ks)==i)
+  if (i!="hh_pop"){
+    dat_southtw_ks[,col_id]=code_book_temp$name[match(dat_southtw_ks[,col_id], code_book_temp$code)]
+    dat_southtw_ks[,col_id]=factor(dat_southtw_ks[,col_id], code_book_temp$name)
+  }else if (i=="hh_pop"){
+    dat_southtw_ks[,col_id]=ifelse(dat_southtw_ks[,col_id]>90,
+                                   code_book_temp$name[match(dat_southtw_ks[,col_id], code_book_temp$code)],
+                                   as.numeric(dat_southtw_ks[,col_id]))
+  }
+  rm(code_book_temp, col_id)
+}
+
+
+# time transformation
+for (i in c("origin_time", "dest_time")){
+  col_id=which(colnames(dat_southtw_ks)==i)
+  dat_southtw_ks[,col_id]=ifelse(grepl(":", dat_southtw_ks[,col_id]), dat_southtw_ks[,col_id],
+                                 paste0((as.numeric(dat_southtw_ks[,col_id])*1440) %/% 60, ":", (ceiling(as.numeric(dat_southtw_ks[,col_id])*1440)) %% 60))
+  dat_southtw_ks[,col_id]=gsub(" ", "", dat_southtw_ks[,col_id])
+  dat_southtw_ks[,col_id]=as.POSIXct(format(dat_southtw_ks[,col_id], format="%H:%M"), format="%H:%M")
+  dat_southtw_ks[,col_id]=paste0(ifelse(nchar(hour(dat_southtw_ks[,col_id]))==1, str_pad(hour(dat_southtw_ks[,col_id]), 2, "left", 0), hour(dat_southtw_ks[,col_id])), ":",
+                                 ifelse(nchar(minute(dat_southtw_ks[,col_id]))==1, str_pad(minute(dat_southtw_ks[,col_id]), 2, "left", 0), minute(dat_southtw_ks[,col_id])))
+}
+```
+
+After converting the code to the attributes, part of data is shown below.  
+
+```{r dat_southtw_ks_data, echo=F, eval=T}
+datatable(dat_southtw_ks[1:20,], options=list(pageLength=5, scrollX=T,
+                                    headerCallback = DT::JS(
+    "function(thead) {",
+    "  $(thead).css('font-size', '0.7em');",
+    "}"
+  )))%>%
+  formatStyle(columns=c(1:ncol(dat_southtw_ks)), fontSize='80%')
+```
+
+Some variables should be converted, in order to formulate the model easily. Here we convert the household population (hh_pop) to the numeric form, and define the unknown data as 1. As for the age, classifying the ages into three intervals, that is, aged under 18, age between 19 to 64, and age over 65. The transport mode is refined as well, car driver and car passenger is unified as "car", and the sames goes for "scooter".  
+
+```{r variable_revised, echo=T, eval=T, warning=F}
+#---mutate the new columns for model use---#
+dat_southtw_ks_model=mutate(dat_southtw_ks, hh_pop_rev=case_when(
+  hh_pop=="為房客不知道" ~ 1,
+  TRUE ~ as.numeric(hh_pop)
+), age_group=case_when(
+  age<=18 ~ "<=18",
+  age<=64 ~ "19-64",
+  TRUE ~ ">=65"
+), mode_class=case_when(
+  grepl("機車", mode_class) ~ "機車",
+  grepl("汽車", mode_class) ~ "汽車",
+  TRUE ~ mode_class
+))
+
+dat_southtw_ks_model$mode_class=factor(dat_southtw_ks_model$mode_class, levels=c("步行","自行車","機車","汽車"))
+dat_southtw_ks_model$age_group=factor(dat_southtw_ks_model$age_group, levels=c("<=18","19-64",">=65"))
+```
+
+## Summarize the trip distance
+The histogram and density plot of trip distance is shown in Figure \@ref(fig:trip-distance) Note that the bin width is set at 1, which means that the frequency is counted by 1 kilometer interval of trip distance. And the density is calculated under Gaussian kernel density function in the figure. From the result, we can find out that most of the surveyees have a trip distance in 1~2 kilometer(s) long. Also, the figure illustrates that the distribution of trip distance is right skewed, which indicates that the mean of trip distance (5.03 km) is higher than the median (2.73 km). This phenomenon is very common in most of the cities, that is, most people travel in a short distance, while there indeed occurs some extremely long travel distance due to the specific economic activities or personal needs.  
+
+```{r trip-distance, echo=F, eval=T, warning=F, out.width="100%", message=F, fig.cap="Histogram of trip distance"}
+temp=density(dat_southtw_ks$trip_dis/1000, kernel="gaussian")
+temp=data.frame(x=temp$x, y=temp$y)
+ggplot()+
+  geom_histogram(data=dat_southtw_ks, aes(x=trip_dis/1000), binwidth=1, color="#6C6C6C", fill="#ADADAD", size=0.5)+
+  # geom_freqpoly(data=dat_southtw_ks, aes(x=trip_dis/1000), binwidth=1, color="blue")+
+  geom_line(data=temp, aes(x=x, y=y*5000), color="red")+
+  xlab("Trip Distance (km)") + ylab("Frequency")+
+  scale_x_continuous(breaks=seq(0, 75, 5))+
+  scale_y_continuous(breaks=seq(0, 1200, 200), sec.axis=sec_axis(~./5000, name="Density"))+
+  geom_vline(xintercept=mean(dat_southtw_ks$trip_dis/1000), color="#005AB5", size=0.5, linetype=5)+
+  geom_vline(xintercept=median(dat_southtw_ks$trip_dis/1000), color="#00A600", size=0.5, linetype=5)+
+  geom_text(aes(x=mean(dat_southtw_ks$trip_dis/1000), y=1000, label="mean"), family="A", size=3, color="#005AB5", angle=90, nudge_x=1, nudge_y=-35)+
+  geom_text(aes(x=median(dat_southtw_ks$trip_dis/1000), y=1000, label="median"), family="A", size=3, color="#00A600", angle=90, nudge_x=1, nudge_y=-35)+
+  theme_minimal()+
+  theme(axis.title.y.left=element_text(size=10, family="A"),
+        axis.text.y.left=element_text(size=8, family="A"),
+        axis.title.y.right=element_text(size=10, family="A", color="red"),
+        axis.text.y.right=element_text(size=8, family="A", color="red"),
+        axis.title.x=element_text(size=10, family="A"),
+        axis.text.x=element_text(size=8, family="A"))
+```
+
+A practical issue we should address is that over half of the travelers do not travel over 3 kilometers in a sub-trip, and it implies that the major trips in Kaohsiung is composed of short distance trip. In addition, to clearly understand the trip distance of each transport mode, the calculation is shown in Table \@ref(tab:trip-distance-mode-table).  
+
+```{r trip-distance-mode-table, echo=F, eval=T, warning=F}
+temp=psych::describeBy(dat_southtw_ks_model[, c("trip_dis")], group=dat_southtw_ks_model$mode_class)
+temp=rbind(psych::describe(dat_southtw_ks_model$trip_dis) %>% data.frame(), do.call("rbind", temp))
+temp=data.frame(temp, row.names=c("所有運具", rownames(temp)[c(2:nrow(temp))]))%>%
+  select(n, mean, sd, median, min, max, skew, kurtosis)
+kable(temp, caption="Trip Distance Summary (All and by mode)", digits=2, booktabs=TRUE)
+```
+
+Here we can figure out that there are totally 4156 samples in the survey, and the major transport mode is scooter, which accounts for approximately 77%. The average travel distance of all modes is 5.03 kilometers, while the maximum distance can be up to 74.8 kilometers. As for different type of mode, we can find that the average distance of personal car is the highest among the four modes, which is 12.7 kilometers. And the second place is scooter, only 4.27 kilometers, much lower than the car is. The absolute value of skew and kurtosis of personal car is the lowest, indicating that the travel distance distribution of this mode is more likely to have no peaks and the value of median as well as mean is closer compared to other modes. In terms of walking, the standard deviation is low, which means that the travel distance of walking does not differ a lot. The skew and kurtosis of walking are the highest among all the modes, it again implies that most people walk only for a small range of distance.  
+
+The violin plot which is used to visualize the distribution of numerical data is shown in Figure \@ref(fig:trip-distance-mode-figure). It can prove what we summarize above. The trip distance of the highest density for each mode is very short, especially for walking, bike and scooter. It again says that most people have a short trip for these modes in Kaohsiung.  
+
+```{r trip-distance-mode-figure, echo=F, eval=T, warning=F, out.width="100%", message=F, fig.cap="Violin Plot of Trip Distance"}
+ggplot()+
+  geom_violin(data=dat_southtw_ks_model, aes(x=mode_class, y=trip_dis/1000), fill="#ADADAD", draw_quantiles=c(0.25, 0.5, 0.75))+
+  scale_x_discrete(name="Modes")+
+  scale_y_continuous(name="Trip Distance (km)")+
+  theme_minimal()+
+  theme(axis.title=element_text(size=10, family="A"),
+        axis.text.x=element_text(size=8, family="B"),
+        axis.text.y=element_text(size=8, family="A"))
+```
+
+
+
+## Effect of age on trip distance  
+
+To identify the effect of age on trip distance, four models are introduced to test whether the model is reasonable and then interpret the result.  
+
+### Naive model
+The naive regression model to evaluate the effect of age on trip distance is let the dependent variable be trip distance, while let the independent variable be ages. The model can be formulated as below.  
+
+$$TripDistance=\beta_{age}*x_{age}$$
+
+The result of naive model and residual plots are shown in Table \@ref(tab:naive-model) and Figure \@ref(fig:naive-model) respectively. The coefficient of age is −23.025 (significant), which means the trip distance would approximately decrease 23 meters as the age increases by 1. From the figures, the mean of residuals are less than 0 for any given fitted values, indicating that the model may be biased. Also, the residual is apparently not under normal distribution. The adjusted R square of the model is only 0.0037. And hence, it is definitely not a good model. Since we found that the residuals have an exponential growth, we can then try to test the log-linear model.  
+
+```{r naive-model-show, echo=T, eval=F, message=F, warning=F, fig.showtext=T, fig.height=6, message=F, results='asis', fig.cap="Residual Plot of Naive Model"}
+lm_age_1=lm(trip_dis ~ age, data=dat_southtw_ks_model)
+summary(lm_age_1)
+plot(lm_age_1)
+```
+
+```{r naive-model, echo=F, eval=T, message=F, warning=F, fig.showtext=T, fig.height=6, message=F, results='asis', fig.cap="Residual Plot of Naive Model"}
+lm_age_1=lm(trip_dis ~ age, data=dat_southtw_ks_model)
+htmlreg(list(lm_age_1), digits=3, caption="(#tab:naive-model)Naive Model of Age and Trip Distance", caption.above=T, custom.model.names="Naive")
+
+par(mfrow = c(2, 2))
+plot(lm_age_1, family="A")
+```
+
+
+### Log-linear model
+The log-linear regression model uses natural log values for dependent variable (trip distance) and keep the independent variables (age) in original scale. The model can be formulated as below.  
+
+$$ln(TripDistance)=\beta_{age}*x_{age}$$
+
+The result of log-linear model and residual plots are shown in Table \@ref(tab:log-linear-model) and Figure \@ref(fig:log-linear-model) respectively. The coefficient of age is -0.0113, which means the trip distance would approximately decrease $|exp(-0.0113)-1|=1.1\%$ (significant) as the age increases by 1. From the figures, the residuals are equally spread around the horizontal line, indicating that the model is not biased. The residual is likely to be normally distributed. Also, from the scale-location plot, we can find that the variance of residuals are equal for any fitted values. Thus, the results show that the linear regression assumption is met. Though the adjusted R square of the model is only 0.0256, it is much better than the previous model.  
+
+```{r log-linear-model-show, echo=T, eval=F, message=F, warning=F, fig.showtext=T, fig.height=6, message=F, results='asis', fig.cap="Residual Plot of Naive Model"}
+lm_age_2=lm(log(trip_dis) ~ age, data=dat_southtw_ks_model)
+summary(lm_age_2)
+plot(lm_age_2)
+```
+
+```{r log-linear-model, echo=F, eval=T, warning=F, message=F, fig.showtext=T, fig.height=6, message=F, results='asis', fig.cap="Residual Plot of Log-linear Model"}
+lm_age_2=lm(log(trip_dis) ~ age, data=dat_southtw_ks_model)
+htmlreg(list(lm_age_2), digits=3, caption="(#tab:log-linear-model)Log-linear Model of Age and Trip Distance", caption.above=T, custom.model.names="Log-linear")
+
+par(mfrow = c(2, 2))
+plot(lm_age_2, family="A")
+```
+
+
+### Polynomial model
+Based on the prior knowledge, the trip distance would be long for the youngsters and youth, while the kids and aged population may have a shorter trip distance. Thus, the relationship between trip distance and age might not be linear. Here, the polynomial model is introduced to verify our observations. The model resembles the log linear model in the former, while adding a quadratic term of age. The model is formulated as follows.    
+
+$$ln(TripDistance)=\beta_{age}*x_{age}+\beta_{age^2}*x_{age^2}$$
+
+The result of polynomial model and residual plots are shown in Table \@ref(tab:polynomial-model) and Figure \@ref(fig:polynomial-model) respectively. The coefficient of age is 0.0815 (significant), and the coefficient of quadratic term is -1.064e-03 (significant). The result indicates that the function of trip distance is concave, and thus, the trip distance would increase in the initial stage, while reach a peak, and decrease after a specific age. From the figures, the residuals bounce randomly around the horizontal line, indicating that the model is not biased. Also, the variance of residuals are equal for any fitted values. The adjusted R square of the model is improved to be 0.1129, better than the two former models.  
+
+```{r polynomial-model-show, echo=T, eval=F, message=F, warning=F, fig.showtext=T, fig.height=6, message=F, results='asis', fig.cap="Residual Plot of Naive Model"}
+lm_age_3=lm(log(trip_dis) ~ age+I(age^2), data=dat_southtw_ks_model)
+summary(lm_age_3)
+plot(lm_age_3)
+```
+
+```{r polynomial-model, echo=F, eval=T, message=F, warning=F, fig.showtext=T, fig.height=6, message=F, results='asis', fig.cap="Residual Plot of Polynomial Model"}
+lm_age_3=lm(log(trip_dis) ~ age+I(age^2), data=dat_southtw_ks_model)
+htmlreg(list(lm_age_3), digits=3, caption="(#tab:polynomial-model)Polynomial Model of Age and Trip Distance", caption.above=T, custom.model.names="Polynomial")
+
+par(mfrow = c(2, 2))
+plot(lm_age_3, family="A")
+```
+
+
+### Dummy Regression
+The relationship between age and trip distance might not simply be linear form. The trip distance may be different under the specific age interval. To classify the age group, we should first dig out the boundary of each group in the original data. As Table \@ref(tab:age-dist) shows, there are a huge gap between 18 to 19 years old, probably because the group turned out to be adults, and thus have a higher mobility. And, there is also a large gap between 64 to 65 years old, mainly because the adults are retired. Based on these observations, we can separate all the ages into 3 groups, namely, "<=18", "19-64", and ">=65". The model can be formulated as the followings, note that the variable used is dummy.  
+
+\begin{align*}
+ln(TripDistance)=\beta_{AgeGroup}*x_{AgeGroup}\\
+AgeGroup\in[\le18, 19-64, \ge65]
+\end{align*}
+
+```{r age-dist, echo=F, eval=T, warning=F, fig.showtext=T, fig.height=3.5, message=F}
+temp=group_by(dat_southtw_ks_model, age) %>% summarise(trip_dis=mean(trip_dis))
+temp=data.frame(temp[temp$age %in% c(14:22),], temp[temp$age %in% c(61:69),])
+
+temp$trip_dis=cell_spec(round(temp$trip_dis, 0), color=ifelse(temp$age %in% c(18, 19), "red", "black"), bold=ifelse(temp$age %in% c(18, 19), T, F))
+temp$age=cell_spec(temp$age, color=ifelse(temp$age %in% c(18, 19), "red", "black"), bold=ifelse(temp$age %in% c(18, 19), T, F))
+temp$trip_dis.1=cell_spec(round(temp$trip_dis.1, 0), color=ifelse(temp$age.1 %in% c(64, 65), "red", "black"), bold=ifelse(temp$age.1 %in% c(64, 65), T, F))
+temp$age.1=cell_spec(temp$age.1, color=ifelse(temp$age.1 %in% c(64, 65), "red", "black"), bold=ifelse(temp$age.1 %in% c(64, 65), T, F))
+
+
+kable(temp, caption="Trip Distance for Each Ages", booktabs=TRUE, col.names=c("Age", "Trip Distance", "Age", "Trip Distance"), escape=F, digits = 2)%>%
+  kable_styling("striped", full_width=F)
+  
+```
+
+The regression results by using dummy variables is shown in Table \@ref(tab:dummy-model) and the residual plot is shown in Figure \@ref(fig:dummy-model). Note that the base dummy is age "<=18" in the result. The coefficient of age 19-64 dummy variable is 1.026, and the t-test tells to reject the null hypothesis. We can conclude that age between 19-64 has a significant longer trip distance than age under 18 by $|exp(1.026)-1|=179\%$. The coefficient of age over 65 cannot reject to be 0, and hence we can say that the trip distance of age over 65 and under 18 have no significant difference. From the residual plot, we can find that it indeed randomly distributed around the horizontal line, and it is under normal distribution. They indicate that the model is not biased and the variance is equal. The adjusted R square of the model is 0.1239, the highest among four regression models.  
+
+```{r dummy-model-show, echo=T, eval=F, message=F, warning=F, fig.showtext=T, fig.height=6, message=F, results='asis', fig.cap="Residual Plot of Naive Model"}
+lm_age_4=lm(log(trip_dis) ~ age_group, data=dat_southtw_ks_model)
+summary(lm_age_4)
+plot(lm_age_4)
+```
+
+```{r dummy-model, echo=F, eval=T, message=F, warning=F, fig.showtext=T, fig.height=6, message=F, results='asis', fig.cap="Residual Plot of Dummy Model"}
+lm_age_4=lm(log(trip_dis) ~ age_group, data=dat_southtw_ks_model)
+htmlreg(list(lm_age_4), digits=3, caption="(#tab:dummy-model)Dummy Model of Age and Trip Distance", caption.above=T, custom.model.names="Dummy")
+
+par(mfrow = c(2, 2))
+plot(lm_age_4, family="A")
+```
+
+
+The four models above are summarized in Table \@ref(tab:all-model) and the prediction of trip distance for each model is shown in Figure \@ref(fig:all-model-plot)  
+
+
+```{r all-model, echo=F, eval=T, warning=F, results = 'asis'}
+htmlreg(list(lm_age_1, lm_age_2, lm_age_3, lm_age_4), digits=3, caption="(#tab:all-model)Dummy Model of Age and Trip Distance",
+        caption.above=T, custom.model.names=c("Naive", "Log-linear", "Polynomial", "Dummy"))
+```
+
+```{r all-model-plot, echo=F, eval=T, message=F, fig.height=6, results='asis', fig.height=6, warning=F, fig.cap="Prediction Plot of Dummy Model"}
+colors_model=c("Real"="red", "Naive"="blue", "Log-linear"="green", "Polynomial"="yellow", "Dummy"="purple")
+ggplot()+
+  geom_point(data=dat_southtw_ks_model, aes(x=age, y=trip_dis), size=1, color="grey")+
+  geom_line(data=group_by(dat_southtw_ks_model, age) %>% summarise(trip_dis=mean(trip_dis)), aes(x=age, y=trip_dis, color="Real"), size=1)+
+  geom_line(data=data.frame(age=5:90, trip_dis=predict(lm_age_1, data.frame(age=5:90))), aes(x=age, y=trip_dis, color="Naive"))+
+  geom_line(data=data.frame(age=5:90, trip_dis=exp(predict(lm_age_2, data.frame(age=5:90)))), aes(x=age, y=trip_dis, color="Log-linear"))+
+  geom_line(data=data.frame(age=5:90, trip_dis=exp(predict(lm_age_3, data.frame(age=5:90)))), aes(x=age, y=trip_dis, color="Polynomial"))+
+  geom_line(data=data.frame(age=5:90, trip_dis=exp(predict(lm_age_4, data.frame(age_group=c(rep("<=18", 14), rep("19-64", 46), rep(">=65", 26)))))), aes(x=age, y=trip_dis, color="Dummy"))+
+  scale_color_manual(values=colors_model, name="Model")+
+  theme_minimal()+
+  xlab("Age") + ylab("Trip Distance")+
+  theme(axis.title=element_text(size=12, family="A", face="bold"),
+        axis.text=element_text(size=10, family="A"),
+        legend.title=element_text(size=12, family="A", face="bold"),
+        legend.text=element_text(size=10, family="A", face="bold"),
+        legend.position=c(0.9, 0.85))
+```       
+
+
+## Average trip distance for each district
+To first observe the mean trip distance of each district in Kaohsiung, it is essential to plot the visualization map, shown in Figure \@ref(fig:Kaohsiung-map). The top three highest mean trip distance is distributed in 田寮區, 六龜區 and 內門區, which are located in the mountainous part of Kaohsiung, and far from the city center. And hence, people should ride for a longer distance. In the contrary, the center of the city such as 三民區, 前金區, 苓雅區 and so forth, which are located in the "舊高雄市", have the relatively lower travel distance, mainly because the accessibility of vital POIs regarding essential lives are much higher. But surprisingly, 甲仙區, 茂林區, 那瑪夏區, 桃源區, etc., where are also located in the remote area have the lowest trip distance. This may result from the socioeconomic features of those districts. The fact that people are not willing to go outside might because the road network is not operated well, or since the population is aged, and has no frequent need to travel for a long distance.  
+
+```{r Kaohsiung-map, echo=F, eval=T, warning=F, out.width="100%", message=F, fig.cap="Average Trip Distance of Each District in Kaohsiung"}
+Kaohsiung=filter(taiwan_town, COUNTYNAME=="高雄市")%>%
+  st_crop(st_as_sfc(st_bbox(c(xmin=120.078793, xmax=121.056401, ymax=23.518702, ymin=22.432267))))%>%
+  st_transform(crs=3826)
+town_trip_dist=group_by(dat_southtw_ks, district)%>%
+  summarise(trip_dis=mean(trip_dis))
+Kaohsiung=left_join(Kaohsiung, town_trip_dist, by=c("TOWNNAME"="district"))
+
+ggplot()+
+  geom_sf(data=Kaohsiung, aes(fill=trip_dis/1000))+
+  scale_fill_distiller(palette="YlOrRd", direction=1, name="Trip Distance (km)")+
+  geom_sf_text_repel(data=Kaohsiung, aes(label=TOWNNAME), family="B", size=2)+
+  theme_void()+
+  theme(legend.title=element_text(size=10, family="A"),
+        legend.text=element_text(size=8, family="A"))
+```
+
+To predict the average trip distance for each district of the Kaohsiung City by regression model, it can be formulated as below.  
+
+$$TripDistance=\beta_{district}*x_{district}$$
+
+```{r district-model-show, echo=T, eval=F, message=F, warning=F}
+lm_district=lm(trip_dis ~ district, data=dat_southtw_ks_model)
+plot(lm_district)
+```
+
+Note that the district variable is dummy. Since there are 38 districts in Kaohsiung, the model would use 37 dummies. The result is shown in Table \@ref(tab:district-model) and here we use 旗津區 as the base. The red and bold font in table indicates the coefficient is significantly different from the base. The adjusted R-squared of the model is 0.0798. In addition, the residual plot is shown in Figure \@ref(fig:district-model).  
+
+```{r district-model, echo=F, eval=T, message=F, message=F, results='asis', fig.cap="Residual Plot of District Model"}
+lm_district=lm(trip_dis ~ district, data=dat_southtw_ks_model)
+temp=data.frame(Coefficients=lm_district$coefficients, p_value=summary(lm_district)[["coefficients"]][, "Pr(>|t|)"])
+temp=data.frame(District=gsub("district", "", row.names(temp)), temp)
+temp=data.frame(temp[1:19,], temp[20:38,])
+rownames(temp)=NULL
+
+temp$Coefficients=cell_spec(round(temp$Coefficients, 2), color=ifelse(temp$p_value<0.05, "red", "black"), bold=ifelse(temp$p_value<0.05, T, F))
+temp$District=cell_spec(temp$District, color=ifelse(temp$p_value<0.05, "red", "black"), bold=ifelse(temp$p_value<0.05, T, F))
+temp$p_value=cell_spec(formatC(round(temp$p_value ,2), 2, format="f"), color=ifelse(temp$p_value<0.05, "red", "black"), bold=ifelse(temp$p_value<0.05, T, F))
+temp$Coefficients.1=cell_spec(round(temp$Coefficients.1, 2), color=ifelse(temp$p_value.1<0.05, "red", "black"), bold=ifelse(temp$p_value.1<0.05, T, F))
+temp$District.1=cell_spec(temp$District.1, color=ifelse(temp$p_value.1<0.05, "red", "black"), bold=ifelse(temp$p_value.1<0.05, T, F))
+temp$p_value.1=cell_spec(formatC(round(temp$p_value.1 ,2), 2, format="f"), color=ifelse(temp$p_value.1<0.05, "red", "black"), bold=ifelse(temp$p_value.1<0.05, T, F))
+
+kable(temp, caption="Regression Model of District and Trip Distance", digits=2, booktabs=TRUE, col.names=c("District", "Coefficients", "p_value", "District", "Coefficients", "p_value"), escape=F)%>%
+  column_spec(3, border_right=T)
+
+par(mfrow = c(2, 2))
+plot(lm_district, family="A")
+```
+
+The result shows that the intercept is 3172.25, it is exactly the average trip distance of the base district (旗津區). And coefficient of each dummy variables represent the difference between that district and 旗津區. For instance, the trip distance of 林園區 is significantly higher than that of 旗津區 by 4603.34 meters. From the residuals and fitted values plot, we can find that the regression is severely biased, and the heterogeneity exists, which indicates that there are other more vital variables we do not consider in the model. Also, the Q-Q plot tells that the residual is not normally distributed, violating the fundamental assumption of linear regression. Though the model performs not well, it indeed explain the difference of average trip distance for each district.  
+
+However, the regression above is not about "prediction", it is only used to prove that when the dependent variable is trip distance, and the independent variable is district, the intercept would be the "average trip distance" of the district which is the base of dummy variable, and the slope would be the difference between the base and each district.  
+
+To predict the average trip distance of each district by using regression, the first task is to construct a regression model, whose independent variable is the socioeconomic factors from the provided data. In order to formulate the model easily, some variables should be cleaned or condensed into fewer attributes. The age is categorized into three groups as the former problem, namely, "<=18", "19-24" and ">=65". The mode is classified into "機車" and "汽車", no matter the respondent is passenger or driver. The trip purpose is condensed into six types, that is, "上班/學旅次", "出差旅次", "返家旅次", "購物旅次", "個人事務與休閒旅次", and "其他". Income is simply labeled as "30萬以下" and "30萬以上", which indicates whether low income group or not. Occupation is categorized into "第一級產業", "第二級產業", "第三級產業", and "無職業(含學生/退休/家管)". Last, create a new variable that separate the districts into two parts, "舊高雄市" and "舊高雄縣". The model result is shown in Table \@ref(tab:lm-all-model). Also the residual plot is shown in Figure \@ref(fig:lm-all-model).    
+
+```{r lm-all-model-show, echo=T, eval=F, message=F, warning=F}
+# rename the variables
+dat_southtw_ks_model=mutate(filter(dat_southtw_ks, p_income!="不知道/拒答"), hh_pop_rev=case_when(
+  hh_pop=="為房客不知道" ~ 1,
+  TRUE ~ as.numeric(hh_pop)
+), age_group=case_when(
+  age<=18 ~ "<=18",
+  # age<=24 ~ "19-24",
+  age<=64 ~ "19-64",
+  TRUE ~ ">=65"
+), mode_class=case_when(
+  grepl("機車", mode_class) ~ "機車",
+  grepl("汽車", mode_class) ~ "汽車",
+  TRUE ~ mode_class
+), trip_purp_rev=case_when(
+  trip_purp %in% c("上班","上學","補習進修") ~ "上班/學旅次",
+  trip_purp %in% c("洽公出差") ~ "出差旅次",
+  trip_purp %in% c("住家(返家)") ~ "返家旅次",
+  trip_purp %in% c("用餐/買餐點","購物(含加油、送洗衣物、租還商品、買菜") ~ "購物旅次",
+  trip_purp %in% c("探訪親友","接送","處理個人事務(含看醫生、去郵局銀行、宗教活動)","休閒娛樂(含運動、溜狗)") ~ "個人事務與休閒旅次",
+  TRUE ~ "其他"
+), license_rev=case_when(
+  license %in% c("汽車","機車","皆有") ~ "有駕照",
+  TRUE ~ "無駕照"
+), p_income_rev=case_when(
+  p_income %in% c("無個人收入","30萬以下") ~ "30萬以下",
+  # p_income %in% c("30至59萬") ~ "30至59萬",
+  # p_income %in% c("60至89萬") ~ "60至89萬",
+  TRUE ~ "30萬以上"
+), occu_rev=case_when(
+  occu %in% c("農林漁牧業") ~ "第一級產業",
+  occu %in% c("營造業","製造業","電力及燃氣供應業","用水供應及污染整治業","礦業及土石採取業") ~ "第二級產業",
+  occu %in% c("資訊及通訊傳播業","公共行政及國防","不動產業","醫療保健/社會工作服務業","批發及零售業","專業、科學及技術服務業",
+              "金融及保險業","教育服務業","藝術、娛樂及休閒服務業","住宿及餐飲業","其他服務業","支援服務業","運輸及倉儲業") ~ "第三級產業",
+  TRUE ~ "無職業(含學生/退休/家管)"
+), mode_own=case_when(
+  (scooter_no!=0 | pc_no!=0 | truck_no!=0) ~ "有車",
+  TRUE ~ "無車"
+), city=case_when(
+  district %in% c("楠梓區","前金區","左營區","新興區","鼓山區","苓雅區","三民區","前鎮區","鹽埕區","旗津區","小港區") ~ "原高雄市",
+  TRUE ~ "原高雄縣"
+))
+
+# set the factor of each variables 
+dat_southtw_ks_model$mode_class=factor(dat_southtw_ks_model$mode_class, levels=c("步行","自行車","機車","汽車"))
+dat_southtw_ks_model$age_group=factor(dat_southtw_ks_model$age_group, levels=c("<=18","19-64",">=65"))
+dat_southtw_ks_model$trip_purp_rev=factor(dat_southtw_ks_model$trip_purp_rev, levels=c("上班/學旅次","出差旅次","返家旅次","購物旅次","個人事務與休閒旅次"))
+dat_southtw_ks_model$p_income_rev=factor(dat_southtw_ks_model$p_income_rev, levels=c("30萬以下","30萬以上"))
+dat_southtw_ks_model$occu_rev=factor(dat_southtw_ks_model$occu_rev, levels=c("無職業(含學生/退休/家管)","第一級產業","第二級產業","第三級產業"))
+dat_southtw_ks_model$mode_own=factor(dat_southtw_ks_model$mode_own, levels=c("無車","有車"))
+dat_southtw_ks_model$city=factor(dat_southtw_ks_model$city, levels=c("原高雄縣","原高雄市"))
+
+# formulate the regression model
+lm_all=lm(log(trip_dis) ~ hh_pop_rev+mode_class+age_group+scooter_no+gender+trip_purp_rev+HB+p_income_rev+occu_rev+city, data=dat_southtw_ks_model)
+
+summary(lm_all)
+plot(lm_all)
+```
+
+```{r lm-all-model, echo=F, eval=T, message=F, fig.showtext=T, fig.height=6, warning=F, results='asis', fig.cap="Residual Plot of Regression Model"}
+dat_southtw_ks_model=mutate(filter(dat_southtw_ks, p_income!="不知道/拒答"), hh_pop_rev=case_when(
+  hh_pop=="為房客不知道" ~ 1,
+  TRUE ~ as.numeric(hh_pop)
+), age_group=case_when(
+  age<=18 ~ "<=18",
+  # age<=24 ~ "19-24",
+  age<=64 ~ "19-64",
+  TRUE ~ ">=65"
+), mode_class=case_when(
+  grepl("機車", mode_class) ~ "機車",
+  grepl("汽車", mode_class) ~ "汽車",
+  TRUE ~ mode_class
+), trip_purp_rev=case_when(
+  trip_purp %in% c("上班","上學","補習進修") ~ "上班/學旅次",
+  trip_purp %in% c("洽公出差") ~ "出差旅次",
+  trip_purp %in% c("住家(返家)") ~ "返家旅次",
+  trip_purp %in% c("用餐/買餐點","購物(含加油、送洗衣物、租還商品、買菜") ~ "購物旅次",
+  trip_purp %in% c("探訪親友","接送","處理個人事務(含看醫生、去郵局銀行、宗教活動)","休閒娛樂(含運動、溜狗)") ~ "個人事務與休閒旅次",
+  TRUE ~ "其他"
+), license_rev=case_when(
+  license %in% c("汽車","機車","皆有") ~ "有駕照",
+  TRUE ~ "無駕照"
+), p_income_rev=case_when(
+  p_income %in% c("無個人收入","30萬以下") ~ "30萬以下",
+  # p_income %in% c("30至59萬") ~ "30至59萬",
+  # p_income %in% c("60至89萬") ~ "60至89萬",
+  TRUE ~ "30萬以上"
+), occu_rev=case_when(
+  occu %in% c("農林漁牧業") ~ "第一級產業",
+  occu %in% c("營造業","製造業","電力及燃氣供應業","用水供應及污染整治業","礦業及土石採取業") ~ "第二級產業",
+  occu %in% c("資訊及通訊傳播業","公共行政及國防","不動產業","醫療保健/社會工作服務業","批發及零售業","專業、科學及技術服務業",
+              "金融及保險業","教育服務業","藝術、娛樂及休閒服務業","住宿及餐飲業","其他服務業","支援服務業","運輸及倉儲業") ~ "第三級產業",
+  TRUE ~ "無職業(含學生/退休/家管)"
+), mode_own=case_when(
+  (scooter_no!=0 | pc_no!=0 | truck_no!=0) ~ "有車",
+  TRUE ~ "無車"
+), city=case_when(
+  district %in% c("楠梓區","前金區","左營區","新興區","鼓山區","苓雅區","三民區","前鎮區","鹽埕區","旗津區","小港區") ~ "原高雄市",
+  TRUE ~ "原高雄縣"
+))
+
+
+dat_southtw_ks_model$mode_class=factor(dat_southtw_ks_model$mode_class, levels=c("步行","自行車","機車","汽車"))
+dat_southtw_ks_model$age_group=factor(dat_southtw_ks_model$age_group, levels=c("<=18","19-64",">=65"))
+dat_southtw_ks_model$trip_purp_rev=factor(dat_southtw_ks_model$trip_purp_rev, levels=c("上班/學旅次","出差旅次","返家旅次","購物旅次","個人事務與休閒旅次"))
+dat_southtw_ks_model$p_income_rev=factor(dat_southtw_ks_model$p_income_rev, levels=c("30萬以下","30萬以上"))
+dat_southtw_ks_model$occu_rev=factor(dat_southtw_ks_model$occu_rev, levels=c("無職業(含學生/退休/家管)","第一級產業","第二級產業","第三級產業"))
+dat_southtw_ks_model$mode_own=factor(dat_southtw_ks_model$mode_own, levels=c("無車","有車"))
+dat_southtw_ks_model$city=factor(dat_southtw_ks_model$city, levels=c("原高雄縣","原高雄市"))
+
+
+lm_all=lm(log(trip_dis) ~ hh_pop_rev+mode_class+age_group+scooter_no+gender+trip_purp_rev+HB+p_income_rev+occu_rev+city, data=dat_southtw_ks_model)
+
+htmlreg(list(lm_all), digits=3, caption="(#tab:lm-all-model)Model Result of Trip Distance", caption.above=T)
+
+par(mfrow = c(2, 2))
+plot(lm_all)
+```
+
+The interpretation of the model result is as the followings. First we can find that the household population has a significant effect on the trip distance. As for the transport mode, all other modes (自行車, 機車, 汽車) has a significant longer trip distance than walking. Age over 19 has also a significantly longer trip distance than the age under 18. The more scooter owns, the longer trip distance occurs. Female is inclined to have a lower trip distance than male, which is approximately $exp(-0.105)=90\%$ of the trip distance of male. For the trip purpose, we can find that 返家旅次, 購物旅次, 個人事務與休閒旅次 have a significant shorter travel distance compared to 上班/學旅次. If the trip is not from home, the trip distance would increase by $exp(0.321)-1=37.9\%$. If the income is over 300 thousand NTD per year, the trip distance is significantly longer. As for the industry category, the tertiary sector of the economy has a significant short distance compared to the one who has no job. But the primary and secondary industry has no obvious difference. Last, if the district is 原高雄市, the trip distance would drop $1-exp(-0.134)=12.5\%$ compared to the one is 原高雄縣. From the residual plot, we can find that the residual bounce randomly around the horizontal line, indicating that the model is not biased, and it is nearly normally distributed. The adjusted R square of the model is 0.387.  
+
+By using the linear regression model, we can calculate the average fitted values of each district, to predict the average trip distance of each district in Kaohsiung. The result is shown in Table \@ref(tab:pred-model). And the relationship between the real value and prediction value of average trip distance for each district is shown in Figure \@ref(fig:pred-model). Here we define the 20% is acceptable, marked green in the figure. And most of the prediction is underestimated, which is marked blue. Few of prediction is overestimated, marked red.  
+
+```{r pred-model, echo=F, eval=T, message=F, fig.height=6, warning=F, results='asis', fig.cap="Plot of Prediction and Real Trip Ditance"}
+dat_southtw_ks_pred=data.frame(dat_southtw_ks_model, trip_dis_pred=exp(predict(lm_all, dat_southtw_ks_model)))
+dat_southtw_ks_district=group_by(dat_southtw_ks_pred, district)%>%
+  summarise(trip_dis=mean(trip_dis),
+            trip_dis_pred=mean(trip_dis_pred))%>%
+  mutate(err_est=ifelse(abs(trip_dis-trip_dis_pred)/trip_dis<0.2, "Tolerant (<20%)", ifelse(trip_dis>trip_dis_pred, "Underestimated", "Overestimated")))
+
+temp=select(dat_southtw_ks_district, district, trip_dis, trip_dis_pred)
+temp=cbind(temp[1:19,], temp[20:38,])
+
+kable(temp, caption="Prediction of Average Trip Distance for Each District", digits=2, escape=F, booktabs=TRUE, col.names=rep(c("District", "Trip Distance", "Prediction of Trip Distance"), 2))%>%
+  column_spec(3, border_right=T)%>%
+  kable_styling("striped", full_width=F)
+
+ggplot()+
+  geom_point(data=dat_southtw_ks_district, aes(x=trip_dis, y=trip_dis_pred, color=err_est))+
+  scale_color_discrete(name="Estimation")+
+  geom_text_repel(data=dat_southtw_ks_district, aes(x=trip_dis, y=trip_dis_pred, label=district), family="B", nudge_y=-100, size=3)+
+  theme_minimal()+
+  xlab("Trip Distance") + ylab("Trip Distance Prediction")+
+  theme(axis.title=element_text(size=12, family="A", face="bold"),
+        axis.text=element_text(size=10, family="A"),
+        legend.title=element_text(size=12, family="A", face="bold"),
+        legend.text=element_text(size=10, family="A", face="bold"),
+        legend.position=c(0.87, 0.15))
+```
+
+
