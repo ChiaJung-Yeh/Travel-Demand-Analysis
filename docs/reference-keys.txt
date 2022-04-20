@@ -48,3 +48,14 @@ tab:Poisson-example
 tab:logit-wrong
 tab:logit-new
 logistic-regression
+multilevel-model
+constant-only-models
+fig:lm-dis
+tab:lm-dis-table
+tab:lm-dis-fixed-table
+fig:lm-dis-fixed
+fixed-effect-only-models
+tab:lm-dis-random-table
+fig:lm-dis-random
+add-random-effects
+fig:lm-dis-random-effects-fig

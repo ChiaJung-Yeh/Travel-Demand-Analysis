@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Exercise 3 Multilevel Model | Travel Demand Analysis Exercise</title>
+  <meta name="description" content="Exercise 3 Multilevel Model | Travel Demand Analysis Exercise" />
+  <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Exercise 3 Multilevel Model | Travel Demand Analysis Exercise" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Exercise 3 Multilevel Model | Travel Demand Analysis Exercise" />
+  <meta name="github-repo" content="ChiaJung-Yeh/Travel-Demand-Analysis" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Exercise 3 Multilevel Model | Travel Demand Analysis Exercise" />
+  
+  <meta name="twitter:description" content="Exercise 3 Multilevel Model | Travel Demand Analysis Exercise" />
+  
+
+<meta name="author" content="Chia Jung, Yeh///n National Yang Ming Chiao Tung University (NYCU), Taiwan" />
+
+
+<meta name="date" content="2022-04-20" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="logistic-poisson-regression.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="lib/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="lib/css/style.css" type="text/css" />
+<link rel="stylesheet" href="lib/css/lesson.css" type="text/css" />
+<link rel="stylesheet" href="stylebox.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Travel Demand Analysis Exercise</a></li>
+
+<li class="divider"></li>
+<li><a href="index.html#preface">Preface<span></span></a></li>
+<li class="chapter" data-level="1" data-path="linear-regression.html"><a href="linear-regression.html"><i class="fa fa-check"></i><b>1</b> Linear Regression<span></span></a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="linear-regression.html"><a href="linear-regression.html#import-and-transform-the-data"><i class="fa fa-check"></i><b>1.1</b> Import and transform the data<span></span></a></li>
+<li class="chapter" data-level="1.2" data-path="linear-regression.html"><a href="linear-regression.html#summarize-the-trip-distance"><i class="fa fa-check"></i><b>1.2</b> Summarize the trip distance<span></span></a></li>
+<li class="chapter" data-level="1.3" data-path="linear-regression.html"><a href="linear-regression.html#effect-of-age-on-trip-distance"><i class="fa fa-check"></i><b>1.3</b> Effect of age on trip distance<span></span></a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="linear-regression.html"><a href="linear-regression.html#naive-model"><i class="fa fa-check"></i><b>1.3.1</b> Naive model<span></span></a></li>
+<li class="chapter" data-level="1.3.2" data-path="linear-regression.html"><a href="linear-regression.html#log-linear-model"><i class="fa fa-check"></i><b>1.3.2</b> Log-linear model<span></span></a></li>
+<li class="chapter" data-level="1.3.3" data-path="linear-regression.html"><a href="linear-regression.html#polynomial-model"><i class="fa fa-check"></i><b>1.3.3</b> Polynomial model<span></span></a></li>
+<li class="chapter" data-level="1.3.4" data-path="linear-regression.html"><a href="linear-regression.html#dummy-regression"><i class="fa fa-check"></i><b>1.3.4</b> Dummy Regression<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="linear-regression.html"><a href="linear-regression.html#average-trip-distance-for-each-district"><i class="fa fa-check"></i><b>1.4</b> Average trip distance for each district<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html"><i class="fa fa-check"></i><b>2</b> Logistic &amp; Poisson Regression<span></span></a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#collider-bias"><i class="fa fa-check"></i><b>2.1</b> Collider Bias<span></span></a></li>
+<li class="chapter" data-level="2.2" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#poisson-regression"><i class="fa fa-check"></i><b>2.2</b> Poisson regression<span></span></a></li>
+<li class="chapter" data-level="2.3" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#logistic-regression"><i class="fa fa-check"></i><b>2.3</b> Logistic regression<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="multilevel-model.html"><a href="multilevel-model.html"><i class="fa fa-check"></i><b>3</b> Multilevel Model<span></span></a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="multilevel-model.html"><a href="multilevel-model.html#constant-only-models"><i class="fa fa-check"></i><b>3.1</b> Constant-only Models<span></span></a></li>
+<li class="chapter" data-level="3.2" data-path="multilevel-model.html"><a href="multilevel-model.html#fixed-effect-only-models"><i class="fa fa-check"></i><b>3.2</b> Fixed-effect only models<span></span></a></li>
+<li class="chapter" data-level="3.3" data-path="multilevel-model.html"><a href="multilevel-model.html#add-random-effects"><i class="fa fa-check"></i><b>3.3</b> Add Random Effects<span></span></a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Travel Demand Analysis Exercise</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="multilevel-model" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Exercise 3</span> Multilevel Model<a href="multilevel-model.html#multilevel-model" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div class="problem">
+<p><font size="4"><strong><svg aria-hidden="true" role="img" viewBox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z"/></svg> PROBLEM</strong></font></p>
+<p>You are provided with a travel survey data of Tainan (from “南臺區域運輸規劃”). Use trip distance as the outcome variable, and fit multilevel models with the grouping structure, respondents within districts.</p>
+<ol style="list-style-type: decimal">
+<li><p>Fit two constant-only models, one using the original value of trip distance and the other transforming the value via logarithm. Explain the results, compare the two models, and pick one for the next step.</p></li>
+<li><p>Develop fixed-effect only (varying intercept) models; at least two respondent level and one district-level variables need to be included in the models. You need to find your own district-level variables. Explain your models, compared them, and pick one for the next step.<br />
+</p></li>
+</ol>
+</div>
+<div id="constant-only-models" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> Constant-only Models<a href="multilevel-model.html#constant-only-models" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The result of two constant-only models are shown in Table <a href="multilevel-model.html#tab:lm-dis-table">3.1</a>. The original value of trip distance is selected to be dependent variable in the first model (Model 1), while the second model (Model 2) takes the logarithm of trip distance. The trip distance is transformed to “kilometers” in advance, to avoid a huge coefficient in the result. The intercept of Model 1 is 5.328, which is the fixed effect of the constant term. The random effect for each district represents how much the intercept is shifted up or down in particular district. The random effect of each district is shown in the left panel of Figure <a href="multilevel-model.html#fig:lm-dis">3.1</a>. The red line implies that the estimates of trip distance is lower than the fixed effect, while the blue one is higher than that. Take 龍崎區 for instance, the random effect of it is 5.513 (check out by using <code>ranef()</code>, or the toppest point in Figure (fig:lm-dis). Since the total effect is composed of the fixed effect and the random effect, the final intercept would be <span class="math inline">\(5.328+5.513=10.841\)</span>. Note that if the line intersects with the “x=0” vertical line, it means that the estimate of trip distance for that district is not significantly inconsistent with the fixed effect, namely, the random effect might not be true.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="multilevel-model.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 1</span></span>
+<span id="cb1-2"><a href="multilevel-model.html#cb1-2" aria-hidden="true" tabindex="-1"></a>lm_dis<span class="ot">=</span><span class="fu">lmer</span>(trip_dis <span class="sc">~</span> <span class="dv">1</span><span class="sc">+</span>(<span class="dv">1</span><span class="sc">|</span>district), <span class="at">data=</span>dat_southtw_tnan)</span>
+<span id="cb1-3"><a href="multilevel-model.html#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="multilevel-model.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 2</span></span>
+<span id="cb1-5"><a href="multilevel-model.html#cb1-5" aria-hidden="true" tabindex="-1"></a>lm_logdis<span class="ot">=</span><span class="fu">lmer</span>(log_dis <span class="sc">~</span> <span class="dv">1</span><span class="sc">+</span>(<span class="dv">1</span><span class="sc">|</span>district), <span class="at">data=</span>dat_southtw_tnan)</span>
+<span id="cb1-6"><a href="multilevel-model.html#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="multilevel-model.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print the model result</span></span>
+<span id="cb1-8"><a href="multilevel-model.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">tab_model</span>(<span class="fu">list</span>(lm_dis, lm_logdis), <span class="at">show.aic=</span>T)</span></code></pre></div>
+<table style="border-collapse:collapse; border:none;">
+<caption style="font-weight: bold; text-align:left;">
+<span id="tab:lm-dis-table">Table 3.1: </span>Constant-only Models
+</caption>
+<tr>
+<th style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm;  text-align:left; ">
+ 
+</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
+Model 1
+</th>
+<th colspan="3" style="border-top: double; text-align:center; font-style:normal; font-weight:bold; padding:0.2cm; ">
+Model 2
+</th>
+</tr>
+<tr>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  text-align:left; ">
+Predictors
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+Estimates
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+CI
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+p
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+Estimates
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  ">
+CI
+</td>
+<td style=" text-align:center; border-bottom:1px solid; font-style:italic; font-weight:normal;  col7">
+p
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; ">
+(Intercept)
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+5.33
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+4.50 – 6.15
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+<strong>&lt;0.001</strong>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.83
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  ">
+0.73 – 0.94
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:center;  col7">
+<strong>&lt;0.001</strong>
+</td>
+</tr>
+<tr>
+<td colspan="7" style="font-weight:bold; text-align:left; padding-top:.8em;">
+Random Effects
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+σ<sup>2</sup>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+34.45
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+1.62
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+τ<sub>00</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+5.65 <sub>district</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.08 <sub>district</sub>
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+ICC
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.14
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.05
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+N
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+37 <sub>district</sub>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+37 <sub>district</sub>
+</td>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm; border-top:1px solid;">
+Observations
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
+3413
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left; border-top:1px solid;" colspan="3">
+3413
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+Marginal R<sup>2</sup> / Conditional R<sup>2</sup>
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.000 / 0.141
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+0.000 / 0.046
+</td>
+</tr>
+<tr>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; text-align:left; padding-top:0.1cm; padding-bottom:0.1cm;">
+AIC
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+21859.757
+</td>
+<td style=" padding:0.2cm; text-align:left; vertical-align:top; padding-top:0.1cm; padding-bottom:0.1cm; text-align:left;" colspan="3">
+11402.361
+</td>
+</tr>
+</table>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:lm-dis"></span>
+<img src="series_files/figure-html/lm-dis-1.png" alt="Random Effects of Intercept for each District" width="100%" />
+<p class="caption">
+Figure 3.1: Random Effects of Intercept for each District
+</p>
+</div>
+<p>The fixed intercept of Model 2 is 0.835, and the random effect is illustrated in the right panel of Figure (fig:lm-dis). We can find that when taking the logarithm form of trip distance, the sign of some random effects are not remained the same compared to the previous model. To choose a model, it is not correct to simply observe the value of AIC, BIC or log likelihood, since the dependent variable of two models are not the same. In terms of Intraclass Correlation Coefficient (ICC), it is the correlation between two observations within the same group. It is calculated as:
+<span class="math display">\[\frac{\tau_0}{\tau_0+\sigma^2}\]</span>
+, where <span class="math inline">\(\tau_0\)</span> is the between-group variation, while <span class="math inline">\(\sigma^2\)</span> is the within-group variation. It means the two variations are nearly the same when it approaches to 1, and it is no need to do multilevel regression. On the other hand, it indicates that the within-group Variation dominates when ICC approaches to 0. It is suggested to have ICC in range 0.05 to 0.25 for using multilevel model in the social science field. Under this background knowledge, ICC of Model 1 is 0.14, while 0.05 for Model 2, and thus, it is a better choice to keep going on Model 1.</p>
+</div>
+<div id="fixed-effect-only-models" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Fixed-effect only models<a href="multilevel-model.html#fixed-effect-only-models" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The district variable is retrieved from the <a href="https://winsta.dgbas.gov.tw/DgbasWeb/index.aspx"><strong>database</strong></a> managed by Department of Budget, Accounting and Statistics of Tainan City Government. The socioeconomic variables include population density, sex ratio, aging index, natural increase, and so forth. To develop the random intercept multilevel model, Model 3 chooses population density as the district-level variable, and the respondent variables contain driver license (owns or not) as well as the number of personal car (categorized into three types: no car, one car, and no less than two cars). Also, Model 4 uses population growth as the district-level variable instead, and adding the gender as well as age to be the respondent levels. And then, Model 5 adds the trip purpose variable, while further add the mode class in Model 6. The model results are shown in Table <a href="multilevel-model.html#tab:lm-dis-fixed-table">3.2</a>. The coefficient and the confidence interval of each fixed effect variable is shown in Figure <a href="multilevel-model.html#fig:lm-dis-fixed">3.2</a>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="multilevel-model.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 3</span></span>
+<span id="cb2-2"><a href="multilevel-model.html#cb2-2" aria-hidden="true" tabindex="-1"></a>lm_dis2<span class="ot">=</span><span class="fu">lmer</span>(trip_dis <span class="sc">~</span> <span class="dv">1</span><span class="sc">+</span>license<span class="sc">+</span>pc_no<span class="sc">+</span><span class="fu">scale</span>(pop_density)<span class="sc">+</span>(<span class="dv">1</span><span class="sc">|</span>district), <span class="at">data=</span>dat_southtw_tnan_new)</span>
+<span id="cb2-3"><a href="multilevel-model.html#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="multilevel-model.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 4</span></span>
+<span id="cb2-5"><a href="multilevel-model.html#cb2-5" aria-hidden="true" tabindex="-1"></a>lm_dis3<span class="ot">=</span><span class="fu">update</span>(lm_dis2, .<span class="sc">~</span>. <span class="sc">-</span><span class="fu">scale</span>(pop_density)<span class="sc">+</span>age<span class="sc">+</span>gender<span class="sc">+</span>pop_growth)</span>
+<span id="cb2-6"><a href="multilevel-model.html#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="multilevel-model.html#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 5</span></span>
+<span id="cb2-8"><a href="multilevel-model.html#cb2-8" aria-hidden="true" tabindex="-1"></a>lm_dis4<span class="ot">=</span><span class="fu">update</span>(lm_dis2, .<span class="sc">~</span>. <span class="sc">-</span><span class="fu">scale</span>(pop_density)<span class="sc">+</span>age<span class="sc">+</span>gender<span class="sc">+</span>pop_growth<span class="sc">+</span>trip_purp_rev)</span>
+<span id="cb2-9"><a href="multilevel-model.html#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="multilevel-model.html#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 6</span></span>
+<span id="cb2-11"><a href="multilevel-model.html#cb2-11" aria-hidden="true" tabindex="-1"></a>lm_dis5<span class="ot">=</span><span class="fu">update</span>(lm_dis2, .<span class="sc">~</span>. <span class="sc">-</span><span class="fu">scale</span>(pop_density)<span class="sc">+</span>age<span class="sc">+</span>gender<span class="sc">+</span>pop_growth<span class="sc">+</span>trip_purp_rev<span class="sc">+</span>mode_class)</span></code></pre></div>
+<table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;caption-side: bottom;color: #000000;border-top: 2px solid #000000;">
+<caption>
+<span id="tab:lm-dis-fixed-table">Table 3.2: </span>Fixed-effect Only Models
+</caption>
+<thead>
+<tr>
+<th style="padding-left: 5px;padding-right: 5px;">
+ 
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Model 3
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Model 4
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Model 5
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Model 6
+</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+(Intercept)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.45<sup>**</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.62<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.35<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.29<sup>*</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.51)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.55)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.55)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.61)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+license
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.63<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3.34<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3.06<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.31<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.28)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.30)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.30)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.35)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+pc_no1
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.11<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.02<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.01<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.64<sup>*</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.26)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.26)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.26)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.25)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+pc_no&gt;=2
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.37<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.27<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.23<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.08<sup>**</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.38)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.37)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.37)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.37)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+scale(pop_density)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.98<sup>*</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.42)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+age
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.04<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.03<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.03<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.01)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.01)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.01)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+gender女生
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-1.11<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.96<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.74<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.20)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.20)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.19)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+pop_growth
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.16<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.15<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.15<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.04)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.04)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.03)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+trip_purp_rev出差旅次
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4.68<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.15
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(1.21)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(1.19)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+trip_purp_rev返家旅次
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.79<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.71<sup>**</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.23)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.23)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+trip_purp_rev個人事務與休閒旅次
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.74<sup>*</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.31
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.35)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.34)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+trip_purp_rev購物旅次
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-1.23<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-1.01<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.31)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.30)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+mode_class自行車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.64
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.55)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+mode_class機車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.75<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.42)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+mode_class汽車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+5.57<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.48)
+</td>
+</tr>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+AIC
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+21609.84
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+21532.35
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+21474.79
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+21270.24
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+BIC
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+21652.76
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+21587.54
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+21554.51
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+21368.36
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Log Likelihood
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-10797.92
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-10757.17
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-10724.40
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-10619.12
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Num. obs.
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3403
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3403
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3403
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3403
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Num. groups: district
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+37
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+37
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+37
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+37
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Var: district (Intercept)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3.62
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3.25
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3.06
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.83
+</td>
+</tr>
+<tr style="border-bottom: 2px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+Var: Residual
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+32.67
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+31.80
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+31.24
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+29.39
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="font-size: 0.8em;" colspan="5">
+<sup>***</sup>p &lt; 0.001; <sup>**</sup>p &lt; 0.01; <sup>*</sup>p &lt; 0.05
+</td>
+</tr>
+</tfoot>
+</table>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:lm-dis-fixed"></span>
+<img src="series_files/figure-html/lm-dis-fixed-1.png" alt="Coefficients of Fixed Effect Variable" width="100%" />
+<p class="caption">
+Figure 3.2: Coefficients of Fixed Effect Variable
+</p>
+</div>
+<p>For Model 3, we can find that respondents who have driver license would have 2.6 kilometers more on the trip distance. And the one who owns a personal car would have 1.1 kilometers more compared who have no cars. In terms of the coefficient of scale of population density, the negative (-0.979) value means that the trip distance would drop 0.979 kilometers as the population density increases by one standard deviation. It is because that the high population density area often owns a good accessibility to point interest, and people would travel less compared to the one living in a sparse area. Also, the intercept is 1.447, which is the fixed effect for all the district.</p>
+<p>For Model 4, population growth is replaced with the population density (note that it may not appropriate to place in the same model, for they have a high correlation). We can find that the trip distance would decrease approximately 0.16 kilometers as the growth increases by one percentage. Age variable suggests that the older respondents, the shorter travel distance. Last, female has a relatively lower trip distance than the male concluded by the model result. As for Model 5, the trip purpose is further added. Note that for easily developing the model, we classify all the purpose into 5 types, including shopping, commuting, home-trip, leisure, and business. The base of the dummy variable is commuting trip, we can find that the trip distance of home-trip and business trip are significantly higher, while the leisure and shopping trip is relatively lower. Last, Model 6 adds a most vital variable: mode classification. We can find that the trip distance of scooter and car are all significantly higher.</p>
+<p>Among all the 4 models mentioned above, AIC, BIC and log likelihood of Model 6 is apparently lowest. And it is mainly because the “mode” variable has been considered, and explains most of the variance.</p>
+</div>
+<div id="add-random-effects" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> Add Random Effects<a href="multilevel-model.html#add-random-effects" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In addition to the varying intercept model, varying slope supposes that the coefficient of each variable is different among districts. Trying to add random effects as much as possible, the final result is shown in Model 11 in <a href="multilevel-model.html#tab:lm-dis-random-table">3.3</a>. This model contains the license, number of personal car, and the scale of population growth introduced in the previous model. And the random effect variable includes whether the respondent is elderly (&gt;65 years old), gender, and mode use in that trip. The diagnostics of the final model is shown in Figure <a href="multilevel-model.html#fig:lm-dis-random">3.3</a>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="multilevel-model.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 7</span></span>
+<span id="cb3-2"><a href="multilevel-model.html#cb3-2" aria-hidden="true" tabindex="-1"></a>lm_dis_rnd1<span class="ot">=</span><span class="fu">lmer</span>(log_dis <span class="sc">~</span> <span class="dv">1</span><span class="sc">+</span>license<span class="sc">+</span>pc_no<span class="sc">+</span><span class="fu">scale</span>(pop_growth)<span class="sc">+</span>(<span class="dv">1</span><span class="sc">+</span>aged<span class="sc">|</span>district), <span class="at">data=</span>dat_southtw_tnan_new)</span>
+<span id="cb3-3"><a href="multilevel-model.html#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="multilevel-model.html#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 8</span></span>
+<span id="cb3-5"><a href="multilevel-model.html#cb3-5" aria-hidden="true" tabindex="-1"></a>lm_dis_rnd2<span class="ot">=</span><span class="fu">lmer</span>(log_dis <span class="sc">~</span> <span class="dv">1</span><span class="sc">+</span>license<span class="sc">+</span>pc_no<span class="sc">+</span><span class="fu">scale</span>(pop_growth)<span class="sc">+</span>(<span class="dv">1</span><span class="sc">+</span>gender<span class="sc">|</span>district), <span class="at">data=</span>dat_southtw_tnan_new)</span>
+<span id="cb3-6"><a href="multilevel-model.html#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="multilevel-model.html#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 9</span></span>
+<span id="cb3-8"><a href="multilevel-model.html#cb3-8" aria-hidden="true" tabindex="-1"></a>lm_dis_rnd3<span class="ot">=</span><span class="fu">lmer</span>(log_dis <span class="sc">~</span> <span class="dv">1</span><span class="sc">+</span>license<span class="sc">+</span>pc_no<span class="sc">+</span><span class="fu">scale</span>(pop_growth)<span class="sc">+</span>(<span class="dv">1</span><span class="sc">+</span>aged<span class="sc">+</span>gender<span class="sc">|</span>district), <span class="at">data=</span>dat_southtw_tnan_new)</span>
+<span id="cb3-9"><a href="multilevel-model.html#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="multilevel-model.html#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 10</span></span>
+<span id="cb3-11"><a href="multilevel-model.html#cb3-11" aria-hidden="true" tabindex="-1"></a>lm_dis_rnd4<span class="ot">=</span><span class="fu">lmer</span>(log_dis <span class="sc">~</span> <span class="dv">1</span><span class="sc">+</span>license<span class="sc">+</span>pc_no<span class="sc">+</span><span class="fu">scale</span>(pop_growth)<span class="sc">+</span>(<span class="dv">1</span><span class="sc">+</span>mode_class<span class="sc">|</span>district), <span class="at">data=</span>dat_southtw_tnan_new)</span>
+<span id="cb3-12"><a href="multilevel-model.html#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="multilevel-model.html#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Model 11</span></span>
+<span id="cb3-14"><a href="multilevel-model.html#cb3-14" aria-hidden="true" tabindex="-1"></a>lm_dis_rnd5<span class="ot">=</span><span class="fu">lmer</span>(log_dis <span class="sc">~</span> <span class="dv">1</span><span class="sc">+</span>license<span class="sc">+</span>pc_no<span class="sc">+</span><span class="fu">scale</span>(pop_growth)<span class="sc">+</span>(<span class="dv">1</span><span class="sc">+</span>aged<span class="sc">+</span>gender<span class="sc">+</span>mode_class<span class="sc">|</span>district), <span class="at">data=</span>dat_southtw_tnan_new)</span></code></pre></div>
+<table class="texreg" style="margin: 10px auto;border-collapse: collapse;border-spacing: 0px;caption-side: bottom;color: #000000;border-top: 2px solid #000000;">
+<caption>
+<span id="tab:lm-dis-random-table">Table 3.3: </span>Random-effect Models
+</caption>
+<thead>
+<tr>
+<th style="padding-left: 5px;padding-right: 5px;">
+ 
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Model 7
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Model 8
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Model 9
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Model 10
+</th>
+<th style="padding-left: 5px;padding-right: 5px;">
+Model 11
+</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+(Intercept)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.36<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.13
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.16<sup>*</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.48<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.61<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.09)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.08)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.08)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.08)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.08)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+license
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.95<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.96<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.94<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.45<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.47<sup>***</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.06)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.06)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.06)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.06)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.06)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+pc_no1
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.24<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.28<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.24<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.16<sup>**</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.14<sup>**</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.06)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.06)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.05)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.05)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.05)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+pc_no&gt;=2
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.49<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.51<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.48<sup>***</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.22<sup>**</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.20<sup>**</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.08)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.08)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.08)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.07)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.07)
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+scale(pop_growth)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.13<sup>**</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.06
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.11<sup>**</sup>
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.08
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.10<sup>**</sup>
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.05)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.04)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.04)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.04)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+(0.04)
+</td>
+</tr>
+<tr style="border-top: 1px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+AIC
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+10964.87
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+11066.22
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+10941.76
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+10488.04
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+10385.51
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+BIC
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+11020.06
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+11121.41
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+11015.35
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+10586.16
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+10551.09
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Log Likelihood
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-5473.43
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-5524.11
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-5458.88
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-5228.02
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-5165.76
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Num. obs.
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3403
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3403
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3403
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3403
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3403
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Num. groups: district
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+37
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+37
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+37
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+37
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+37
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Var: district (Intercept)
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.16
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.02
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.07
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4.75
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3.86
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Var: district agedaged
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.49
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.47
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.30
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district (Intercept) agedaged
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.20
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.12
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.04
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Var: Residual
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.41
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.47
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.39
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.19
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.14
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Var: district gender女生
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.08
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.06
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.05
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district (Intercept) gender女生
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.05
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.02
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.27
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district agedaged gender女生
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.09
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+0.06
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Var: district mode_class自行車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.83
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+1.67
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Var: district mode_class機車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4.06
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3.44
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Var: district mode_class汽車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+7.59
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+6.62
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district (Intercept) mode_class自行車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-2.93
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-2.53
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district (Intercept) mode_class機車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-4.34
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-3.60
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district (Intercept) mode_class汽車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-5.96
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-5.00
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district mode_class自行車 mode_class機車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.71
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+2.39
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district mode_class自行車 mode_class汽車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3.64
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+3.25
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district mode_class機車 mode_class汽車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+5.45
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+4.62
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district agedaged mode_class自行車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.67
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district agedaged mode_class機車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.95
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district agedaged mode_class汽車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-1.40
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district gender女生 mode_class自行車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.16
+</td>
+</tr>
+<tr>
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district gender女生 mode_class機車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.21
+</td>
+</tr>
+<tr style="border-bottom: 2px solid #000000;">
+<td style="padding-left: 5px;padding-right: 5px;">
+Cov: district gender女生 mode_class汽車
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+ 
+</td>
+<td style="padding-left: 5px;padding-right: 5px;">
+-0.33
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="font-size: 0.8em;" colspan="6">
+<sup>***</sup>p &lt; 0.001; <sup>**</sup>p &lt; 0.01; <sup>*</sup>p &lt; 0.05
+</td>
+</tr>
+</tfoot>
+</table>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:lm-dis-random"></span>
+<img src="series_files/figure-html/lm-dis-random-1.png" alt="Diagnostics of  Model 11" width="100%" />
+<p class="caption">
+Figure 3.3: Diagnostics of Model 11
+</p>
+</div>
+<p>From the diagnostics, we may conclude that the model performs not well enough, since the residuals are not very correspondent to the line in QQ plot, and the deviation is significant. In addition, the random effect of Model 11 is shown in <a href="multilevel-model.html#fig:lm-dis-random-effects-fig">3.4</a>.</p>
+<div class="figure" style="text-align: center"><span style="display:block;" id="fig:lm-dis-random-effects-fig"></span>
+<img src="series_files/figure-html/lm-dis-random-effects-fig-1.png" alt="Diagnostics of  Model 11" width="100%" />
+<p class="caption">
+Figure 3.4: Diagnostics of Model 11
+</p>
+</div>
+<p>The random effect of mode is obvious, which has a huge difference between districts. It may because that how mode usage influences the trip distance are totally different among districts. In 西港區, 佳里區, 白河區, the random effect of mode class is higher, which may imply that the trip distance is much more affected by the choice of modal in these districts. For instance, trip distance would increase a lot when using car, compared to 白河區 and 南化區 (where the random effects of car use is 0).</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="logistic-poisson-regression.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "serif",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/ChiaJung-Yeh/Travel-Demand-Analysis/tree/master/03-Exercise_3.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["series.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+},
+"toolbar": {
+"position": "fixed",
+"download": "series.pdf",
+"search": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

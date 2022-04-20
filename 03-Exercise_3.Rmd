@@ -1,0 +1,288 @@
+--- 
+title: "Travel Demand Analysis Exercise"
+author: "Chia Jung, Yeh///n National Yang Ming Chiao Tung University (NYCU), Taiwan"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output:
+  bookdown::html_document2: default
+  bookdown::pdf_document2: default
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: ChiaJung-Yeh/Travel-Demand-Analysis
+description: "Travel Demand Analysis Exercise"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(data.table)
+library(stringr)
+library(ggplot2)
+library(texreg)
+library(psych)
+library(ggfortify)
+library(ggrepel)
+library(lme4)
+library(dotwhisker)
+library(broom.mixed)
+library(arm)
+library(sjPlot)
+library(scales)
+library(showtext)
+library(stargazer)
+library(kableExtra)
+library(knitr)
+library(cowplot)
+library(showtext)
+library(knitr)
+library(fontawesome)
+library(DT)
+
+windowsFonts(A=windowsFont("Times New Roman"))
+windowsFonts(B=windowsFont("標楷體"))
+```
+
+
+# Multilevel Model
+
+:::problem
+<font size="4">**`r fa(name="question-circle")`  PROBLEM**</font> 
+
+You are provided with a travel survey data of Tainan (from "南臺區域運輸規劃"). Use trip distance as the outcome variable, and fit multilevel models with the grouping structure, respondents within districts.  
+
+1. Fit two constant-only models, one using the original value of trip distance and the  other transforming the value via logarithm. Explain the results, compare the two models, and pick one for the next step.  
+
+2. Develop fixed-effect only (varying intercept) models; at least two respondent level and one district-level variables need to be included in the models. You need to find your own district-level variables. Explain your models, compared them, and pick one for the next step.  
+:::
+
+```{r read_import, echo=F, eval=T, warning=F, message=F}
+# import data
+dat_southtw_tnan=fread("./data/03-Exercise_3/dat_southtw_tnan.csv")%>%
+  data.frame()
+code_book=fread("./data/03-Exercise_3/code_book.csv")%>%
+  data.frame()
+
+# time processing
+for (i in c("origin_time", "dest_time")){
+  col_id=which(colnames(dat_southtw_tnan)==i)
+  dat_southtw_tnan[,col_id]=ifelse(grepl(":", dat_southtw_tnan[,col_id]), dat_southtw_tnan[,col_id],
+                                   paste0((as.numeric(dat_southtw_tnan[,col_id])*1440) %/% 60, ":", (ceiling(as.numeric(dat_southtw_tnan[,col_id])*1440)) %% 60))
+  dat_southtw_tnan[,col_id]=gsub(" ", "", dat_southtw_tnan[,col_id])
+  dat_southtw_tnan[,col_id]=as.ITime(as.POSIXct(format(dat_southtw_tnan[,col_id], format="%H:%M"), format="%H:%M"))
+}
+
+# column to factor
+for (i in unique(code_book$variable)){
+  code_book_temp=code_book[code_book$variable==i,]
+  col_id=which(colnames(dat_southtw_tnan)==i)
+  if (i!="hh_pop"){
+    dat_southtw_tnan[,col_id]=code_book_temp$name[match(dat_southtw_tnan[,col_id], code_book_temp$code)]
+    dat_southtw_tnan[,col_id]=factor(dat_southtw_tnan[,col_id], code_book_temp$name)
+  }else if (i=="hh_pop"){
+    dat_southtw_tnan[,col_id]=ifelse(dat_southtw_tnan[,col_id]>90, code_book_temp$name[match(dat_southtw_tnan[,col_id], code_book_temp$code)], as.numeric(dat_southtw_tnan[,col_id]))
+  }
+  rm(code_book_temp, col_id)
+}
+
+# distance transformation
+dat_southtw_tnan$trip_dis=dat_southtw_tnan$trip_dis/1000
+dat_southtw_tnan$log_dis=log(dat_southtw_tnan$trip_dis)
+
+# data column cleaning
+dat_southtw_tnan_new=mutate(filter(dat_southtw_tnan, p_income!="不知道/拒答"), hh_pop_rev=case_when(
+  hh_pop=="為房客不知道" ~ 1,
+  TRUE ~ as.numeric(hh_pop)
+), age_group=case_when(
+  age<=18 ~ "<=18",
+  # age<=24 ~ "19-24",
+  age<=64 ~ "19-64",
+  TRUE ~ ">=65"
+), mode_class=case_when(
+  grepl("機車", mode_class) ~ "機車",
+  grepl("汽車", mode_class) ~ "汽車",
+  TRUE ~ mode_class
+), pc_no=case_when(
+  pc_no==0 ~ "0",
+  pc_no==1 ~ "1",
+  TRUE ~ ">=2"
+), scooter_no=case_when(
+  scooter_no==0 ~ "0",
+  scooter_no==1 ~ "1",
+  TRUE ~ ">=2"
+), trip_purp_rev=case_when(
+  trip_purp %in% c("上班","上學","補習進修") ~ "上班/學旅次",
+  trip_purp %in% c("洽公出差") ~ "出差旅次",
+  trip_purp %in% c("住家(返家)") ~ "返家旅次",
+  trip_purp %in% c("用餐/買餐點","購物(含加油、送洗衣物、租還商品、買菜") ~ "購物旅次",
+  trip_purp %in% c("探訪親友","接送","處理個人事務(含看醫生、去郵局銀行、宗教活動)","休閒娛樂(含運動、溜狗)") ~ "個人事務與休閒旅次",
+  TRUE ~ "其他"
+), p_income_rev=case_when(
+  p_income %in% c("無個人收入","30萬以下") ~ "30萬以下",
+  # p_income %in% c("30至59萬") ~ "30至59萬",
+  # p_income %in% c("60至89萬") ~ "60至89萬",
+  TRUE ~ "30萬以上"
+), occu_rev=case_when(
+  occu %in% c("農林漁牧業") ~ "第一級產業",
+  occu %in% c("營造業","製造業","電力及燃氣供應業","用水供應及污染整治業","礦業及土石採取業") ~ "第二級產業",
+  occu %in% c("資訊及通訊傳播業","公共行政及國防","不動產業","醫療保健/社會工作服務業","批發及零售業","專業、科學及技術服務業",
+              "金融及保險業","教育服務業","藝術、娛樂及休閒服務業","住宿及餐飲業","其他服務業","支援服務業","運輸及倉儲業") ~ "第三級產業",
+  TRUE ~ "無職業(含學生/退休/家管)"
+))
+
+dat_southtw_tnan_new$license=ifelse(dat_southtw_tnan_new$license=="皆無", 0, 1)
+dat_southtw_tnan_new$pc_no=factor(dat_southtw_tnan_new$pc_no, levels=c("0", "1", ">=2"))
+dat_southtw_tnan_new$scooter_no=factor(dat_southtw_tnan_new$scooter_no, levels=c("0", "1", ">=2"))
+dat_southtw_tnan_new$aged=ifelse(dat_southtw_tnan_new$age>=65, "aged", "not_aged")
+dat_southtw_tnan_new$aged=factor(dat_southtw_tnan_new$aged, levels=c("not_aged", "aged"))
+dat_southtw_tnan_new$mode_class=factor(dat_southtw_tnan_new$mode_class, levels=c("步行","自行車","機車","汽車"))
+
+# join data
+tainan_se_factor=fread("./data/03-Exercise_3/tainan_se_factor.csv", encoding="UTF-8")
+dat_southtw_tnan_new=left_join(dat_southtw_tnan_new, tainan_se_factor)
+
+dat_southtw_tnan_new$car_private=dat_southtw_tnan_new$car_private/dat_southtw_tnan_new$population
+dat_southtw_tnan_new$scooter=dat_southtw_tnan_new$scooter/dat_southtw_tnan_new$population
+```
+
+## Constant-only Models
+The result of two constant-only models are shown in Table \@ref(tab:lm-dis-table). The original value of trip distance is selected to be dependent variable in the first model (Model 1), while the second model (Model 2) takes the logarithm of trip distance. The trip distance is transformed to "kilometers" in advance, to avoid a huge coefficient in the result. The intercept of Model 1 is 5.328, which is the fixed effect of the constant term. The random effect for each district represents how much the intercept is shifted up or down in particular district. The random effect of each district is shown in the left panel of Figure \@ref(fig:lm-dis). The red line implies that the estimates of trip distance is lower than the fixed effect, while the blue one is higher than that. Take 龍崎區 for instance, the random effect of it is 5.513 (check out by using `ranef()`, or the toppest point in Figure \ref(fig:lm-dis). Since the total effect is composed of the fixed effect and the random effect, the final intercept would be $5.328+5.513=10.841$. Note that if the line intersects with the "x=0" vertical line, it means that the estimate of trip distance for that district is not significantly inconsistent with the fixed effect, namely, the random effect might not be true.  
+
+```{r lm-dis-code, echo=T, eval=F, warning=F, message=F}
+# Model 1
+lm_dis=lmer(trip_dis ~ 1+(1|district), data=dat_southtw_tnan)
+
+# Model 2
+lm_logdis=lmer(log_dis ~ 1+(1|district), data=dat_southtw_tnan)
+
+# print the model result
+tab_model(list(lm_dis, lm_logdis), show.aic=T)
+```
+
+
+```{r lm-dis, echo=F, eval=T, warning=F, message=F, results="asis", fig.cap="Random Effects of Intercept for each District", out.width="100%", fig.align="center", fig.height=6, results="asis"}
+lm_dis=lmer(trip_dis ~ 1+(1|district), data=dat_southtw_tnan)
+lm_logdis=lmer(log_dis ~ 1+(1|district), data=dat_southtw_tnan)
+
+tab_model(list(lm_dis, lm_logdis), show.aic=T, title="(#tab:lm-dis-table)Constant-only Models", dv.labels=c("Model 1", "Model 2"))
+
+p1=plot_model(lm_dis, type="re")+
+  ggtitle("Model 1")+
+  geom_hline(yintercept=0, linetype="dashed", size=1, color="black")+
+  theme_minimal()+
+  theme(axis.text.y=element_text(family="B", size=11),
+        axis.text.x=element_text(family="A", size=11),
+        strip.text.x=element_text(size=12, family="A", face="bold"),
+        plot.title=element_text(family="A", size=12, face="bold", hjust=0.5))
+
+p2=plot_model(lm_logdis, type="re")+
+  ggtitle("Model 2")+
+  geom_hline(yintercept=0, linetype="dashed", size=1, color="black")+
+  theme_minimal()+
+  theme(axis.text.y=element_text(family="B", size=11),
+        axis.text.x=element_text(family="A", size=11),
+        strip.text.x=element_text(size=12, family="A", face="bold"),
+        plot.title=element_text(family="A", size=12, face="bold", hjust=0.5))
+
+plot_grid(p1, p2, ncol=2)
+```
+
+
+The fixed intercept of Model 2 is 0.835, and the random effect is illustrated in the right panel of Figure \ref(fig:lm-dis). We can find that when taking the logarithm form of trip distance, the sign of some random effects are not remained the same compared to the previous model. To choose a model, it is not correct to simply observe the value of AIC, BIC or log likelihood, since the dependent variable of two models are not the same. In terms of Intraclass Correlation Coefficient (ICC), it is the correlation between two observations within the same group. It is calculated as:
+$$\frac{\tau_0}{\tau_0+\sigma^2}$$
+, where $\tau_0$ is the between-group variation, while $\sigma^2$ is the within-group variation. It means the two variations are nearly the same when it approaches to 1, and it is no need to do multilevel regression. On the other hand, it indicates that the within-group Variation dominates when ICC approaches to 0. It is suggested to have ICC in range 0.05 to 0.25 for using multilevel model in the social science field. Under this background knowledge, ICC of Model 1 is 0.14, while 0.05 for Model 2, and thus, it is a better choice to keep going on Model 1.  
+
+
+## Fixed-effect only models
+The district variable is retrieved from the [**database**](https://winsta.dgbas.gov.tw/DgbasWeb/index.aspx) managed by Department of Budget, Accounting and Statistics of Tainan City Government. The socioeconomic variables include population density, sex ratio, aging index, natural increase, and so forth. To develop the random intercept multilevel model, Model 3 chooses population density as the district-level variable, and the respondent variables contain driver license (owns or not) as well as the number of personal car (categorized into three types: no car, one car, and no less than two cars). Also, Model 4 uses population growth as the district-level variable instead, and adding the gender as well as age to be the respondent levels. And then, Model 5 adds the trip purpose variable, while further add the mode class in Model 6. The model results are shown in Table \@ref(tab:lm-dis-fixed-table). The coefficient and the confidence interval of each fixed effect variable is shown in Figure \@ref(fig:lm-dis-fixed).  
+
+```{r lm-dis-fixed-show, echo=T, eval=F, warning=F, message=F}
+# Model 3
+lm_dis2=lmer(trip_dis ~ 1+license+pc_no+scale(pop_density)+(1|district), data=dat_southtw_tnan_new)
+
+# Model 4
+lm_dis3=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth)
+
+# Model 5
+lm_dis4=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth+trip_purp_rev)
+
+# Model 6
+lm_dis5=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth+trip_purp_rev+mode_class)
+```
+
+```{r lm-dis-fixed, echo=F, eval=T, warning=F, message=F, results="asis", fig.cap="Coefficients of Fixed Effect Variable", out.width="100%", fig.align="center", fig.height=4}
+lm_dis2=lmer(trip_dis ~ 1+license+pc_no+scale(pop_density)+(1|district), data=dat_southtw_tnan_new)
+lm_dis3=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth)
+lm_dis4=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth+trip_purp_rev)
+lm_dis5=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth+trip_purp_rev+mode_class)
+
+# tab_model(list(lm_dis2, lm_dis3, lm_dis4, lm_dis5), show.aic=T, title="(#tab:lm-dis-fixed-table)Fixed-effect Only Models", dv.labels=c("Model 3", "Model 4", "Model 5", "Model 6"))
+
+htmlreg(list(lm_dis2, lm_dis3, lm_dis4, lm_dis5), caption="(#tab:lm-dis-fixed-table)Fixed-effect Only Models", custom.model.names=c("Model 3", "Model 4", "Model 5", "Model 6"))
+
+dwplot(list(lm_dis2, lm_dis3, lm_dis4, lm_dis5), effects="fixed")+
+  geom_vline(xintercept=0, lty=2)+
+  scale_color_brewer(palette="Set2", name="Model", label=paste0("Model ", c(6:3)))+
+  theme_minimal()+
+  theme(axis.text.y=element_text(family="B", size=8, face="bold"),
+        axis.text.x=element_text(family="A", size=8, face="bold"),
+        legend.title=element_text(family="A", size=12),
+        legend.text=element_text(family="A", size=10))
+```
+
+For Model 3, we can find that respondents who have driver license would have 2.6 kilometers more on the trip distance. And the one who owns a personal car would have 1.1 kilometers more compared who have no cars. In terms of the coefficient of scale of population density, the negative (-0.979) value means that the trip distance would drop 0.979 kilometers as the population density increases by one standard deviation. It is because that the high population density area often owns a good accessibility to point interest, and people would travel less compared to the one living in a sparse area. Also, the intercept is 1.447, which is the fixed effect for all the district.  
+
+For Model 4, population growth is replaced with the population density (note that it may not appropriate to place in the same model, for they have a high correlation). We can find that the trip distance would decrease approximately 0.16 kilometers as the growth increases by one percentage. Age variable suggests that the older respondents, the shorter travel distance. Last, female has a relatively lower trip distance than the male concluded by the model result. As for Model 5, the trip purpose is further added. Note that for easily developing the model, we classify all the purpose into 5 types, including shopping, commuting, home-trip, leisure, and business. The base of the dummy variable is commuting trip, we can find that the trip distance of home-trip and business trip are significantly higher, while the leisure and shopping trip is relatively lower. Last, Model 6 adds a most vital variable: mode classification. We can find that the trip distance of scooter and car are all significantly higher.  
+
+Among all the 4 models mentioned above, AIC, BIC and log likelihood of Model 6 is apparently lowest. And it is mainly because the "mode" variable has been considered, and explains most of the variance.  
+
+
+
+## Add Random Effects
+In addition to the varying intercept model, varying slope supposes that the coefficient of each variable is different among districts. Trying to add random effects as much as possible, the final result is shown in Model 11 in \@ref(tab:lm-dis-random-table). This model contains the license, number of personal car, and the scale of population growth introduced in the previous model. And the random effect variable includes whether the respondent is elderly (>65 years old), gender, and mode use in that trip. The diagnostics of the final model is shown in Figure \@ref(fig:lm-dis-random).   
+
+```{r lm-dis-random-show, echo=T, eval=F, warning=F, message=F}
+# Model 7
+lm_dis_rnd1=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged|district), data=dat_southtw_tnan_new)
+
+# Model 8
+lm_dis_rnd2=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+gender|district), data=dat_southtw_tnan_new)
+
+# Model 9
+lm_dis_rnd3=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged+gender|district), data=dat_southtw_tnan_new)
+
+# Model 10
+lm_dis_rnd4=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+mode_class|district), data=dat_southtw_tnan_new)
+
+# Model 11
+lm_dis_rnd5=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged+gender+mode_class|district), data=dat_southtw_tnan_new)
+```
+
+```{r lm-dis-random, echo=F, eval=T, warning=F, message=F, results="asis", fig.showtext=T, fig.cap="Diagnostics of  Model 11", out.width="100%", fig.align="center", fig.height=5}
+lm_dis_rnd1=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged|district), data=dat_southtw_tnan_new)
+lm_dis_rnd2=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+gender|district), data=dat_southtw_tnan_new)
+lm_dis_rnd3=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged+gender|district), data=dat_southtw_tnan_new)
+lm_dis_rnd4=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+mode_class|district), data=dat_southtw_tnan_new)
+lm_dis_rnd5=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged+gender+mode_class|district), data=dat_southtw_tnan_new)
+
+htmlreg(list(lm_dis_rnd1, lm_dis_rnd2, lm_dis_rnd3, lm_dis_rnd4, lm_dis_rnd5), caption="(#tab:lm-dis-random-table)Random-effect Models", custom.model.names=c("Model 7", "Model 8", "Model 9", "Model 10", "Model 11"))
+
+plot(sr<-DHARMa::simulateResiduals(lm_dis_rnd5), cex.axis=2)
+```
+
+From the diagnostics, we may conclude that the model performs not well enough, since the residuals are not very correspondent to the line in QQ plot, and the deviation is significant. In addition, the random effect of Model 11 is shown in \@ref(fig:lm-dis-random-effects-fig).  
+
+```{r lm-dis-random-effects-fig, echo=F, eval=T, warning=F, message=F, results="asis", fig.cap="Diagnostics of  Model 11", out.width="100%", fig.align="center", fig.height=7}
+
+pm=plot_model(lm_dis_rnd5, type="re")+
+  theme(axis.text.y=element_text(family="B", size=11),
+        axis.text.x=element_text(family="A", size=11),
+        strip.text.x=element_text(size=12, family="B", face="bold"),
+        plot.title=element_text(family="A", size=18, face="bold", hjust=0.5))
+pm$data$facet=factor(pm$data$facet, levels=unique(pm$data$facet))
+pm
+```
+
+The random effect of mode is obvious, which has a huge difference between districts. It may because that how mode usage influences the trip distance are totally different among districts. In 西港區, 佳里區, 白河區, the random effect of mode class is higher, which may imply that the trip distance is much more affected by the choice of modal in these districts. For instance, trip distance would increase a lot when using car, compared to 白河區 and 南化區 (where the random effects of car use is 0).  
+
