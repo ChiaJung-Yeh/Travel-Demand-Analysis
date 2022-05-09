@@ -1,0 +1,720 @@
+--- 
+title: "Travel Demand Analysis Exercise"
+author: "Chia Jung, Yeh///n National Yang Ming Chiao Tung University (NYCU), Taiwan"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output:
+  bookdown::html_document2: default
+  bookdown::pdf_document2: default
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: ChiaJung-Yeh/Travel-Demand-Analysis
+description: "Travel Demand Analysis Exercise"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(data.table)
+library(stringr)
+library(ggplot2)
+library(texreg)
+library(psych)
+library(apollo)
+library(reshape2)
+library(mlogit)
+library(caret)
+library(arm)
+library(sjPlot)
+library(scales)
+library(showtext)
+library(stargazer)
+library(kableExtra)
+library(knitr)
+library(cowplot)
+library(showtext)
+library(knitr)
+library(fontawesome)
+library(DT)
+library(rtemps)
+
+windowsFonts(A=windowsFont("Times New Roman"))
+windowsFonts(B=windowsFont("標楷體"))
+```
+
+
+# Discrete Choice Modeling
+:::problem
+<font size="4">**`r fa(name="question-circle")`  PROBLEM**</font> 
+
+You are provided with a data set, from a survey of 210 individuals' choices of travel mode between Sydney, Melbourne and New South Wales. There are four alternative choices, along with four choice-specific covariates for each choice. The variable definition is provided as follows:  
+
+  * Develop LR models for identifying the effect of age on trip distance.  
+  * Mode = choice; Air, Train, Bus, or Car  
+  * Ttme = terminal waiting time, 0 for car  
+  * Invc = in vehicle cost  
+  * Invt = travel time, in vehicle  
+  * GC = generalized cost measure  
+  * Hinc = household income  
+  * Psize = party size in mode chosen  
+
+Use Apollo to answer the following questions. Note that you need to transform the data set format from long to wide and add an ID variable.  
+:::
+
+## Data Transformation  
+Note that the provided data (download [**here**](https://github.com/ChiaJung-Yeh/Travel-Demand-Analysis/raw/master/docs/data_out/clogit.csv)) is long format, which the attributes of each alternative are listed in different rows. However, the required format for developing model by using `apollo` package is wide, and thus, the data should first be transformed. Also, ID variable is required in the model, to identify each of the respondent.  
+
+Before transforming the data, it is better to observe the original data in advance. Table \@ref(tab:long-data) shows the long data format (original) of a respondent, the column "MODE" represents Air, Train, Bus, and Car respectively. If it is coded as 1, it means that the respondent chooses that mode. Thus, every 4 rows belongs to a respondent, and there must exists only one "1" in "MODE" column. Take Table \@ref(tab:long-data) for instance, the first row records the attributes of mode "Air", and its terminal waiting time (TTME) is 69 minutes, while the second row records the attributes of "Train", and its in vehicle cost (INVC) is 31 dollars, and so forth. Also, note that terminal waiting time (TTME), vehicle cost (INVC), in vehicle travel time (INVT), generalized cost (GC) are often regarded as generic variables, which have identical impacts on the utility for different modes. Conversely, household income (HINC) is often considered to be alternative specific variable, which has a different impact on utility by modes. Note that Table \@ref(tab:long-data) shows the first 8 rows, which indicates that there are 2 respondents.  
+
+```{r long-data, echo=F, eval=T, warning=F, message=F}
+clogit=read.csv("./dATA/04-Exercise_4/clogit.csv")
+kable(clogit[1:8, c("MODE","TTME","INVC","INVT","GC","HINC","PSIZE")], caption="Example for Long Data", booktabs=T)%>%
+  kable_styling("striped", full_width = F)
+```
+
+As the illustration above, the long format should be transformed to wide and add the ID variable before developing the choice model by means of `apollo` package. The code of transforming the data format is shown below.  
+
+```{r wide-data-transform, echo=T, eval=F, warning=F, message=F}
+clogit=read.csv("./clogit.csv")
+clogit$ID=rep(c(1:(nrow(clogit)/4)), each=4)
+clogit$MODE_ALL=rep(c("Air","Train","Bus","Car"), times=nrow(clogit)/4)
+MODE=clogit$MODE_ALL[clogit$MODE==1]
+clogit=dplyr::select(clogit, ID, MODE_ALL, TTME, INVC, INVT, GC, HINC, PSIZE)
+clogit=reshape(data=clogit, idvar="ID", v.names=c("TTME","INVC","INVT","GC"), timevar="MODE_ALL", direction="wide")
+clogit$MODE=MODE
+```
+
+Table \@ref(tab:wide-data) shows part of the wide format data after being reshaped. For each of row, it represents one of the attributes and the final choice of a respondent. For instance, for respondents ID "1", the terminal waiting time (TTME) of "Air" is 69 minutes, while it takes 34 minutes for "Train". Also, the final choice is shown in the last column of Table \@ref(tab:wide-data). For respondents ID "1", he chooses "Car".  
+
+```{r wide-data, echo=F, eval=T, warning=F, message=F}
+clogit$ID=rep(c(1:(nrow(clogit)/4)), each=4)
+clogit$MODE_ALL=rep(c("Air","Train","Bus","Car"), times=nrow(clogit)/4)
+MODE=clogit$MODE_ALL[clogit$MODE==1]
+clogit=dplyr::select(clogit, ID, MODE_ALL, TTME, INVC, INVT, GC, HINC, PSIZE)
+clogit=reshape(data=clogit, idvar="ID", v.names=c("TTME","INVC","INVT","GC"), timevar="MODE_ALL", direction="wide")
+clogit$MODE=MODE
+clogit$AV.Air=1
+clogit$AV.Train=1
+clogit$AV.Bus=1
+clogit$AV.Car=1
+rm(MODE)
+kable(clogit[1:2, c(1, 4:11, 20)], caption="Example for Wide Data (Part of columns, attributes of Air and Train)", booktabs=T)%>%
+  kable_styling("striped", full_width=F)%>% 
+  scroll_box(width="800px", height="200px")
+```
+
+
+## Model without Intercept
+
+### Problem Description  
+:::problem
+<font size="3">**`r fa(name="question-circle")`  Run a model with generalized cost and in-vehicle time, without intercepts.**</font>  
+(1) Do the estimated coefficients have the expected signs?  
+(2) Are both coefficients significantly different from zero?  
+(3) How closely do the average probabilities match the shares of travelers choosing each alternative?  
+(4) The ratio of coefficients usually provides economically meaningful information. The willingness to pay (wtp) through higher travel cost for a one-minute reduction in travel time is the ratio of the travel time coefficient to the travel cost coefficient. What is the wtp from this model? Is it reasonable in magnitude?  
+:::
+
+### Model Result
+Consider a model only with generalized cost and in-vehicle time, the model (**Model 1**) can be formulated as below.  
+
+$$
+V_{mode}=\beta_{GC}*GC_{mode}+\beta_{INVT}*INVT_{mode}
+$$
+
+Based on the formulation, the code is shown below. Note that only the vector of parameters are shown, and other settings by using `apollo` package are ignored.  
+
+```{r model1-show, echo=T, eval=F, warning=F, message=F}
+# Vector of parameters
+apollo_beta=c(constant=0,
+              b_gc=0,
+              b_invt=0)
+apollo_fixed=c("constant")
+apollo_inputs = apollo_validateInputs(database=clogit)
+apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimate"){
+  apollo_attach(apollo_beta, apollo_inputs)
+  on.exit(apollo_detach(apollo_beta, apollo_inputs))
+  P = list()
+  V = list()
+  V[["Car"]]   = constant+    b_gc  * GC.Car    + b_invt * INVT.Car
+  V[["Train"]] = constant+    b_gc  * GC.Train  + b_invt * INVT.Train
+  V[["Air"]]   = constant+    b_gc  * GC.Air    + b_invt * INVT.Air
+  V[["Bus"]]   = constant+    b_gc  * GC.Bus    + b_invt * INVT.Bus
+  mnl_settings = list(
+    alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
+    avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
+    choiceVar     = MODE,
+    utilities     = V
+  )
+  P[["model"]] = apollo_mnl(mnl_settings, functionality)
+  P = apollo_prepareProb(P, apollo_inputs, functionality)
+  return(P)
+}
+```
+
+
+```{r model1, echo=F, eval=T, warning=F, message=F, include=F}
+apollo_initialise()
+
+# Set core controls
+apollo_control = list(
+  modelName       = "clogit_1",
+  modelDescr      = "clogit_1 Model",
+  indivID         = "ID", 
+  outputDirectory = "clogit_1_output"
+)
+# Vector of parameters
+apollo_beta=c(constant=0,
+              b_gc=0,
+              b_invt=0)
+apollo_fixed=c("constant")
+apollo_inputs = apollo_validateInputs(database=clogit)
+apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimate"){
+  apollo_attach(apollo_beta, apollo_inputs)
+  on.exit(apollo_detach(apollo_beta, apollo_inputs))
+  P = list()
+  V = list()
+  V[["Car"]]   = constant+    b_gc  * GC.Car    + b_invt * INVT.Car
+  V[["Train"]] = constant+    b_gc  * GC.Train  + b_invt * INVT.Train
+  V[["Air"]]   = constant+    b_gc  * GC.Air    + b_invt * INVT.Air
+  V[["Bus"]]   = constant+    b_gc  * GC.Bus    + b_invt * INVT.Bus
+  mnl_settings = list(
+    alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
+    avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
+    choiceVar     = MODE,
+    utilities     = V
+  )
+  
+  P[["model"]] = apollo_mnl(mnl_settings, functionality)
+  P = apollo_prepareProb(P, apollo_inputs, functionality)
+  return(P)
+}
+model=apollo_estimate(apollo_beta, apollo_fixed, apollo_probabilities, apollo_inputs)
+model_result=apollo_modelOutput(model)
+
+# Predmodel1_contingencyction
+PROB=apollo_prediction(model, 
+                       apollo_probabilities, 
+                       apollo_inputs)
+PROB$Prediction=c("Car","Train","Air","Bus")[apply(PROB[, c(3:6)], 1, which.max)]
+clogit_res=cbind(clogit, PROB)
+```
+
+The result of Model 1 is shown in Table \@ref(tab:model1-table) The estimation of $\beta_{GC}$ (`b_gc` in the table) is -0.0124, which means a higher generalized cost would cause a negative utility for the mode. Also, the t-value of $\beta_{GC}$ suggests that the coefficient is significantly different from 0. It is reasonable, for people would not be inclined to choose the mode as the cost increases. On the other hand, the coefficient of $\beta_{INVT}$ (`b_invt` in the table) is also negative as expected though, the statistics test shows that it cannot significantly reject the null hypothesis. To sum up, the estimated coefficients have the expected signs, and particularly for the coefficient of generalized cost ***<span style="color: red;">(1, 2)</span>***.  
+
+```{r model1-table, echo=F, eval=T, warning=F}
+kable(model_result, caption="Model 1 Result", booktabs=T, digits=4)
+```
+
+$LL(0)$ of Model 1 is `r round(model$LL0, 2)`, while $LL(C)=LL(\beta)$ is `r round(model$LLout, 2)` and thus $\rho^2=0.039$, which implies there is only a slight difference between log-likelihoods when just take generalized cost and in-vehicle travel time into consideration. The contingency table and market share of prediction and real mode are illustrated in Table \@ref(tab:model1-contingency) From the table, we can find that there is a huge gap between market share of the real and prediction value. The predictive market share of "Air" as well as "Car" are severely over-estimated, while "Bus" and "Car" has an extreme low proportion. The accuracy of prediction of the mode is merely `r round(mean(PROB$Prediction==clogit$MODE)*100, 1)` % ***<span style="color: red;">(3)</span>***.  
+
+
+```{r model1-contingency, echo=F, eval=T, warning=F, message=F}
+temp=reshape(data.frame(table(clogit_res[, c("MODE","Prediction")])), timevar="Prediction", direction="wide", idvar="MODE")
+temp=cbind(REAL="REAL", temp)
+temp=cbind(temp, Percentage=paste0(round(apply(table(clogit_res$MODE), 1, sum)/sum(table(clogit_res$MODE))*100, 1), " %"))
+colnames(temp)=gsub("Freq.", "", colnames(temp))
+temp_v=rbind(paste0(round(t(apply(table(clogit_res$Prediction), 1, sum)/sum(table(clogit_res$Prediction)))*100, 1), " %"))
+colnames(temp_v)=c("Air","Bus","Car","Train")
+temp=rbind(temp, cbind(REAL="REAL", MODE="Percentage", temp_v, Percentage="100 %"))
+colnames(temp)=gsub("MODE|REAL", "", colnames(temp))
+
+kable(temp, caption="Contigency Table of Model 1", digits=4)%>%
+  add_header_above(c("", "Prediction"=6))%>%
+  column_spec(7, bold=T, background="#E0E0E0")%>%
+  collapse_rows(columns=1, valign="middle")%>%
+  row_spec(4, extra_latex_after="\\cline{2-7}")%>%
+  row_spec(5, bold=T, background="#E0E0E0")
+```
+
+The willingness to pay through higher travel cost for a one-minute reduction in travel time is the ratio of the travel time coefficient to the travel cost coefficient. It can be calculated as below:   
+
+$$
+\frac{-0.0004}{-0.0124}=0.0322
+$$
+, which means the willingness to pay for one-minute reduction travel time costs \$0.0322, that is approximately NT\$ 0.9, namely NT\$ 54 an hour. It is very unreasonable, since the estimated value is much lower than the wage ***<span style="color: red;">(4)</span>***.  
+
+
+
+## Model with Constants
+
+### Problem Description  
+:::problem
+<font size="3">**`r fa(name="question-circle")`  Add alternative-specific constants to the model. Normalize the constant for the alternative bus to 0.**</font>  
+(1) How well do the estimated probabilities match the shares of travelers choosing each alternative?  
+(2) Calculate the wtp. Is it reasonable?
+:::
+
+
+### Model Result
+Consider a model with alternative-specific constants, generalized cost and in-vehicle time, the model (**Model 2**) can be formulated as below.  
+
+$$
+V_{mode}=\beta_{mode}+\beta_{GC}*GC_{mode}+\beta_{INVT}*INVT_{mode}
+$$
+
+Based on the formulation, the code of Model 2 is shown below. Note that only the vector of parameters are shown, and other settings by using `apollo` package are ignored.  
+
+```{r model2-show, echo=T, eval=F, warning=F, message=F}
+apollo_beta=c(asc_car=0,
+              asc_train=0,
+              asc_air=0,
+              asc_bus=0,
+              b_gc=0,
+              b_invt=0)
+apollo_fixed=c("asc_bus")
+apollo_inputs = apollo_validateInputs(database=clogit)
+apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimate"){
+  apollo_attach(apollo_beta, apollo_inputs)
+  on.exit(apollo_detach(apollo_beta, apollo_inputs))
+  P = list()
+  V = list()
+  V[["Car"]]   = asc_car+    b_gc  * GC.Car    + b_invt * INVT.Car
+  V[["Train"]] = asc_train+  b_gc  * GC.Train  + b_invt * INVT.Train
+  V[["Air"]]   = asc_air+    b_gc  * GC.Air    + b_invt * INVT.Air
+  V[["Bus"]]   = asc_bus+    b_gc  * GC.Bus    + b_invt * INVT.Bus
+  mnl_settings = list(
+    alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
+    avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
+    choiceVar     = MODE,
+    utilities     = V
+  )
+  P[["model"]] = apollo_mnl(mnl_settings, functionality)
+  P = apollo_prepareProb(P, apollo_inputs, functionality)
+  return(P)
+}
+```
+
+
+```{r model2, echo=F, eval=T, warning=F, message=F, include=F}
+apollo_control = list(
+  modelName       = "clogit_2",
+  modelDescr      = "clogit_2 Model",
+  indivID         = "ID", 
+  outputDirectory = "clogit_2_output"
+)
+apollo_beta=c(asc_car=0,
+              asc_train=0,
+              asc_air=0,
+              asc_bus=0,
+              b_gc=0,
+              b_invt=0)
+apollo_fixed=c("asc_bus")
+apollo_inputs = apollo_validateInputs(database=clogit)
+apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimate"){
+  apollo_attach(apollo_beta, apollo_inputs)
+  on.exit(apollo_detach(apollo_beta, apollo_inputs))
+  P = list()
+  V = list()
+  V[["Car"]]   = asc_car+    b_gc  * GC.Car    + b_invt * INVT.Car
+  V[["Train"]] = asc_train+  b_gc  * GC.Train  + b_invt * INVT.Train
+  V[["Air"]]   = asc_air+    b_gc  * GC.Air    + b_invt * INVT.Air
+  V[["Bus"]]   = asc_bus+    b_gc  * GC.Bus    + b_invt * INVT.Bus
+  mnl_settings = list(
+    alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
+    avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
+    choiceVar     = MODE,
+    utilities     = V
+  )
+  P[["model"]] = apollo_mnl(mnl_settings, functionality)
+  P = apollo_prepareProb(P, apollo_inputs, functionality)
+  return(P)
+}
+model=apollo_estimate(apollo_beta, apollo_fixed, apollo_probabilities, apollo_inputs)
+model_result=apollo_modelOutput(model)
+
+# Prediction
+PROB=apollo_prediction(model, 
+                       apollo_probabilities, 
+                       apollo_inputs)
+PROB$Prediction=c("Car","Train","Air","Bus")[apply(PROB[, c(3:6)], 1, which.max)]
+clogit_res=cbind(clogit, PROB)
+```
+
+The result of Model 2 is shown in Table \@ref(tab:model2-table) The estimation of $\beta_{GC}$ (`b_gc` in the table) is -0.0117, while the coefficients of in-vehicle travel time is -0.0022, and both of the t-statistics suggest the null hypothesis be rejected. It implies a higher cost or longer travel time would result in the lower utility of the mode, and people would tend to choose other alternatives.  
+
+In addition, "Train" is the only alternative-specific constants that its t-value suggests reject the null hypothesis. It implies that there is a significant difference on utility between "Train" and "Bus" under other conditions (generalized cost and in-vehicle travel time) to be fixed. However, there is no apparent difference between the constants of other modes and that of the "Bus".  
+
+```{r model2-table, echo=F, eval=T, warning=F}
+kable(model_result, caption="Model 2 Result", booktabs=T, digits=4)
+```
+
+$LL(0)$ of Model 2 is `r round(model$LL0, 2)`, while $LL(\beta)$ is `r round(model$LLout, 2)` and thus $\rho^2=0.083$, which is a little improved compared to Model 1. The contingency table and market share of prediction and real mode are illustrated in Table \@ref(tab:model2-contingency) From the table, we can find that there still exists a large gap between the real market share and the prediction one. The predictive market share of "Car" is about 21.9 %, which is relative close to the real proportion (28.1 %). However, the model wrongly estimates the market share of "Bus" which accounts for 14.3%, but the estimation is only 0.5 %. The overall accuracy of Model 2 is approximately `r round(mean(PROB$Prediction==clogit$MODE)*100, 1)` % ***<span style="color: red;">(1)</span>***.  , it is indeed not ideal for the estimation result, but much higher than that of Model 1.  
+
+```{r model2-contingency, echo=F, eval=T, warning=F, message=F}
+temp=reshape(data.frame(table(clogit_res[, c("MODE","Prediction")])), timevar="Prediction", direction="wide", idvar="MODE")
+temp=cbind(REAL="REAL", temp)
+temp=cbind(temp, Percentage=paste0(round(apply(table(clogit_res$MODE), 1, sum)/sum(table(clogit_res$MODE))*100, 1), " %"))
+colnames(temp)=gsub("Freq.", "", colnames(temp))
+temp_v=rbind(paste0(round(t(apply(table(clogit_res$Prediction), 1, sum)/sum(table(clogit_res$Prediction)))*100, 1), " %"))
+colnames(temp_v)=c("Air","Bus","Car","Train")
+temp=rbind(temp, cbind(REAL="REAL", MODE="Percentage", temp_v, Percentage="100 %"))
+colnames(temp)=gsub("MODE|REAL", "", colnames(temp))
+
+kable(temp, caption="Contigency Table of Model 2", booktabs=T, digits=4)%>%
+  add_header_above(c("", "Prediction"=6))%>%
+  column_spec(7, bold=T, background="#E0E0E0")%>%
+  collapse_rows(columns=1, valign="middle")%>%
+  row_spec(4, extra_latex_after="\\cline{2-7}")%>%
+  row_spec(5, bold=T, background="#E0E0E0")
+```
+
+In terms of willingness to pay of one-minute reduction in travel time, the calculation is listed below:  
+
+$$
+\frac{-0.0022}{-0.0117}=0.1880
+$$
+
+, which means the willingness to pay is \$0.1880 per minute (\$11.28 per hour). It may not be reasonable for the time the data collected, since the current minimum wage for most of states in the U.S is $7.25 per hour, and $11.28 per hour is too high ***<span style="color: red;">(2)</span>***.  
+
+
+
+## Models with sociodemographic variables
+
+### Problem Description  
+:::problem
+<font size="3">**`r fa(name="question-circle")`  Now try some models with sociodemographic variables entering.**</font>  
+(1) Enter generalized cost divided by household income, instead of generalized cost. With this specification, the magnitude of the generalized cost is inversely related to household income, such that high income households are less concerned with generalized travel costs than lower income households. Does dividing generalized cost by income seem to make the model better or worse?  
+(2) Instead of dividing generalized cost by household income, enter alternative-specific generalized cost effects. Do these generalized cost terms enter significantly?  
+(3) Try other models. Determine which model you think is best from these data.  
+:::
+
+
+### Model Result
+Consider a model with generalized cost divided by household income, the model (**Model 3**) can be formulated as below.  
+
+$$
+V_{mode}=\beta_{mode}+\beta_{GC}*(\frac{GC_{mode}}{HINC_r})+\beta_{INVT}*INVT_{mode}
+$$
+, where $r$ is for every respondent (sample).  
+
+Based on the formulation, the code of Model 3 is shown below. Note that only the vector of parameters are shown, and other settings by using `apollo` package are ignored.  
+
+```{r model3-show, echo=T, eval=F, warning=F, message=F}
+clogit$GC.Air_I=clogit$GC.Air/clogit$HINC
+clogit$GC.Train_I=clogit$GC.Train/clogit$HINC
+clogit$GC.Bus_I=clogit$GC.Bus/clogit$HINC
+clogit$GC.Car_I=clogit$GC.Car/clogit$HINC
+
+apollo_beta=c(asc_car=0,
+              asc_train=0,
+              asc_air=0,
+              asc_bus=0,
+              b_gc_inc=0,
+              b_invt=0)
+apollo_fixed=c("asc_bus")
+apollo_inputs = apollo_validateInputs(database=clogit)
+
+apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimate"){
+  
+  apollo_attach(apollo_beta, apollo_inputs)
+  on.exit(apollo_detach(apollo_beta, apollo_inputs))
+  P = list()
+  V = list()
+  V[["Car"]]   = asc_car+    b_gc_inc  * GC.Car_I    + b_invt * INVT.Car  
+  V[["Train"]] = asc_train+  b_gc_inc  * GC.Train_I  + b_invt * INVT.Train  
+  V[["Air"]]   = asc_air+    b_gc_inc  * GC.Air_I    + b_invt * INVT.Air
+  V[["Bus"]]   = asc_bus+    b_gc_inc  * GC.Bus_I    + b_invt * INVT.Bus
+  mnl_settings = list(
+    alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
+    avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
+    choiceVar     = MODE,
+    utilities     = V
+  )
+  P[["model"]] = apollo_mnl(mnl_settings, functionality)
+  P = apollo_prepareProb(P, apollo_inputs, functionality)
+  return(P)
+}
+```
+
+
+```{r model3, echo=F, eval=T, warning=F, message=F, include=F}
+apollo_initialise()
+apollo_control = list(
+  modelName       = "clogit_3.1",
+  modelDescr      = "clogit_3.1 Model",
+  indivID         = "ID", 
+  outputDirectory = "clogit_3.1_output"
+)
+clogit$GC.Air_I=clogit$GC.Air/clogit$HINC
+clogit$GC.Train_I=clogit$GC.Train/clogit$HINC
+clogit$GC.Bus_I=clogit$GC.Bus/clogit$HINC
+clogit$GC.Car_I=clogit$GC.Car/clogit$HINC
+
+apollo_beta=c(asc_car=0,
+              asc_train=0,
+              asc_air=0,
+              asc_bus=0,
+              b_gc_inc=0,
+              b_invt=0)
+apollo_fixed=c("asc_bus")
+apollo_inputs = apollo_validateInputs(database=clogit)
+
+apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimate"){
+  
+  apollo_attach(apollo_beta, apollo_inputs)
+  on.exit(apollo_detach(apollo_beta, apollo_inputs))
+  P = list()
+  V = list()
+  V[["Car"]]   = asc_car+    b_gc_inc  * GC.Car_I    + b_invt * INVT.Car  
+  V[["Train"]] = asc_train+  b_gc_inc  * GC.Train_I  + b_invt * INVT.Train  
+  V[["Air"]]   = asc_air+    b_gc_inc  * GC.Air_I    + b_invt * INVT.Air
+  V[["Bus"]]   = asc_bus+    b_gc_inc  * GC.Bus_I    + b_invt * INVT.Bus
+  mnl_settings = list(
+    alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
+    avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
+    choiceVar     = MODE,
+    utilities     = V
+  )
+  P[["model"]] = apollo_mnl(mnl_settings, functionality)
+  P = apollo_prepareProb(P, apollo_inputs, functionality)
+  return(P)
+}
+
+model=apollo_estimate(apollo_beta, apollo_fixed, apollo_probabilities, apollo_inputs)
+model_result=apollo_modelOutput(model)
+
+# Prediction
+PROB=apollo_prediction(model, 
+                       apollo_probabilities, 
+                       apollo_inputs)
+PROB$Prediction=c("Car","Train","Air","Bus")[apply(PROB[, c(3:6)], 1, which.max)]
+clogit_res=cbind(clogit, PROB)
+```
+
+The result of Model 3 is shown in Table \@ref(tab:model3-table) The estimation of  generalized cost divided by household income (`b_gc_inc` in the table) is -0.0735; however, its t-value is only -0.8772, meaning that the null hypothesis that the coefficient is 0 cannot be rejected. The coefficients of in-vehicle travel time is -0.0032, and the t-statistics (-3.9439) suggest the null hypothesis be rejected. It implies a longer travel time would significantly result in the lower utility of the mode.  
+
+```{r model3-table, echo=F, eval=T, warning=F}
+kable(model_result, caption="Model 3 Result", booktabs=T, digits=4)
+```
+
+In this model, if the generalized cost divided by household income is larger, it indicates that the travel cost are not affordable for that target group. By this concept, we consider that this new variable would have a more negative impact on the utilities. However, the statistic test cannot prove this assumption, and $LL(\beta)$ of Model 3 is `r round(model$LLout, 2)`, slightly worsen than Model 2. In conclusion,  dividing generalized cost by income seem have no significant benefits on the model result ***<span style="color: red;">(1)</span>***.  
+
+
+Now, taking all the general cost as alternative-specific variables, which means to consider the impact of general cost on each mode is totally different. From practical perspective, it may be true, since the "feelings" of increasing the cost for different mode might not be the same, and thus the change of utility might have a difference. Based on this assumption, the model (**Model 4**) can be formed as below.  
+
+$$
+V_{mode}=\beta_{mode}+\beta_{GC_{mode}}*{GC}_{mode}+\beta_{INVT}*INVT_{mode}
+$$
+
+Based on the formulation, the code of Model 4 is shown below. Note that only the vector of parameters are shown, and other settings by using `apollo` package are ignored.  
+
+```{r model4-show, echo=T, eval=F, warning=F, message=F}
+apollo_beta=c(asc_car=0,
+              asc_train=0,
+              asc_air=0,
+              asc_bus=0,
+              b_gc_car=0,
+              b_gc_train=0,
+              b_gc_air=0,
+              b_gc_bus=0,
+              b_invt=0)
+apollo_fixed=c("asc_bus","b_gc_bus")
+apollo_inputs = apollo_validateInputs(database=clogit)
+apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimate"){
+  apollo_attach(apollo_beta, apollo_inputs)
+  on.exit(apollo_detach(apollo_beta, apollo_inputs))
+  P = list()
+  V = list()
+  V[["Car"]]   = asc_car+    b_gc_car     * GC.Car_I    + b_invt * INVT.Car  
+  V[["Train"]] = asc_train+  b_gc_train   * GC.Train_I  + b_invt * INVT.Train  
+  V[["Air"]]   = asc_air+    b_gc_air     * GC.Air_I    + b_invt * INVT.Air
+  V[["Bus"]]   = asc_bus+    b_gc_bus     * GC.Bus_I    + b_invt * INVT.Bus
+  mnl_settings = list(
+    alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
+    avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
+    choiceVar     = MODE,
+    utilities     = V
+  )
+  P[["model"]] = apollo_mnl(mnl_settings, functionality)
+  P = apollo_prepareProb(P, apollo_inputs, functionality)
+  return(P)
+}
+```
+
+
+```{r model4, echo=F, eval=T, warning=F, message=F, include=F}
+apollo_initialise()
+apollo_control = list(
+  modelName       = "clogit_3.2",
+  modelDescr      = "clogit_3.2 Model",
+  indivID         = "ID", 
+  outputDirectory = "clogit_3.2_output"
+)
+apollo_beta=c(asc_car=0,
+              asc_train=0,
+              asc_air=0,
+              asc_bus=0,
+              b_gc_car=0,
+              b_gc_train=0,
+              b_gc_air=0,
+              b_gc_bus=0,
+              b_invt=0)
+apollo_fixed=c("asc_bus","b_gc_bus")
+apollo_inputs = apollo_validateInputs(database=clogit)
+apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimate"){
+  apollo_attach(apollo_beta, apollo_inputs)
+  on.exit(apollo_detach(apollo_beta, apollo_inputs))
+  P = list()
+  V = list()
+  V[["Car"]]   = asc_car+    b_gc_car     * GC.Car_I    + b_invt * INVT.Car  
+  V[["Train"]] = asc_train+  b_gc_train   * GC.Train_I  + b_invt * INVT.Train  
+  V[["Air"]]   = asc_air+    b_gc_air     * GC.Air_I    + b_invt * INVT.Air
+  V[["Bus"]]   = asc_bus+    b_gc_bus     * GC.Bus_I    + b_invt * INVT.Bus
+  mnl_settings = list(
+    alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
+    avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
+    choiceVar     = MODE,
+    utilities     = V
+  )
+  P[["model"]] = apollo_mnl(mnl_settings, functionality)
+  P = apollo_prepareProb(P, apollo_inputs, functionality)
+  return(P)
+}
+
+model=apollo_estimate(apollo_beta, apollo_fixed, apollo_probabilities, apollo_inputs)
+model_result=apollo_modelOutput(model)
+```
+
+
+The result of Model 4 is shown in Table \@ref(tab:model4-table) Note that the constant term and generalized cost coefficient of bus is regarded as base (0). We can find that the impact of generalized cost are indeed significant different between "Car" and "Bus", as well as "Air" and "Bus" ***<span style="color: red;">(2)</span>***. It implies that the utility of "Car" and "Air" modes are more likely to be influenced due to the change of cost. It is quite reasonable, for they are more sensitive to the cost than other modes. As for "Train" and "Bus", they are all pubic transport system, people are not easily to change the modes, which might result from the users' sociodemographic features.  
+
+
+```{r model4-table, echo=F, eval=T, warning=F}
+kable(model_result, caption="Model 4 Result", booktabs=T, digits=4)
+```
+
+Last, develop a model that can well predict the market share of each mode. Here, we use terminal waiting time (TTME), in-vehicle cost (INVC), in-vehicle travel time (INVT), and household income (HINC) to be the independent variable. Note that the household income is used to be as alternative-specific variables, while others are the generic variables. The model (**Model 5**) is formed as below.  
+
+$$
+V_{mode}=\beta_{TTME}*TTME_{mode}+\beta_{INVC}*INVC_{mode}+\beta_{INVT}*INVT_{mode}+\beta_{HINC_{mode}}*HINC_{r}
+$$
+, where $r$ is for every respondent (sample).  
+
+
+Based on the formulation, the code of Model 5 is shown below. Note that only the vector of parameters are shown, and other settings by using `apollo` package are ignored.  
+
+```{r model5-show, echo=T, eval=F, warning=F, message=F}
+apollo_beta=c(asc_car=0,
+              asc_train=0,
+              asc_air=0,
+              asc_bus=0,
+              b_ttme=0,
+              b_invt=0,
+              b_invc=0,
+              b_hinc_car=0,
+              b_hinc_train=0,
+              b_hinc_air=0,
+              b_hinc_bus=0)
+
+apollo_fixed=c("asc_bus","b_hinc_bus")
+apollo_inputs = apollo_validateInputs(database=clogit)
+apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimate"){
+  apollo_attach(apollo_beta, apollo_inputs)
+  on.exit(apollo_detach(apollo_beta, apollo_inputs))
+  P = list()
+  V = list()
+  V[["Car"]]   = asc_car+    b_ttme   * TTME.Car    + b_invt * INVT.Car    + b_invc * INVT.Car   + b_hinc_car   * HINC
+  V[["Train"]] = asc_train+  b_ttme   * TTME.Train  + b_invt * INVT.Train  + b_invc * INVT.Car  + b_hinc_train * HINC
+  V[["Air"]]   = asc_air+    b_ttme   * TTME.Air    + b_invt * INVT.Air    + b_invc * INVT.Car + b_hinc_air   * HINC
+  V[["Bus"]]   = asc_bus+    b_ttme   * TTME.Bus    + b_invt * INVT.Bus    + b_invc * INVT.Car + b_hinc_bus   * HINC
+  mnl_settings = list(
+    alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
+    avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
+    choiceVar     = MODE,
+    utilities     = V
+  )
+  P[["model"]] = apollo_mnl(mnl_settings, functionality)
+  P = apollo_prepareProb(P, apollo_inputs, functionality)
+  return(P)
+}
+```
+
+
+```{r model5, echo=F, eval=T, warning=F, message=F, include=F}
+apollo_initialise()
+apollo_control = list(
+  modelName       = "clogit_3.3",
+  modelDescr      = "clogit_3.3 Model",
+  indivID         = "ID", 
+  outputDirectory = "clogit_3.3_output"
+)
+apollo_beta=c(asc_car=0,
+              asc_train=0,
+              asc_air=0,
+              asc_bus=0,
+              b_ttme=0,
+              b_invt=0,
+              b_invc=0,
+              b_hinc_car=0,
+              b_hinc_train=0,
+              b_hinc_air=0,
+              b_hinc_bus=0)
+
+apollo_fixed=c("asc_bus","b_hinc_bus")
+apollo_inputs = apollo_validateInputs(database=clogit)
+apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimate"){
+  apollo_attach(apollo_beta, apollo_inputs)
+  on.exit(apollo_detach(apollo_beta, apollo_inputs))
+  P = list()
+  V = list()
+  V[["Car"]]   = asc_car+    b_ttme   * TTME.Car    + b_invt * INVT.Car    + b_invc * INVT.Car   + b_hinc_car   * HINC
+  V[["Train"]] = asc_train+  b_ttme   * TTME.Train  + b_invt * INVT.Train  + b_invc * INVT.Car  + b_hinc_train * HINC
+  V[["Air"]]   = asc_air+    b_ttme   * TTME.Air    + b_invt * INVT.Air    + b_invc * INVT.Car + b_hinc_air   * HINC
+  V[["Bus"]]   = asc_bus+    b_ttme   * TTME.Bus    + b_invt * INVT.Bus    + b_invc * INVT.Car + b_hinc_bus   * HINC
+  mnl_settings = list(
+    alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
+    avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
+    choiceVar     = MODE,
+    utilities     = V
+  )
+  P[["model"]] = apollo_mnl(mnl_settings, functionality)
+  P = apollo_prepareProb(P, apollo_inputs, functionality)
+  return(P)
+}
+model=apollo_estimate(apollo_beta, apollo_fixed, apollo_probabilities, apollo_inputs)
+model_result=apollo_modelOutput(model)
+PROB=apollo_prediction(model, 
+                       apollo_probabilities, 
+                       apollo_inputs)
+PROB$Prediction=c("Car","Train","Air","Bus")[apply(PROB[, c(3:6)], 1, which.max)]
+clogit_res=cbind(clogit, PROB)
+```
+
+
+The result of Model 5 is shown in Table \@ref(tab:model5-table) In Table \@ref(tab:model5-table), first observe the alternative-specific constants, we can find that "Car" and "Train" have a significant difference compared to "Bus". Under same conditions, the utility of "Car" is less than that of the "Bus", while the utility of "Train" is higher. And the alternative-specific constants of "Air" seems to have no significant difference between that of "Bus". As for the terminal waiting time, in-vehicle travel time, they are all significantly cause a negative impact on utility. And interestingly, the coefficient of terminal waiting time is more negative than that of in-vehicle travel time (-0.0957<-0.0036, note that the unit of these two variables are the same). It does make sense, waiting time is much more unaffordable than staying in the vehicle, for the out of vehicle environment, which may influenced by the weather and the crowds, is definitely not comfortable relative to the one in the vehicle. As for the household income, we can find that only "Train" has a significant negative sign compared to "Bus", which means that if the income is large, people would tend not to choose "Train".
+
+$LL(0)$ of Model 5 is `r round(model$LL0, 2)`, while $LL(\beta)$ is `r round(model$LLout, 2)` and thus $\rho^2=0.373$, which is hugely improved compared to all of the previous model. The contingency table and market share of prediction and real mode are illustrated in Table \@ref(tab:model5-contingency) From the table, we can find that the predictive market share is much closer to the real one, indicating that this model might have a good estimation on the mode choice. The overall accuracy of Model 5 is approximately `r round(mean(PROB$Prediction==clogit$MODE)*100, 1)` %, which is pretty well among all the models developed ***<span style="color: red;">(3)</span>***.  
+
+```{r model5-table, echo=F, eval=T, warning=F}
+kable(model_result, caption="Model 5 Result", booktabs=T, digits=4)
+```
+
+
+```{r model5-contingency, echo=F, eval=T, warning=F, message=F}
+temp=reshape(data.frame(table(clogit_res[, c("MODE","Prediction")])), timevar="Prediction", direction="wide", idvar="MODE")
+temp=cbind(REAL="REAL", temp)
+temp=cbind(temp, Percentage=paste0(round(apply(table(clogit_res$MODE), 1, sum)/sum(table(clogit_res$MODE))*100, 1), " %"))
+colnames(temp)=gsub("Freq.", "", colnames(temp))
+temp_v=rbind(paste0(round(t(apply(table(clogit_res$Prediction), 1, sum)/sum(table(clogit_res$Prediction)))*100, 1), " %"))
+colnames(temp_v)=c("Air","Bus","Car","Train")
+temp=rbind(temp, cbind(REAL="REAL", MODE="Percentage", temp_v, Percentage="100 %"))
+colnames(temp)=gsub("MODE|REAL", "", colnames(temp))
+
+kable(temp, caption="Contigency Table of Model 5", booktabs=T, digits=4)%>%
+  add_header_above(c("", "Prediction"=6))%>%
+  column_spec(7, bold=T, background="#E0E0E0")%>%
+  collapse_rows(columns=1, valign="middle")%>%
+  row_spec(4, extra_latex_after="\\cline{2-7}")%>%
+  row_spec(5, bold=T, background="#E0E0E0")
+```
+
+
+
+
+
+
+

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Exercise 5 Data Transformation | Travel Demand Analysis Exercise</title>
+  <meta name="description" content="Exercise 5 Data Transformation | Travel Demand Analysis Exercise" />
+  <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Exercise 5 Data Transformation | Travel Demand Analysis Exercise" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Exercise 5 Data Transformation | Travel Demand Analysis Exercise" />
+  <meta name="github-repo" content="ChiaJung-Yeh/Travel-Demand-Analysis" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Exercise 5 Data Transformation | Travel Demand Analysis Exercise" />
+  
+  <meta name="twitter:description" content="Exercise 5 Data Transformation | Travel Demand Analysis Exercise" />
+  
+
+<meta name="author" content="Chia Jung, Yeh///n National Yang Ming Chiao Tung University (NYCU), Taiwan" />
+
+
+<meta name="date" content="2022-05-09" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="multilevel-model-1.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+
+<link rel="stylesheet" href="lib/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="lib/css/style.css" type="text/css" />
+<link rel="stylesheet" href="lib/css/lesson.css" type="text/css" />
+<link rel="stylesheet" href="stylebox.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Travel Demand Analysis Exercise</a></li>
+
+<li class="divider"></li>
+<li><a href="index.html#preface">Preface<span></span></a></li>
+<li class="chapter" data-level="1" data-path="linear-regression.html"><a href="linear-regression.html"><i class="fa fa-check"></i><b>1</b> Linear Regression<span></span></a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="linear-regression.html"><a href="linear-regression.html#import-and-transform-the-data"><i class="fa fa-check"></i><b>1.1</b> Import and transform the data<span></span></a></li>
+<li class="chapter" data-level="1.2" data-path="linear-regression.html"><a href="linear-regression.html#summarize-the-trip-distance"><i class="fa fa-check"></i><b>1.2</b> Summarize the trip distance<span></span></a></li>
+<li class="chapter" data-level="1.3" data-path="linear-regression.html"><a href="linear-regression.html#effect-of-age-on-trip-distance"><i class="fa fa-check"></i><b>1.3</b> Effect of age on trip distance<span></span></a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="linear-regression.html"><a href="linear-regression.html#naive-model"><i class="fa fa-check"></i><b>1.3.1</b> Naive model<span></span></a></li>
+<li class="chapter" data-level="1.3.2" data-path="linear-regression.html"><a href="linear-regression.html#log-linear-model"><i class="fa fa-check"></i><b>1.3.2</b> Log-linear model<span></span></a></li>
+<li class="chapter" data-level="1.3.3" data-path="linear-regression.html"><a href="linear-regression.html#polynomial-model"><i class="fa fa-check"></i><b>1.3.3</b> Polynomial model<span></span></a></li>
+<li class="chapter" data-level="1.3.4" data-path="linear-regression.html"><a href="linear-regression.html#dummy-regression"><i class="fa fa-check"></i><b>1.3.4</b> Dummy Regression<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="linear-regression.html"><a href="linear-regression.html#average-trip-distance-for-each-district"><i class="fa fa-check"></i><b>1.4</b> Average trip distance for each district<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html"><i class="fa fa-check"></i><b>2</b> Logistic &amp; Poisson Regression<span></span></a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#collider-bias"><i class="fa fa-check"></i><b>2.1</b> Collider Bias<span></span></a></li>
+<li class="chapter" data-level="2.2" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#poisson-regression"><i class="fa fa-check"></i><b>2.2</b> Poisson regression<span></span></a></li>
+<li class="chapter" data-level="2.3" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#logistic-regression"><i class="fa fa-check"></i><b>2.3</b> Logistic regression<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="multilevel-model.html"><a href="multilevel-model.html"><i class="fa fa-check"></i><b>3</b> Multilevel Model<span></span></a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="multilevel-model.html"><a href="multilevel-model.html#constant-only-models"><i class="fa fa-check"></i><b>3.1</b> Constant-only Models<span></span></a></li>
+<li class="chapter" data-level="3.2" data-path="multilevel-model.html"><a href="multilevel-model.html#fixed-effect-only-models"><i class="fa fa-check"></i><b>3.2</b> Fixed-effect only models<span></span></a></li>
+<li class="chapter" data-level="3.3" data-path="multilevel-model.html"><a href="multilevel-model.html#add-random-effects"><i class="fa fa-check"></i><b>3.3</b> Add Random Effects<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="multilevel-model-1.html"><a href="multilevel-model-1.html"><i class="fa fa-check"></i><b>4</b> Multilevel Model<span></span></a></li>
+<li class="chapter" data-level="5" data-path="data-transformation.html"><a href="data-transformation.html"><i class="fa fa-check"></i><b>5</b> Data Transformation<span></span></a></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Travel Demand Analysis Exercise</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="data-transformation" class="section level1 hasAnchor" number="5">
+<h1><span class="header-section-number">Exercise 5</span> Data Transformation<a href="data-transformation.html#data-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Note that the provided data is long format, which the attributes of each alternative are listed in different rows. However, the required format for developing model by using <code>apollo</code> package is wide, and thus, the data should first be transformed. Also, ID variable is required in the model, to identify each of the respondent.</p>
+<p>Before transforming the data, it is better to observe the original data in advance. Table <a href="data-transformation.html#tab:long-data">5.1</a> shows the long data format (original) of a respondent, the column “MODE” represents Air, Train, Bus, and Car respectively. If it is coded as 1, it means that the respondent chooses that mode. Thus, every 4 rows belongs to a respondent, and there must exists only one “1” in “MODE” column. Take Table <a href="data-transformation.html#tab:long-data">5.1</a> for instance, the first row records the attributes of mode “Air,” and its terminal waiting time (TTME) is 69 minutes, while the second row records the attributes of “Train,” and its in vehicle cost (INVC) is 31 dollars, and so forth. Also, note that terminal waiting time (TTME), vehicle cost (INVC), in vehicle travel time (INVT), generalized cost (GC) are often regarded as generic variables, which have identical impacts on the utility for different modes. Conversely, household income (HINC) is often considered to be alternative specific variable, which has a different impact on utility by modes.</p>
+<table>
+<caption>
+<span id="tab:long-data">Table 5.1: </span>Example for Long Data
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+MODE
+</th>
+<th style="text-align:right;">
+TTME
+</th>
+<th style="text-align:right;">
+INVC
+</th>
+<th style="text-align:right;">
+INVT
+</th>
+<th style="text-align:right;">
+GC
+</th>
+<th style="text-align:right;">
+HINC
+</th>
+<th style="text-align:right;">
+PSIZE
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+69
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+70
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+372
+</td>
+<td style="text-align:right;">
+71
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+417
+</td>
+<td style="text-align:right;">
+70
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+180
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+<p>As the illustration above, the long format should be transformed to wide and add the ID variable before developing the choice model by means of <code>apollo</code> package. Table  shows part of the wide format data after being reshaped. For each of row, it represents one of the attributes and the final choice of a respondent. For instance, for respondents ID “1,” the terminal waiting time (TTME) of “Air” is 69 minutes, while it takes 34 minutes for “Train.” Also, the final choice is shown in the last column of Table . For respondents ID “1,” he chooses “Car.”</p>
+<!-- ## Constant-only Models -->
+<!-- The result of two constant-only models are shown in Table \@ref(tab:lm-dis-table). The original value of trip distance is selected to be dependent variable in the first model (Model 1), while the second model (Model 2) takes the logarithm of trip distance. The trip distance is transformed to "kilometers" in advance, to avoid a huge coefficient in the result. The intercept of Model 1 is 5.328, which is the fixed effect of the constant term. The random effect for each district represents how much the intercept is shifted up or down in particular district. The random effect of each district is shown in the left panel of Figure \@ref(fig:lm-dis). The red line implies that the estimates of trip distance is lower than the fixed effect, while the blue one is higher than that. Take 龍崎區 for instance, the random effect of it is 5.513 (check out by using `ranef()`, or the toppest point in Figure \ref(fig:lm-dis). Since the total effect is composed of the fixed effect and the random effect, the final intercept would be $5.328+5.513=10.841$. Note that if the line intersects with the "x=0" vertical line, it means that the estimate of trip distance for that district is not significantly inconsistent with the fixed effect, namely, the random effect might not be true.   -->
+<!-- ```{r lm-dis-code, echo=T, eval=F, warning=F, message=F} -->
+<!-- # Model 1 -->
+<!-- lm_dis=lmer(trip_dis ~ 1+(1|district), data=dat_southtw_tnan) -->
+<!-- # Model 2 -->
+<!-- lm_logdis=lmer(log_dis ~ 1+(1|district), data=dat_southtw_tnan) -->
+<!-- # print the model result -->
+<!-- tab_model(list(lm_dis, lm_logdis), show.aic=T) -->
+<!-- ``` -->
+<!-- ```{r lm-dis, echo=F, eval=T, warning=F, message=F, results="asis", fig.cap="Random Effects of Intercept for each District", out.width="100%", fig.align="center", fig.height=6, results="asis"} -->
+<!-- lm_dis=lmer(trip_dis ~ 1+(1|district), data=dat_southtw_tnan) -->
+<!-- lm_logdis=lmer(log_dis ~ 1+(1|district), data=dat_southtw_tnan) -->
+<!-- tab_model(list(lm_dis, lm_logdis), show.aic=T, title="(#tab:lm-dis-table)Constant-only Models", dv.labels=c("Model 1", "Model 2")) -->
+<!-- p1=plot_model(lm_dis, type="re")+ -->
+<!--   ggtitle("Model 1")+ -->
+<!--   geom_hline(yintercept=0, linetype="dashed", size=1, color="black")+ -->
+<!--   theme_minimal()+ -->
+<!--   theme(axis.text.y=element_text(family="B", size=11), -->
+<!--         axis.text.x=element_text(family="A", size=11), -->
+<!--         strip.text.x=element_text(size=12, family="A", face="bold"), -->
+<!--         plot.title=element_text(family="A", size=12, face="bold", hjust=0.5)) -->
+<!-- p2=plot_model(lm_logdis, type="re")+ -->
+<!--   ggtitle("Model 2")+ -->
+<!--   geom_hline(yintercept=0, linetype="dashed", size=1, color="black")+ -->
+<!--   theme_minimal()+ -->
+<!--   theme(axis.text.y=element_text(family="B", size=11), -->
+<!--         axis.text.x=element_text(family="A", size=11), -->
+<!--         strip.text.x=element_text(size=12, family="A", face="bold"), -->
+<!--         plot.title=element_text(family="A", size=12, face="bold", hjust=0.5)) -->
+<!-- plot_grid(p1, p2, ncol=2) -->
+<!-- ``` -->
+<!-- The fixed intercept of Model 2 is 0.835, and the random effect is illustrated in the right panel of Figure \ref(fig:lm-dis). We can find that when taking the logarithm form of trip distance, the sign of some random effects are not remained the same compared to the previous model. To choose a model, it is not correct to simply observe the value of AIC, BIC or log likelihood, since the dependent variable of two models are not the same. In terms of Intraclass Correlation Coefficient (ICC), it is the correlation between two observations within the same group. It is calculated as: -->
+<!-- $$\frac{\tau_0}{\tau_0+\sigma^2}$$ -->
+<!-- , where $\tau_0$ is the between-group variation, while $\sigma^2$ is the within-group variation. It means the two variations are nearly the same when it approaches to 1, and it is no need to do multilevel regression. On the other hand, it indicates that the within-group Variation dominates when ICC approaches to 0. It is suggested to have ICC in range 0.05 to 0.25 for using multilevel model in the social science field. Under this background knowledge, ICC of Model 1 is 0.14, while 0.05 for Model 2, and thus, it is a better choice to keep going on Model 1.   -->
+<!-- ## Fixed-effect only models -->
+<!-- The district variable is retrieved from the [**database**](https://winsta.dgbas.gov.tw/DgbasWeb/index.aspx) managed by Department of Budget, Accounting and Statistics of Tainan City Government. The socioeconomic variables include population density, sex ratio, aging index, natural increase, and so forth. To develop the random intercept multilevel model, Model 3 chooses population density as the district-level variable, and the respondent variables contain driver license (owns or not) as well as the number of personal car (categorized into three types: no car, one car, and no less than two cars). Also, Model 4 uses population growth as the district-level variable instead, and adding the gender as well as age to be the respondent levels. And then, Model 5 adds the trip purpose variable, while further add the mode class in Model 6. The model results are shown in Table \@ref(tab:lm-dis-fixed-table). The coefficient and the confidence interval of each fixed effect variable is shown in Figure \@ref(fig:lm-dis-fixed).   -->
+<!-- ```{r lm-dis-fixed-show, echo=T, eval=F, warning=F, message=F} -->
+<!-- # Model 3 -->
+<!-- lm_dis2=lmer(trip_dis ~ 1+license+pc_no+scale(pop_density)+(1|district), data=dat_southtw_tnan_new) -->
+<!-- # Model 4 -->
+<!-- lm_dis3=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth) -->
+<!-- # Model 5 -->
+<!-- lm_dis4=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth+trip_purp_rev) -->
+<!-- # Model 6 -->
+<!-- lm_dis5=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth+trip_purp_rev+mode_class) -->
+<!-- ``` -->
+<!-- ```{r lm-dis-fixed, echo=F, eval=T, warning=F, message=F, results="asis", fig.cap="Coefficients of Fixed Effect Variable", out.width="100%", fig.align="center", fig.height=4} -->
+<!-- lm_dis2=lmer(trip_dis ~ 1+license+pc_no+scale(pop_density)+(1|district), data=dat_southtw_tnan_new) -->
+<!-- lm_dis3=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth) -->
+<!-- lm_dis4=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth+trip_purp_rev) -->
+<!-- lm_dis5=update(lm_dis2, .~. -scale(pop_density)+age+gender+pop_growth+trip_purp_rev+mode_class) -->
+<!-- # tab_model(list(lm_dis2, lm_dis3, lm_dis4, lm_dis5), show.aic=T, title="(#tab:lm-dis-fixed-table)Fixed-effect Only Models", dv.labels=c("Model 3", "Model 4", "Model 5", "Model 6")) -->
+<!-- htmlreg(list(lm_dis2, lm_dis3, lm_dis4, lm_dis5), caption="(#tab:lm-dis-fixed-table)Fixed-effect Only Models", custom.model.names=c("Model 3", "Model 4", "Model 5", "Model 6")) -->
+<!-- dwplot(list(lm_dis2, lm_dis3, lm_dis4, lm_dis5), effects="fixed")+ -->
+<!--   geom_vline(xintercept=0, lty=2)+ -->
+<!--   scale_color_brewer(palette="Set2", name="Model", label=paste0("Model ", c(6:3)))+ -->
+<!--   theme_minimal()+ -->
+<!--   theme(axis.text.y=element_text(family="B", size=8, face="bold"), -->
+<!--         axis.text.x=element_text(family="A", size=8, face="bold"), -->
+<!--         legend.title=element_text(family="A", size=12), -->
+<!--         legend.text=element_text(family="A", size=10)) -->
+<!-- ``` -->
+<!-- For Model 3, we can find that respondents who have driver license would have 2.6 kilometers more on the trip distance. And the one who owns a personal car would have 1.1 kilometers more compared who have no cars. In terms of the coefficient of scale of population density, the negative (-0.979) value means that the trip distance would drop 0.979 kilometers as the population density increases by one standard deviation. It is because that the high population density area often owns a good accessibility to point interest, and people would travel less compared to the one living in a sparse area. Also, the intercept is 1.447, which is the fixed effect for all the district.   -->
+<!-- For Model 4, population growth is replaced with the population density (note that it may not appropriate to place in the same model, for they have a high correlation). We can find that the trip distance would decrease approximately 0.16 kilometers as the growth increases by one percentage. Age variable suggests that the older respondents, the shorter travel distance. Last, female has a relatively lower trip distance than the male concluded by the model result. As for Model 5, the trip purpose is further added. Note that for easily developing the model, we classify all the purpose into 5 types, including shopping, commuting, home-trip, leisure, and business. The base of the dummy variable is commuting trip, we can find that the trip distance of home-trip and business trip are significantly higher, while the leisure and shopping trip is relatively lower. Last, Model 6 adds a most vital variable: mode classification. We can find that the trip distance of scooter and car are all significantly higher.   -->
+<!-- Among all the 4 models mentioned above, AIC, BIC and log likelihood of Model 6 is apparently lowest. And it is mainly because the "mode" variable has been considered, and explains most of the variance.   -->
+<!-- ## Add Random Effects -->
+<!-- In addition to the varying intercept model, varying slope supposes that the coefficient of each variable is different among districts. Trying to add random effects as much as possible, the final result is shown in Model 11 in \@ref(tab:lm-dis-random-table). This model contains the license, number of personal car, and the scale of population growth introduced in the previous model. And the random effect variable includes whether the respondent is elderly (>65 years old), gender, and mode use in that trip. The diagnostics of the final model is shown in Figure \@ref(fig:lm-dis-random).    -->
+<!-- ```{r lm-dis-random-show, echo=T, eval=F, warning=F, message=F} -->
+<!-- # Model 7 -->
+<!-- lm_dis_rnd1=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged|district), data=dat_southtw_tnan_new) -->
+<!-- # Model 8 -->
+<!-- lm_dis_rnd2=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+gender|district), data=dat_southtw_tnan_new) -->
+<!-- # Model 9 -->
+<!-- lm_dis_rnd3=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged+gender|district), data=dat_southtw_tnan_new) -->
+<!-- # Model 10 -->
+<!-- lm_dis_rnd4=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+mode_class|district), data=dat_southtw_tnan_new) -->
+<!-- # Model 11 -->
+<!-- lm_dis_rnd5=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged+gender+mode_class|district), data=dat_southtw_tnan_new) -->
+<!-- ``` -->
+<!-- ```{r lm-dis-random, echo=F, eval=T, warning=F, message=F, results="asis", fig.showtext=T, fig.cap="Diagnostics of  Model 11", out.width="100%", fig.align="center", fig.height=5} -->
+<!-- lm_dis_rnd1=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged|district), data=dat_southtw_tnan_new) -->
+<!-- lm_dis_rnd2=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+gender|district), data=dat_southtw_tnan_new) -->
+<!-- lm_dis_rnd3=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged+gender|district), data=dat_southtw_tnan_new) -->
+<!-- lm_dis_rnd4=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+mode_class|district), data=dat_southtw_tnan_new) -->
+<!-- lm_dis_rnd5=lmer(log_dis ~ 1+license+pc_no+scale(pop_growth)+(1+aged+gender+mode_class|district), data=dat_southtw_tnan_new) -->
+<!-- htmlreg(list(lm_dis_rnd1, lm_dis_rnd2, lm_dis_rnd3, lm_dis_rnd4, lm_dis_rnd5), caption="(#tab:lm-dis-random-table)Random-effect Models", custom.model.names=c("Model 7", "Model 8", "Model 9", "Model 10", "Model 11")) -->
+<!-- plot(sr<-DHARMa::simulateResiduals(lm_dis_rnd5), cex.axis=2) -->
+<!-- ``` -->
+<!-- From the diagnostics, we may conclude that the model performs not well enough, since the residuals are not very correspondent to the line in QQ plot, and the deviation is significant. In addition, the random effect of Model 11 is shown in \@ref(fig:lm-dis-random-effects-fig).   -->
+<!-- ```{r lm-dis-random-effects-fig, echo=F, eval=T, warning=F, message=F, results="asis", fig.cap="Diagnostics of  Model 11", out.width="100%", fig.align="center", fig.height=7} -->
+<!-- pm=plot_model(lm_dis_rnd5, type="re")+ -->
+<!--   theme(axis.text.y=element_text(family="B", size=11), -->
+<!--         axis.text.x=element_text(family="A", size=11), -->
+<!--         strip.text.x=element_text(size=12, family="B", face="bold"), -->
+<!--         plot.title=element_text(family="A", size=18, face="bold", hjust=0.5)) -->
+<!-- pm$data$facet=factor(pm$data$facet, levels=unique(pm$data$facet)) -->
+<!-- pm -->
+<!-- ``` -->
+<!-- The random effect of mode is obvious, which has a huge difference between districts. It may because that how mode usage influences the trip distance are totally different among districts. In 西港區, 佳里區, 白河區, the random effect of mode class is higher, which may imply that the trip distance is much more affected by the choice of modal in these districts. For instance, trip distance would increase a lot when using car, compared to 白河區 and 南化區 (where the random effects of car use is 0).   -->
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="multilevel-model-1.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "serif",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/ChiaJung-Yeh/Travel-Demand-Analysis/tree/master/04-Exercise_4.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["series.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+},
+"toolbar": {
+"position": "fixed",
+"download": "series.pdf",
+"search": true
+}
+});
+});
+</script>
+
+</body>
+
+</html>

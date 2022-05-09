@@ -1,0 +1,2167 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Exercise 4 Discrete Choice Modeling | Travel Demand Analysis Exercise</title>
+  <meta name="description" content="Exercise 4 Discrete Choice Modeling | Travel Demand Analysis Exercise" />
+  <meta name="generator" content="bookdown 0.25 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Exercise 4 Discrete Choice Modeling | Travel Demand Analysis Exercise" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Exercise 4 Discrete Choice Modeling | Travel Demand Analysis Exercise" />
+  <meta name="github-repo" content="ChiaJung-Yeh/Travel-Demand-Analysis" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Exercise 4 Discrete Choice Modeling | Travel Demand Analysis Exercise" />
+  
+  <meta name="twitter:description" content="Exercise 4 Discrete Choice Modeling | Travel Demand Analysis Exercise" />
+  
+
+<meta name="author" content="Chia Jung, Yeh///n National Yang Ming Chiao Tung University (NYCU), Taiwan" />
+
+
+<meta name="date" content="2022-05-09" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="multilevel-model.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="lib/css/bootstrap.min.css" type="text/css" />
+<link rel="stylesheet" href="lib/css/style.css" type="text/css" />
+<link rel="stylesheet" href="lib/css/lesson.css" type="text/css" />
+<link rel="stylesheet" href="stylebox.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Travel Demand Analysis Exercise</a></li>
+
+<li class="divider"></li>
+<li><a href="index.html#preface">Preface<span></span></a></li>
+<li class="chapter" data-level="1" data-path="linear-regression.html"><a href="linear-regression.html"><i class="fa fa-check"></i><b>1</b> Linear Regression<span></span></a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="linear-regression.html"><a href="linear-regression.html#import-and-transform-the-data"><i class="fa fa-check"></i><b>1.1</b> Import and transform the data<span></span></a></li>
+<li class="chapter" data-level="1.2" data-path="linear-regression.html"><a href="linear-regression.html#summarize-the-trip-distance"><i class="fa fa-check"></i><b>1.2</b> Summarize the trip distance<span></span></a></li>
+<li class="chapter" data-level="1.3" data-path="linear-regression.html"><a href="linear-regression.html#effect-of-age-on-trip-distance"><i class="fa fa-check"></i><b>1.3</b> Effect of age on trip distance<span></span></a>
+<ul>
+<li class="chapter" data-level="1.3.1" data-path="linear-regression.html"><a href="linear-regression.html#naive-model"><i class="fa fa-check"></i><b>1.3.1</b> Naive model<span></span></a></li>
+<li class="chapter" data-level="1.3.2" data-path="linear-regression.html"><a href="linear-regression.html#log-linear-model"><i class="fa fa-check"></i><b>1.3.2</b> Log-linear model<span></span></a></li>
+<li class="chapter" data-level="1.3.3" data-path="linear-regression.html"><a href="linear-regression.html#polynomial-model"><i class="fa fa-check"></i><b>1.3.3</b> Polynomial model<span></span></a></li>
+<li class="chapter" data-level="1.3.4" data-path="linear-regression.html"><a href="linear-regression.html#dummy-regression"><i class="fa fa-check"></i><b>1.3.4</b> Dummy Regression<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="1.4" data-path="linear-regression.html"><a href="linear-regression.html#average-trip-distance-for-each-district"><i class="fa fa-check"></i><b>1.4</b> Average trip distance for each district<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html"><i class="fa fa-check"></i><b>2</b> Logistic &amp; Poisson Regression<span></span></a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#collider-bias"><i class="fa fa-check"></i><b>2.1</b> Collider Bias<span></span></a></li>
+<li class="chapter" data-level="2.2" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#poisson-regression"><i class="fa fa-check"></i><b>2.2</b> Poisson regression<span></span></a></li>
+<li class="chapter" data-level="2.3" data-path="logistic-poisson-regression.html"><a href="logistic-poisson-regression.html#logistic-regression"><i class="fa fa-check"></i><b>2.3</b> Logistic regression<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="multilevel-model.html"><a href="multilevel-model.html"><i class="fa fa-check"></i><b>3</b> Multilevel Model<span></span></a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="multilevel-model.html"><a href="multilevel-model.html#constant-only-models"><i class="fa fa-check"></i><b>3.1</b> Constant-only Models<span></span></a></li>
+<li class="chapter" data-level="3.2" data-path="multilevel-model.html"><a href="multilevel-model.html#fixed-effect-only-models"><i class="fa fa-check"></i><b>3.2</b> Fixed-effect only models<span></span></a></li>
+<li class="chapter" data-level="3.3" data-path="multilevel-model.html"><a href="multilevel-model.html#add-random-effects"><i class="fa fa-check"></i><b>3.3</b> Add Random Effects<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html"><i class="fa fa-check"></i><b>4</b> Discrete Choice Modeling<span></span></a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html#data-transformation"><i class="fa fa-check"></i><b>4.1</b> Data Transformation<span></span></a></li>
+<li class="chapter" data-level="4.2" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html#model-without-intercept"><i class="fa fa-check"></i><b>4.2</b> Model without Intercept<span></span></a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html#problem-description"><i class="fa fa-check"></i><b>4.2.1</b> Problem Description<span></span></a></li>
+<li class="chapter" data-level="4.2.2" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html#model-result"><i class="fa fa-check"></i><b>4.2.2</b> Model Result<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html#model-with-constants"><i class="fa fa-check"></i><b>4.3</b> Model with Constants<span></span></a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html#problem-description-1"><i class="fa fa-check"></i><b>4.3.1</b> Problem Description<span></span></a></li>
+<li class="chapter" data-level="4.3.2" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html#model-result-1"><i class="fa fa-check"></i><b>4.3.2</b> Model Result<span></span></a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html#models-with-sociodemographic-variables"><i class="fa fa-check"></i><b>4.4</b> Models with sociodemographic variables<span></span></a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html#problem-description-2"><i class="fa fa-check"></i><b>4.4.1</b> Problem Description<span></span></a></li>
+<li class="chapter" data-level="4.4.2" data-path="discrete-choice-modeling.html"><a href="discrete-choice-modeling.html#model-result-2"><i class="fa fa-check"></i><b>4.4.2</b> Model Result<span></span></a></li>
+</ul></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://bookdown.org" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Travel Demand Analysis Exercise</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="discrete-choice-modeling" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Exercise 4</span> Discrete Choice Modeling<a href="discrete-choice-modeling.html#discrete-choice-modeling" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div class="problem">
+<p><font size="4"><strong><svg aria-hidden="true" role="img" viewBox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z"/></svg> PROBLEM</strong></font></p>
+<p>You are provided with a data set, from a survey of 210 individuals’ choices of travel mode between Sydney, Melbourne and New South Wales. There are four alternative choices, along with four choice-specific covariates for each choice. The variable definition is provided as follows:</p>
+<ul>
+<li>Develop LR models for identifying the effect of age on trip distance.<br />
+</li>
+<li>Mode = choice; Air, Train, Bus, or Car<br />
+</li>
+<li>Ttme = terminal waiting time, 0 for car<br />
+</li>
+<li>Invc = in vehicle cost<br />
+</li>
+<li>Invt = travel time, in vehicle<br />
+</li>
+<li>GC = generalized cost measure<br />
+</li>
+<li>Hinc = household income<br />
+</li>
+<li>Psize = party size in mode chosen</li>
+</ul>
+<p>Use Apollo to answer the following questions. Note that you need to transform the data set format from long to wide and add an ID variable.</p>
+</div>
+<div id="data-transformation" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Data Transformation<a href="discrete-choice-modeling.html#data-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Note that the provided data (download <a href="https://github.com/ChiaJung-Yeh/Travel-Demand-Analysis/raw/master/docs/data_out/clogit.csv"><strong>here</strong></a>) is long format, which the attributes of each alternative are listed in different rows. However, the required format for developing model by using <code>apollo</code> package is wide, and thus, the data should first be transformed. Also, ID variable is required in the model, to identify each of the respondent.</p>
+<p>Before transforming the data, it is better to observe the original data in advance. Table <a href="discrete-choice-modeling.html#tab:long-data">4.1</a> shows the long data format (original) of a respondent, the column “MODE” represents Air, Train, Bus, and Car respectively. If it is coded as 1, it means that the respondent chooses that mode. Thus, every 4 rows belongs to a respondent, and there must exists only one “1” in “MODE” column. Take Table <a href="discrete-choice-modeling.html#tab:long-data">4.1</a> for instance, the first row records the attributes of mode “Air,” and its terminal waiting time (TTME) is 69 minutes, while the second row records the attributes of “Train,” and its in vehicle cost (INVC) is 31 dollars, and so forth. Also, note that terminal waiting time (TTME), vehicle cost (INVC), in vehicle travel time (INVT), generalized cost (GC) are often regarded as generic variables, which have identical impacts on the utility for different modes. Conversely, household income (HINC) is often considered to be alternative specific variable, which has a different impact on utility by modes. Note that Table <a href="discrete-choice-modeling.html#tab:long-data">4.1</a> shows the first 8 rows, which indicates that there are 2 respondents.</p>
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:long-data">Table 4.1: </span>Example for Long Data
+</caption>
+<thead>
+<tr>
+<th style="text-align:right;">
+MODE
+</th>
+<th style="text-align:right;">
+TTME
+</th>
+<th style="text-align:right;">
+INVC
+</th>
+<th style="text-align:right;">
+INVT
+</th>
+<th style="text-align:right;">
+GC
+</th>
+<th style="text-align:right;">
+HINC
+</th>
+<th style="text-align:right;">
+PSIZE
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+69
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+70
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+372
+</td>
+<td style="text-align:right;">
+71
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+417
+</td>
+<td style="text-align:right;">
+70
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:right;">
+180
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+35
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:right;">
+68
+</td>
+<td style="text-align:right;">
+68
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+44
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+354
+</td>
+<td style="text-align:right;">
+84
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+399
+</td>
+<td style="text-align:right;">
+85
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+255
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+</tbody>
+</table>
+<p>As the illustration above, the long format should be transformed to wide and add the ID variable before developing the choice model by means of <code>apollo</code> package. The code of transforming the data format is shown below.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="discrete-choice-modeling.html#cb1-1" aria-hidden="true" tabindex="-1"></a>clogit<span class="ot">=</span><span class="fu">read.csv</span>(<span class="st">&quot;./clogit.csv&quot;</span>)</span>
+<span id="cb1-2"><a href="discrete-choice-modeling.html#cb1-2" aria-hidden="true" tabindex="-1"></a>clogit<span class="sc">$</span>ID<span class="ot">=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span>(<span class="fu">nrow</span>(clogit)<span class="sc">/</span><span class="dv">4</span>)), <span class="at">each=</span><span class="dv">4</span>)</span>
+<span id="cb1-3"><a href="discrete-choice-modeling.html#cb1-3" aria-hidden="true" tabindex="-1"></a>clogit<span class="sc">$</span>MODE_ALL<span class="ot">=</span><span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">&quot;Air&quot;</span>,<span class="st">&quot;Train&quot;</span>,<span class="st">&quot;Bus&quot;</span>,<span class="st">&quot;Car&quot;</span>), <span class="at">times=</span><span class="fu">nrow</span>(clogit)<span class="sc">/</span><span class="dv">4</span>)</span>
+<span id="cb1-4"><a href="discrete-choice-modeling.html#cb1-4" aria-hidden="true" tabindex="-1"></a>MODE<span class="ot">=</span>clogit<span class="sc">$</span>MODE_ALL[clogit<span class="sc">$</span>MODE<span class="sc">==</span><span class="dv">1</span>]</span>
+<span id="cb1-5"><a href="discrete-choice-modeling.html#cb1-5" aria-hidden="true" tabindex="-1"></a>clogit<span class="ot">=</span>dplyr<span class="sc">::</span><span class="fu">select</span>(clogit, ID, MODE_ALL, TTME, INVC, INVT, GC, HINC, PSIZE)</span>
+<span id="cb1-6"><a href="discrete-choice-modeling.html#cb1-6" aria-hidden="true" tabindex="-1"></a>clogit<span class="ot">=</span><span class="fu">reshape</span>(<span class="at">data=</span>clogit, <span class="at">idvar=</span><span class="st">&quot;ID&quot;</span>, <span class="at">v.names=</span><span class="fu">c</span>(<span class="st">&quot;TTME&quot;</span>,<span class="st">&quot;INVC&quot;</span>,<span class="st">&quot;INVT&quot;</span>,<span class="st">&quot;GC&quot;</span>), <span class="at">timevar=</span><span class="st">&quot;MODE_ALL&quot;</span>, <span class="at">direction=</span><span class="st">&quot;wide&quot;</span>)</span>
+<span id="cb1-7"><a href="discrete-choice-modeling.html#cb1-7" aria-hidden="true" tabindex="-1"></a>clogit<span class="sc">$</span>MODE<span class="ot">=</span>MODE</span></code></pre></div>
+<p>Table <a href="discrete-choice-modeling.html#tab:wide-data">4.2</a> shows part of the wide format data after being reshaped. For each of row, it represents one of the attributes and the final choice of a respondent. For instance, for respondents ID “1,” the terminal waiting time (TTME) of “Air” is 69 minutes, while it takes 34 minutes for “Train.” Also, the final choice is shown in the last column of Table <a href="discrete-choice-modeling.html#tab:wide-data">4.2</a>. For respondents ID “1,” he chooses “Car.”</p>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; overflow-x: scroll; width:800px; ">
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:wide-data">Table 4.2: </span>Example for Wide Data (Part of columns, attributes of Air and Train)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+ID
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+TTME.Air
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+INVC.Air
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+INVT.Air
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+GC.Air
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+TTME.Train
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+INVC.Train
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+INVT.Train
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+GC.Train
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+MODE
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+69
+</td>
+<td style="text-align:right;">
+59
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+70
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+372
+</td>
+<td style="text-align:right;">
+71
+</td>
+<td style="text-align:left;">
+Car
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+64
+</td>
+<td style="text-align:right;">
+58
+</td>
+<td style="text-align:right;">
+68
+</td>
+<td style="text-align:right;">
+68
+</td>
+<td style="text-align:right;">
+44
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+354
+</td>
+<td style="text-align:right;">
+84
+</td>
+<td style="text-align:left;">
+Car
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="model-without-intercept" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Model without Intercept<a href="discrete-choice-modeling.html#model-without-intercept" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="problem-description" class="section level3 hasAnchor" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Problem Description<a href="discrete-choice-modeling.html#problem-description" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="problem">
+<p><font size="3"><strong><svg aria-hidden="true" role="img" viewBox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z"/></svg> Run a model with generalized cost and in-vehicle time, without intercepts.</strong></font><br />
+(1) Do the estimated coefficients have the expected signs?<br />
+(2) Are both coefficients significantly different from zero?<br />
+(3) How closely do the average probabilities match the shares of travelers choosing each alternative?<br />
+(4) The ratio of coefficients usually provides economically meaningful information. The willingness to pay (wtp) through higher travel cost for a one-minute reduction in travel time is the ratio of the travel time coefficient to the travel cost coefficient. What is the wtp from this model? Is it reasonable in magnitude?</p>
+</div>
+</div>
+<div id="model-result" class="section level3 hasAnchor" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> Model Result<a href="discrete-choice-modeling.html#model-result" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider a model only with generalized cost and in-vehicle time, the model (<strong>Model 1</strong>) can be formulated as below.</p>
+<p><span class="math display">\[
+V_{mode}=\beta_{GC}*GC_{mode}+\beta_{INVT}*INVT_{mode}
+\]</span></p>
+<p>Based on the formulation, the code is shown below. Note that only the vector of parameters are shown, and other settings by using <code>apollo</code> package are ignored.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="discrete-choice-modeling.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector of parameters</span></span>
+<span id="cb2-2"><a href="discrete-choice-modeling.html#cb2-2" aria-hidden="true" tabindex="-1"></a>apollo_beta<span class="ot">=</span><span class="fu">c</span>(<span class="at">constant=</span><span class="dv">0</span>,</span>
+<span id="cb2-3"><a href="discrete-choice-modeling.html#cb2-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_gc=</span><span class="dv">0</span>,</span>
+<span id="cb2-4"><a href="discrete-choice-modeling.html#cb2-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_invt=</span><span class="dv">0</span>)</span>
+<span id="cb2-5"><a href="discrete-choice-modeling.html#cb2-5" aria-hidden="true" tabindex="-1"></a>apollo_fixed<span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;constant&quot;</span>)</span>
+<span id="cb2-6"><a href="discrete-choice-modeling.html#cb2-6" aria-hidden="true" tabindex="-1"></a>apollo_inputs <span class="ot">=</span> <span class="fu">apollo_validateInputs</span>(<span class="at">database=</span>clogit)</span>
+<span id="cb2-7"><a href="discrete-choice-modeling.html#cb2-7" aria-hidden="true" tabindex="-1"></a>apollo_probabilities<span class="ot">=</span><span class="cf">function</span>(apollo_beta, apollo_inputs, <span class="at">functionality=</span><span class="st">&quot;estimate&quot;</span>){</span>
+<span id="cb2-8"><a href="discrete-choice-modeling.html#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">apollo_attach</span>(apollo_beta, apollo_inputs)</span>
+<span id="cb2-9"><a href="discrete-choice-modeling.html#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">on.exit</span>(<span class="fu">apollo_detach</span>(apollo_beta, apollo_inputs))</span>
+<span id="cb2-10"><a href="discrete-choice-modeling.html#cb2-10" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb2-11"><a href="discrete-choice-modeling.html#cb2-11" aria-hidden="true" tabindex="-1"></a>  V <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb2-12"><a href="discrete-choice-modeling.html#cb2-12" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Car&quot;</span>]]   <span class="ot">=</span> constant<span class="sc">+</span>    b_gc  <span class="sc">*</span> GC.Car    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Car</span>
+<span id="cb2-13"><a href="discrete-choice-modeling.html#cb2-13" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Train&quot;</span>]] <span class="ot">=</span> constant<span class="sc">+</span>    b_gc  <span class="sc">*</span> GC.Train  <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Train</span>
+<span id="cb2-14"><a href="discrete-choice-modeling.html#cb2-14" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Air&quot;</span>]]   <span class="ot">=</span> constant<span class="sc">+</span>    b_gc  <span class="sc">*</span> GC.Air    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Air</span>
+<span id="cb2-15"><a href="discrete-choice-modeling.html#cb2-15" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Bus&quot;</span>]]   <span class="ot">=</span> constant<span class="sc">+</span>    b_gc  <span class="sc">*</span> GC.Bus    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Bus</span>
+<span id="cb2-16"><a href="discrete-choice-modeling.html#cb2-16" aria-hidden="true" tabindex="-1"></a>  mnl_settings <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb2-17"><a href="discrete-choice-modeling.html#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">alternatives  =</span> <span class="fu">c</span>(<span class="at">Car=</span><span class="st">&quot;Car&quot;</span>, <span class="at">Train=</span><span class="st">&quot;Train&quot;</span>, <span class="at">Air=</span><span class="st">&quot;Air&quot;</span>, <span class="at">Bus=</span><span class="st">&quot;Bus&quot;</span>), </span>
+<span id="cb2-18"><a href="discrete-choice-modeling.html#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">avail         =</span> <span class="fu">list</span>(<span class="at">Car=</span>AV.Car, <span class="at">Train=</span>AV.Train, <span class="at">Air=</span>AV.Air, <span class="at">Bus=</span>AV.Bus),</span>
+<span id="cb2-19"><a href="discrete-choice-modeling.html#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">choiceVar     =</span> MODE,</span>
+<span id="cb2-20"><a href="discrete-choice-modeling.html#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">utilities     =</span> V</span>
+<span id="cb2-21"><a href="discrete-choice-modeling.html#cb2-21" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-22"><a href="discrete-choice-modeling.html#cb2-22" aria-hidden="true" tabindex="-1"></a>  P[[<span class="st">&quot;model&quot;</span>]] <span class="ot">=</span> <span class="fu">apollo_mnl</span>(mnl_settings, functionality)</span>
+<span id="cb2-23"><a href="discrete-choice-modeling.html#cb2-23" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">=</span> <span class="fu">apollo_prepareProb</span>(P, apollo_inputs, functionality)</span>
+<span id="cb2-24"><a href="discrete-choice-modeling.html#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(P)</span>
+<span id="cb2-25"><a href="discrete-choice-modeling.html#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The result of Model 1 is shown in Table <a href="discrete-choice-modeling.html#tab:model1-table">4.3</a> The estimation of <span class="math inline">\(\beta_{GC}\)</span> (<code>b_gc</code> in the table) is -0.0124, which means a higher generalized cost would cause a negative utility for the mode. Also, the t-value of <span class="math inline">\(\beta_{GC}\)</span> suggests that the coefficient is significantly different from 0. It is reasonable, for people would not be inclined to choose the mode as the cost increases. On the other hand, the coefficient of <span class="math inline">\(\beta_{INVT}\)</span> (<code>b_invt</code> in the table) is also negative as expected though, the statistics test shows that it cannot significantly reject the null hypothesis. To sum up, the estimated coefficients have the expected signs, and particularly for the coefficient of generalized cost <strong><em><span style="color: red;">(1, 2)</span></em></strong>.</p>
+<table>
+<caption>
+<span id="tab:model1-table">Table 4.3: </span>Model 1 Result
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+s.e.
+</th>
+<th style="text-align:right;">
+t.rat.(0)
+</th>
+<th style="text-align:right;">
+Rob.s.e.
+</th>
+<th style="text-align:right;">
+Rob.t.rat.(0)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+constant
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_gc
+</td>
+<td style="text-align:right;">
+-0.0124
+</td>
+<td style="text-align:right;">
+0.0037
+</td>
+<td style="text-align:right;">
+-3.3101
+</td>
+<td style="text-align:right;">
+0.0045
+</td>
+<td style="text-align:right;">
+-2.7694
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_invt
+</td>
+<td style="text-align:right;">
+-0.0004
+</td>
+<td style="text-align:right;">
+0.0003
+</td>
+<td style="text-align:right;">
+-1.3438
+</td>
+<td style="text-align:right;">
+0.0004
+</td>
+<td style="text-align:right;">
+-1.1661
+</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(LL(0)\)</span> of Model 1 is -291.12, while <span class="math inline">\(LL(C)=LL(\beta)\)</span> is -279.74 and thus <span class="math inline">\(\rho^2=0.039\)</span>, which implies there is only a slight difference between log-likelihoods when just take generalized cost and in-vehicle travel time into consideration. The contingency table and market share of prediction and real mode are illustrated in Table <a href="discrete-choice-modeling.html#tab:model1-contingency">4.4</a> From the table, we can find that there is a huge gap between market share of the real and prediction value. The predictive market share of “Air” as well as “Car” are severely over-estimated, while “Bus” and “Car” has an extreme low proportion. The accuracy of prediction of the mode is merely 28.1 % <strong><em><span style="color: red;">(3)</span></em></strong>.</p>
+<table>
+<caption>
+<span id="tab:model1-contingency">Table 4.4: </span>Contigency Table of Model 1
+</caption>
+<thead>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="6">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Prediction
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Air
+</th>
+<th style="text-align:left;">
+Bus
+</th>
+<th style="text-align:left;">
+Car
+</th>
+<th style="text-align:left;">
+Train
+</th>
+<th style="text-align:left;">
+Percentage
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;vertical-align: middle !important;" rowspan="5">
+REAL
+</td>
+<td style="text-align:left;">
+Air
+</td>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+35
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+27.6 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bus
+</td>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+14.3 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Car
+</td>
+<td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+30
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+28.1 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Train
+</td>
+<td style="text-align:left;">
+33
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+26
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+30 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+Percentage
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+48.6 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+2.9 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+46.7 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+1.9 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;font-weight: bold;background-color: #E0E0E0 !important;">
+100 %
+</td>
+</tr>
+</tbody>
+</table>
+<p>The willingness to pay through higher travel cost for a one-minute reduction in travel time is the ratio of the travel time coefficient to the travel cost coefficient. It can be calculated as below:</p>
+<p><span class="math display">\[
+\frac{-0.0004}{-0.0124}=0.0322
+\]</span>
+, which means the willingness to pay for one-minute reduction travel time costs $0.0322, that is approximately NT$ 0.9, namely NT$ 54 an hour. It is very unreasonable, since the estimated value is much lower than the wage <strong><em><span style="color: red;">(4)</span></em></strong>.</p>
+</div>
+</div>
+<div id="model-with-constants" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Model with Constants<a href="discrete-choice-modeling.html#model-with-constants" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="problem-description-1" class="section level3 hasAnchor" number="4.3.1">
+<h3><span class="header-section-number">4.3.1</span> Problem Description<a href="discrete-choice-modeling.html#problem-description-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="problem">
+<p><font size="3"><strong><svg aria-hidden="true" role="img" viewBox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z"/></svg> Add alternative-specific constants to the model. Normalize the constant for the alternative bus to 0.</strong></font><br />
+(1) How well do the estimated probabilities match the shares of travelers choosing each alternative?<br />
+(2) Calculate the wtp. Is it reasonable?</p>
+</div>
+</div>
+<div id="model-result-1" class="section level3 hasAnchor" number="4.3.2">
+<h3><span class="header-section-number">4.3.2</span> Model Result<a href="discrete-choice-modeling.html#model-result-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider a model with alternative-specific constants, generalized cost and in-vehicle time, the model (<strong>Model 2</strong>) can be formulated as below.</p>
+<p><span class="math display">\[
+V_{mode}=\beta_{mode}+\beta_{GC}*GC_{mode}+\beta_{INVT}*INVT_{mode}
+\]</span></p>
+<p>Based on the formulation, the code of Model 2 is shown below. Note that only the vector of parameters are shown, and other settings by using <code>apollo</code> package are ignored.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="discrete-choice-modeling.html#cb3-1" aria-hidden="true" tabindex="-1"></a>apollo_beta<span class="ot">=</span><span class="fu">c</span>(<span class="at">asc_car=</span><span class="dv">0</span>,</span>
+<span id="cb3-2"><a href="discrete-choice-modeling.html#cb3-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_train=</span><span class="dv">0</span>,</span>
+<span id="cb3-3"><a href="discrete-choice-modeling.html#cb3-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_air=</span><span class="dv">0</span>,</span>
+<span id="cb3-4"><a href="discrete-choice-modeling.html#cb3-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_bus=</span><span class="dv">0</span>,</span>
+<span id="cb3-5"><a href="discrete-choice-modeling.html#cb3-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_gc=</span><span class="dv">0</span>,</span>
+<span id="cb3-6"><a href="discrete-choice-modeling.html#cb3-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_invt=</span><span class="dv">0</span>)</span>
+<span id="cb3-7"><a href="discrete-choice-modeling.html#cb3-7" aria-hidden="true" tabindex="-1"></a>apollo_fixed<span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;asc_bus&quot;</span>)</span>
+<span id="cb3-8"><a href="discrete-choice-modeling.html#cb3-8" aria-hidden="true" tabindex="-1"></a>apollo_inputs <span class="ot">=</span> <span class="fu">apollo_validateInputs</span>(<span class="at">database=</span>clogit)</span>
+<span id="cb3-9"><a href="discrete-choice-modeling.html#cb3-9" aria-hidden="true" tabindex="-1"></a>apollo_probabilities<span class="ot">=</span><span class="cf">function</span>(apollo_beta, apollo_inputs, <span class="at">functionality=</span><span class="st">&quot;estimate&quot;</span>){</span>
+<span id="cb3-10"><a href="discrete-choice-modeling.html#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">apollo_attach</span>(apollo_beta, apollo_inputs)</span>
+<span id="cb3-11"><a href="discrete-choice-modeling.html#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">on.exit</span>(<span class="fu">apollo_detach</span>(apollo_beta, apollo_inputs))</span>
+<span id="cb3-12"><a href="discrete-choice-modeling.html#cb3-12" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb3-13"><a href="discrete-choice-modeling.html#cb3-13" aria-hidden="true" tabindex="-1"></a>  V <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb3-14"><a href="discrete-choice-modeling.html#cb3-14" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Car&quot;</span>]]   <span class="ot">=</span> asc_car<span class="sc">+</span>    b_gc  <span class="sc">*</span> GC.Car    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Car</span>
+<span id="cb3-15"><a href="discrete-choice-modeling.html#cb3-15" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Train&quot;</span>]] <span class="ot">=</span> asc_train<span class="sc">+</span>  b_gc  <span class="sc">*</span> GC.Train  <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Train</span>
+<span id="cb3-16"><a href="discrete-choice-modeling.html#cb3-16" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Air&quot;</span>]]   <span class="ot">=</span> asc_air<span class="sc">+</span>    b_gc  <span class="sc">*</span> GC.Air    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Air</span>
+<span id="cb3-17"><a href="discrete-choice-modeling.html#cb3-17" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Bus&quot;</span>]]   <span class="ot">=</span> asc_bus<span class="sc">+</span>    b_gc  <span class="sc">*</span> GC.Bus    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Bus</span>
+<span id="cb3-18"><a href="discrete-choice-modeling.html#cb3-18" aria-hidden="true" tabindex="-1"></a>  mnl_settings <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb3-19"><a href="discrete-choice-modeling.html#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">alternatives  =</span> <span class="fu">c</span>(<span class="at">Car=</span><span class="st">&quot;Car&quot;</span>, <span class="at">Train=</span><span class="st">&quot;Train&quot;</span>, <span class="at">Air=</span><span class="st">&quot;Air&quot;</span>, <span class="at">Bus=</span><span class="st">&quot;Bus&quot;</span>), </span>
+<span id="cb3-20"><a href="discrete-choice-modeling.html#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">avail         =</span> <span class="fu">list</span>(<span class="at">Car=</span>AV.Car, <span class="at">Train=</span>AV.Train, <span class="at">Air=</span>AV.Air, <span class="at">Bus=</span>AV.Bus),</span>
+<span id="cb3-21"><a href="discrete-choice-modeling.html#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">choiceVar     =</span> MODE,</span>
+<span id="cb3-22"><a href="discrete-choice-modeling.html#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">utilities     =</span> V</span>
+<span id="cb3-23"><a href="discrete-choice-modeling.html#cb3-23" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-24"><a href="discrete-choice-modeling.html#cb3-24" aria-hidden="true" tabindex="-1"></a>  P[[<span class="st">&quot;model&quot;</span>]] <span class="ot">=</span> <span class="fu">apollo_mnl</span>(mnl_settings, functionality)</span>
+<span id="cb3-25"><a href="discrete-choice-modeling.html#cb3-25" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">=</span> <span class="fu">apollo_prepareProb</span>(P, apollo_inputs, functionality)</span>
+<span id="cb3-26"><a href="discrete-choice-modeling.html#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(P)</span>
+<span id="cb3-27"><a href="discrete-choice-modeling.html#cb3-27" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The result of Model 2 is shown in Table <a href="discrete-choice-modeling.html#tab:model2-table">4.5</a> The estimation of <span class="math inline">\(\beta_{GC}\)</span> (<code>b_gc</code> in the table) is -0.0117, while the coefficients of in-vehicle travel time is -0.0022, and both of the t-statistics suggest the null hypothesis be rejected. It implies a higher cost or longer travel time would result in the lower utility of the mode, and people would tend to choose other alternatives.</p>
+<p>In addition, “Train” is the only alternative-specific constants that its t-value suggests reject the null hypothesis. It implies that there is a significant difference on utility between “Train” and “Bus” under other conditions (generalized cost and in-vehicle travel time) to be fixed. However, there is no apparent difference between the constants of other modes and that of the “Bus.”</p>
+<table>
+<caption>
+<span id="tab:model2-table">Table 4.5: </span>Model 2 Result
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+s.e.
+</th>
+<th style="text-align:right;">
+t.rat.(0)
+</th>
+<th style="text-align:right;">
+Rob.s.e.
+</th>
+<th style="text-align:right;">
+Rob.t.rat.(0)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asc_car
+</td>
+<td style="text-align:right;">
+0.3016
+</td>
+<td style="text-align:right;">
+0.2400
+</td>
+<td style="text-align:right;">
+1.2568
+</td>
+<td style="text-align:right;">
+0.2504
+</td>
+<td style="text-align:right;">
+1.2044
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_train
+</td>
+<td style="text-align:right;">
+0.8402
+</td>
+<td style="text-align:right;">
+0.2373
+</td>
+<td style="text-align:right;">
+3.5411
+</td>
+<td style="text-align:right;">
+0.2232
+</td>
+<td style="text-align:right;">
+3.7648
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_air
+</td>
+<td style="text-align:right;">
+-0.6861
+</td>
+<td style="text-align:right;">
+0.5103
+</td>
+<td style="text-align:right;">
+-1.3445
+</td>
+<td style="text-align:right;">
+0.6207
+</td>
+<td style="text-align:right;">
+-1.1054
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_bus
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_gc
+</td>
+<td style="text-align:right;">
+-0.0117
+</td>
+<td style="text-align:right;">
+0.0052
+</td>
+<td style="text-align:right;">
+-2.2694
+</td>
+<td style="text-align:right;">
+0.0062
+</td>
+<td style="text-align:right;">
+-1.9048
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_invt
+</td>
+<td style="text-align:right;">
+-0.0022
+</td>
+<td style="text-align:right;">
+0.0009
+</td>
+<td style="text-align:right;">
+-2.4051
+</td>
+<td style="text-align:right;">
+0.0011
+</td>
+<td style="text-align:right;">
+-1.9889
+</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(LL(0)\)</span> of Model 2 is -291.12, while <span class="math inline">\(LL(\beta)\)</span> is -266.94 and thus <span class="math inline">\(\rho^2=0.083\)</span>, which is a little improved compared to Model 1. The contingency table and market share of prediction and real mode are illustrated in Table <a href="discrete-choice-modeling.html#tab:model2-contingency">4.6</a> From the table, we can find that there still exists a large gap between the real market share and the prediction one. The predictive market share of “Car” is about 21.9 %, which is relative close to the real proportion (28.1 %). However, the model wrongly estimates the market share of “Bus” which accounts for 14.3%, but the estimation is only 0.5 %. The overall accuracy of Model 2 is approximately 43.8 % <strong><em><span style="color: red;">(1)</span></em></strong>. , it is indeed not ideal for the estimation result, but much higher than that of Model 1.</p>
+<table>
+<caption>
+<span id="tab:model2-contingency">Table 4.6: </span>Contigency Table of Model 2
+</caption>
+<thead>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="6">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Prediction
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Air
+</th>
+<th style="text-align:left;">
+Bus
+</th>
+<th style="text-align:left;">
+Car
+</th>
+<th style="text-align:left;">
+Train
+</th>
+<th style="text-align:left;">
+Percentage
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;vertical-align: middle !important;" rowspan="5">
+REAL
+</td>
+<td style="text-align:left;">
+Air
+</td>
+<td style="text-align:left;">
+20
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+27.6 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bus
+</td>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+14.3 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Car
+</td>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+28.1 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Train
+</td>
+<td style="text-align:left;">
+18
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+42
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+30 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+Percentage
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+38.6 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+0.5 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+21.9 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+39 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;font-weight: bold;background-color: #E0E0E0 !important;">
+100 %
+</td>
+</tr>
+</tbody>
+</table>
+<p>In terms of willingness to pay of one-minute reduction in travel time, the calculation is listed below:</p>
+<p><span class="math display">\[
+\frac{-0.0022}{-0.0117}=0.1880
+\]</span></p>
+<p>, which means the willingness to pay is $0.1880 per minute ($11.28 per hour). It may not be reasonable for the time the data collected, since the current minimum wage for most of states in the U.S is $7.25 per hour, and $11.28 per hour is too high <strong><em><span style="color: red;">(2)</span></em></strong>.</p>
+</div>
+</div>
+<div id="models-with-sociodemographic-variables" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> Models with sociodemographic variables<a href="discrete-choice-modeling.html#models-with-sociodemographic-variables" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="problem-description-2" class="section level3 hasAnchor" number="4.4.1">
+<h3><span class="header-section-number">4.4.1</span> Problem Description<a href="discrete-choice-modeling.html#problem-description-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div class="problem">
+<p><font size="3"><strong><svg aria-hidden="true" role="img" viewBox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zM262.655 90c-54.497 0-89.255 22.957-116.549 63.758-3.536 5.286-2.353 12.415 2.715 16.258l34.699 26.31c5.205 3.947 12.621 3.008 16.665-2.122 17.864-22.658 30.113-35.797 57.303-35.797 20.429 0 45.698 13.148 45.698 32.958 0 14.976-12.363 22.667-32.534 33.976C247.128 238.528 216 254.941 216 296v4c0 6.627 5.373 12 12 12h56c6.627 0 12-5.373 12-12v-1.333c0-28.462 83.186-29.647 83.186-106.667 0-58.002-60.165-102-116.531-102zM256 338c-25.365 0-46 20.635-46 46 0 25.364 20.635 46 46 46s46-20.636 46-46c0-25.365-20.635-46-46-46z"/></svg> Now try some models with sociodemographic variables entering.</strong></font><br />
+(1) Enter generalized cost divided by household income, instead of generalized cost. With this specification, the magnitude of the generalized cost is inversely related to household income, such that high income households are less concerned with generalized travel costs than lower income households. Does dividing generalized cost by income seem to make the model better or worse?<br />
+(2) Instead of dividing generalized cost by household income, enter alternative-specific generalized cost effects. Do these generalized cost terms enter significantly?<br />
+(3) Try other models. Determine which model you think is best from these data.</p>
+</div>
+</div>
+<div id="model-result-2" class="section level3 hasAnchor" number="4.4.2">
+<h3><span class="header-section-number">4.4.2</span> Model Result<a href="discrete-choice-modeling.html#model-result-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Consider a model with generalized cost divided by household income, the model (<strong>Model 3</strong>) can be formulated as below.</p>
+<p><span class="math display">\[
+V_{mode}=\beta_{mode}+\beta_{GC}*(\frac{GC_{mode}}{HINC_r})+\beta_{INVT}*INVT_{mode}
+\]</span>
+, where <span class="math inline">\(r\)</span> is for every respondent (sample).</p>
+<p>Based on the formulation, the code of Model 3 is shown below. Note that only the vector of parameters are shown, and other settings by using <code>apollo</code> package are ignored.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="discrete-choice-modeling.html#cb4-1" aria-hidden="true" tabindex="-1"></a>clogit<span class="sc">$</span>GC.Air_I<span class="ot">=</span>clogit<span class="sc">$</span>GC.Air<span class="sc">/</span>clogit<span class="sc">$</span>HINC</span>
+<span id="cb4-2"><a href="discrete-choice-modeling.html#cb4-2" aria-hidden="true" tabindex="-1"></a>clogit<span class="sc">$</span>GC.Train_I<span class="ot">=</span>clogit<span class="sc">$</span>GC.Train<span class="sc">/</span>clogit<span class="sc">$</span>HINC</span>
+<span id="cb4-3"><a href="discrete-choice-modeling.html#cb4-3" aria-hidden="true" tabindex="-1"></a>clogit<span class="sc">$</span>GC.Bus_I<span class="ot">=</span>clogit<span class="sc">$</span>GC.Bus<span class="sc">/</span>clogit<span class="sc">$</span>HINC</span>
+<span id="cb4-4"><a href="discrete-choice-modeling.html#cb4-4" aria-hidden="true" tabindex="-1"></a>clogit<span class="sc">$</span>GC.Car_I<span class="ot">=</span>clogit<span class="sc">$</span>GC.Car<span class="sc">/</span>clogit<span class="sc">$</span>HINC</span>
+<span id="cb4-5"><a href="discrete-choice-modeling.html#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="discrete-choice-modeling.html#cb4-6" aria-hidden="true" tabindex="-1"></a>apollo_beta<span class="ot">=</span><span class="fu">c</span>(<span class="at">asc_car=</span><span class="dv">0</span>,</span>
+<span id="cb4-7"><a href="discrete-choice-modeling.html#cb4-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_train=</span><span class="dv">0</span>,</span>
+<span id="cb4-8"><a href="discrete-choice-modeling.html#cb4-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_air=</span><span class="dv">0</span>,</span>
+<span id="cb4-9"><a href="discrete-choice-modeling.html#cb4-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_bus=</span><span class="dv">0</span>,</span>
+<span id="cb4-10"><a href="discrete-choice-modeling.html#cb4-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_gc_inc=</span><span class="dv">0</span>,</span>
+<span id="cb4-11"><a href="discrete-choice-modeling.html#cb4-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_invt=</span><span class="dv">0</span>)</span>
+<span id="cb4-12"><a href="discrete-choice-modeling.html#cb4-12" aria-hidden="true" tabindex="-1"></a>apollo_fixed<span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;asc_bus&quot;</span>)</span>
+<span id="cb4-13"><a href="discrete-choice-modeling.html#cb4-13" aria-hidden="true" tabindex="-1"></a>apollo_inputs <span class="ot">=</span> <span class="fu">apollo_validateInputs</span>(<span class="at">database=</span>clogit)</span>
+<span id="cb4-14"><a href="discrete-choice-modeling.html#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="discrete-choice-modeling.html#cb4-15" aria-hidden="true" tabindex="-1"></a>apollo_probabilities<span class="ot">=</span><span class="cf">function</span>(apollo_beta, apollo_inputs, <span class="at">functionality=</span><span class="st">&quot;estimate&quot;</span>){</span>
+<span id="cb4-16"><a href="discrete-choice-modeling.html#cb4-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-17"><a href="discrete-choice-modeling.html#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">apollo_attach</span>(apollo_beta, apollo_inputs)</span>
+<span id="cb4-18"><a href="discrete-choice-modeling.html#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">on.exit</span>(<span class="fu">apollo_detach</span>(apollo_beta, apollo_inputs))</span>
+<span id="cb4-19"><a href="discrete-choice-modeling.html#cb4-19" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb4-20"><a href="discrete-choice-modeling.html#cb4-20" aria-hidden="true" tabindex="-1"></a>  V <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb4-21"><a href="discrete-choice-modeling.html#cb4-21" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Car&quot;</span>]]   <span class="ot">=</span> asc_car<span class="sc">+</span>    b_gc_inc  <span class="sc">*</span> GC.Car_I    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Car  </span>
+<span id="cb4-22"><a href="discrete-choice-modeling.html#cb4-22" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Train&quot;</span>]] <span class="ot">=</span> asc_train<span class="sc">+</span>  b_gc_inc  <span class="sc">*</span> GC.Train_I  <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Train  </span>
+<span id="cb4-23"><a href="discrete-choice-modeling.html#cb4-23" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Air&quot;</span>]]   <span class="ot">=</span> asc_air<span class="sc">+</span>    b_gc_inc  <span class="sc">*</span> GC.Air_I    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Air</span>
+<span id="cb4-24"><a href="discrete-choice-modeling.html#cb4-24" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Bus&quot;</span>]]   <span class="ot">=</span> asc_bus<span class="sc">+</span>    b_gc_inc  <span class="sc">*</span> GC.Bus_I    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Bus</span>
+<span id="cb4-25"><a href="discrete-choice-modeling.html#cb4-25" aria-hidden="true" tabindex="-1"></a>  mnl_settings <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb4-26"><a href="discrete-choice-modeling.html#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">alternatives  =</span> <span class="fu">c</span>(<span class="at">Car=</span><span class="st">&quot;Car&quot;</span>, <span class="at">Train=</span><span class="st">&quot;Train&quot;</span>, <span class="at">Air=</span><span class="st">&quot;Air&quot;</span>, <span class="at">Bus=</span><span class="st">&quot;Bus&quot;</span>), </span>
+<span id="cb4-27"><a href="discrete-choice-modeling.html#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">avail         =</span> <span class="fu">list</span>(<span class="at">Car=</span>AV.Car, <span class="at">Train=</span>AV.Train, <span class="at">Air=</span>AV.Air, <span class="at">Bus=</span>AV.Bus),</span>
+<span id="cb4-28"><a href="discrete-choice-modeling.html#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">choiceVar     =</span> MODE,</span>
+<span id="cb4-29"><a href="discrete-choice-modeling.html#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">utilities     =</span> V</span>
+<span id="cb4-30"><a href="discrete-choice-modeling.html#cb4-30" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-31"><a href="discrete-choice-modeling.html#cb4-31" aria-hidden="true" tabindex="-1"></a>  P[[<span class="st">&quot;model&quot;</span>]] <span class="ot">=</span> <span class="fu">apollo_mnl</span>(mnl_settings, functionality)</span>
+<span id="cb4-32"><a href="discrete-choice-modeling.html#cb4-32" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">=</span> <span class="fu">apollo_prepareProb</span>(P, apollo_inputs, functionality)</span>
+<span id="cb4-33"><a href="discrete-choice-modeling.html#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(P)</span>
+<span id="cb4-34"><a href="discrete-choice-modeling.html#cb4-34" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The result of Model 3 is shown in Table <a href="discrete-choice-modeling.html#tab:model3-table">4.7</a> The estimation of generalized cost divided by household income (<code>b_gc_inc</code> in the table) is -0.0735; however, its t-value is only -0.8772, meaning that the null hypothesis that the coefficient is 0 cannot be rejected. The coefficients of in-vehicle travel time is -0.0032, and the t-statistics (-3.9439) suggest the null hypothesis be rejected. It implies a longer travel time would significantly result in the lower utility of the mode.</p>
+<table>
+<caption>
+<span id="tab:model3-table">Table 4.7: </span>Model 3 Result
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+s.e.
+</th>
+<th style="text-align:right;">
+t.rat.(0)
+</th>
+<th style="text-align:right;">
+Rob.s.e.
+</th>
+<th style="text-align:right;">
+Rob.t.rat.(0)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asc_car
+</td>
+<td style="text-align:right;">
+0.4111
+</td>
+<td style="text-align:right;">
+0.2348
+</td>
+<td style="text-align:right;">
+1.7507
+</td>
+<td style="text-align:right;">
+0.2385
+</td>
+<td style="text-align:right;">
+1.7234
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_train
+</td>
+<td style="text-align:right;">
+0.6920
+</td>
+<td style="text-align:right;">
+0.2262
+</td>
+<td style="text-align:right;">
+3.0591
+</td>
+<td style="text-align:right;">
+0.2087
+</td>
+<td style="text-align:right;">
+3.3149
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_air
+</td>
+<td style="text-align:right;">
+-1.0767
+</td>
+<td style="text-align:right;">
+0.4877
+</td>
+<td style="text-align:right;">
+-2.2077
+</td>
+<td style="text-align:right;">
+0.6499
+</td>
+<td style="text-align:right;">
+-1.6566
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_bus
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_gc_inc
+</td>
+<td style="text-align:right;">
+-0.0735
+</td>
+<td style="text-align:right;">
+0.0838
+</td>
+<td style="text-align:right;">
+-0.8772
+</td>
+<td style="text-align:right;">
+0.0921
+</td>
+<td style="text-align:right;">
+-0.7977
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_invt
+</td>
+<td style="text-align:right;">
+-0.0032
+</td>
+<td style="text-align:right;">
+0.0008
+</td>
+<td style="text-align:right;">
+-3.9439
+</td>
+<td style="text-align:right;">
+0.0011
+</td>
+<td style="text-align:right;">
+-3.0196
+</td>
+</tr>
+</tbody>
+</table>
+<p>In this model, if the generalized cost divided by household income is larger, it indicates that the travel cost are not affordable for that target group. By this concept, we consider that this new variable would have a more negative impact on the utilities. However, the statistic test cannot prove this assumption, and <span class="math inline">\(LL(\beta)\)</span> of Model 3 is -269.18, slightly worsen than Model 2. In conclusion, dividing generalized cost by income seem have no significant benefits on the model result <strong><em><span style="color: red;">(1)</span></em></strong>.</p>
+<p>Now, taking all the general cost as alternative-specific variables, which means to consider the impact of general cost on each mode is totally different. From practical perspective, it may be true, since the “feelings” of increasing the cost for different mode might not be the same, and thus the change of utility might have a difference. Based on this assumption, the model (<strong>Model 4</strong>) can be formed as below.</p>
+<p><span class="math display">\[
+V_{mode}=\beta_{mode}+\beta_{GC_{mode}}*{GC}_{mode}+\beta_{INVT}*INVT_{mode}
+\]</span></p>
+<p>Based on the formulation, the code of Model 4 is shown below. Note that only the vector of parameters are shown, and other settings by using <code>apollo</code> package are ignored.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="discrete-choice-modeling.html#cb5-1" aria-hidden="true" tabindex="-1"></a>apollo_beta<span class="ot">=</span><span class="fu">c</span>(<span class="at">asc_car=</span><span class="dv">0</span>,</span>
+<span id="cb5-2"><a href="discrete-choice-modeling.html#cb5-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_train=</span><span class="dv">0</span>,</span>
+<span id="cb5-3"><a href="discrete-choice-modeling.html#cb5-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_air=</span><span class="dv">0</span>,</span>
+<span id="cb5-4"><a href="discrete-choice-modeling.html#cb5-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_bus=</span><span class="dv">0</span>,</span>
+<span id="cb5-5"><a href="discrete-choice-modeling.html#cb5-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_gc_car=</span><span class="dv">0</span>,</span>
+<span id="cb5-6"><a href="discrete-choice-modeling.html#cb5-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_gc_train=</span><span class="dv">0</span>,</span>
+<span id="cb5-7"><a href="discrete-choice-modeling.html#cb5-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_gc_air=</span><span class="dv">0</span>,</span>
+<span id="cb5-8"><a href="discrete-choice-modeling.html#cb5-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_gc_bus=</span><span class="dv">0</span>,</span>
+<span id="cb5-9"><a href="discrete-choice-modeling.html#cb5-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_invt=</span><span class="dv">0</span>)</span>
+<span id="cb5-10"><a href="discrete-choice-modeling.html#cb5-10" aria-hidden="true" tabindex="-1"></a>apollo_fixed<span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;asc_bus&quot;</span>,<span class="st">&quot;b_gc_bus&quot;</span>)</span>
+<span id="cb5-11"><a href="discrete-choice-modeling.html#cb5-11" aria-hidden="true" tabindex="-1"></a>apollo_inputs <span class="ot">=</span> <span class="fu">apollo_validateInputs</span>(<span class="at">database=</span>clogit)</span>
+<span id="cb5-12"><a href="discrete-choice-modeling.html#cb5-12" aria-hidden="true" tabindex="-1"></a>apollo_probabilities<span class="ot">=</span><span class="cf">function</span>(apollo_beta, apollo_inputs, <span class="at">functionality=</span><span class="st">&quot;estimate&quot;</span>){</span>
+<span id="cb5-13"><a href="discrete-choice-modeling.html#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">apollo_attach</span>(apollo_beta, apollo_inputs)</span>
+<span id="cb5-14"><a href="discrete-choice-modeling.html#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">on.exit</span>(<span class="fu">apollo_detach</span>(apollo_beta, apollo_inputs))</span>
+<span id="cb5-15"><a href="discrete-choice-modeling.html#cb5-15" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb5-16"><a href="discrete-choice-modeling.html#cb5-16" aria-hidden="true" tabindex="-1"></a>  V <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb5-17"><a href="discrete-choice-modeling.html#cb5-17" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Car&quot;</span>]]   <span class="ot">=</span> asc_car<span class="sc">+</span>    b_gc_car     <span class="sc">*</span> GC.Car_I    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Car  </span>
+<span id="cb5-18"><a href="discrete-choice-modeling.html#cb5-18" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Train&quot;</span>]] <span class="ot">=</span> asc_train<span class="sc">+</span>  b_gc_train   <span class="sc">*</span> GC.Train_I  <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Train  </span>
+<span id="cb5-19"><a href="discrete-choice-modeling.html#cb5-19" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Air&quot;</span>]]   <span class="ot">=</span> asc_air<span class="sc">+</span>    b_gc_air     <span class="sc">*</span> GC.Air_I    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Air</span>
+<span id="cb5-20"><a href="discrete-choice-modeling.html#cb5-20" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Bus&quot;</span>]]   <span class="ot">=</span> asc_bus<span class="sc">+</span>    b_gc_bus     <span class="sc">*</span> GC.Bus_I    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Bus</span>
+<span id="cb5-21"><a href="discrete-choice-modeling.html#cb5-21" aria-hidden="true" tabindex="-1"></a>  mnl_settings <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb5-22"><a href="discrete-choice-modeling.html#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">alternatives  =</span> <span class="fu">c</span>(<span class="at">Car=</span><span class="st">&quot;Car&quot;</span>, <span class="at">Train=</span><span class="st">&quot;Train&quot;</span>, <span class="at">Air=</span><span class="st">&quot;Air&quot;</span>, <span class="at">Bus=</span><span class="st">&quot;Bus&quot;</span>), </span>
+<span id="cb5-23"><a href="discrete-choice-modeling.html#cb5-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">avail         =</span> <span class="fu">list</span>(<span class="at">Car=</span>AV.Car, <span class="at">Train=</span>AV.Train, <span class="at">Air=</span>AV.Air, <span class="at">Bus=</span>AV.Bus),</span>
+<span id="cb5-24"><a href="discrete-choice-modeling.html#cb5-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">choiceVar     =</span> MODE,</span>
+<span id="cb5-25"><a href="discrete-choice-modeling.html#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">utilities     =</span> V</span>
+<span id="cb5-26"><a href="discrete-choice-modeling.html#cb5-26" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-27"><a href="discrete-choice-modeling.html#cb5-27" aria-hidden="true" tabindex="-1"></a>  P[[<span class="st">&quot;model&quot;</span>]] <span class="ot">=</span> <span class="fu">apollo_mnl</span>(mnl_settings, functionality)</span>
+<span id="cb5-28"><a href="discrete-choice-modeling.html#cb5-28" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">=</span> <span class="fu">apollo_prepareProb</span>(P, apollo_inputs, functionality)</span>
+<span id="cb5-29"><a href="discrete-choice-modeling.html#cb5-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(P)</span>
+<span id="cb5-30"><a href="discrete-choice-modeling.html#cb5-30" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The result of Model 4 is shown in Table <a href="discrete-choice-modeling.html#tab:model4-table">4.8</a> Note that the constant term and generalized cost coefficient of bus is regarded as base (0). We can find that the impact of generalized cost are indeed significant different between “Car” and “Bus,” as well as “Air” and “Bus” <strong><em><span style="color: red;">(2)</span></em></strong>. It implies that the utility of “Car” and “Air” modes are more likely to be influenced due to the change of cost. It is quite reasonable, for they are more sensitive to the cost than other modes. As for “Train” and “Bus,” they are all pubic transport system, people are not easily to change the modes, which might result from the users’ sociodemographic features.</p>
+<table>
+<caption>
+<span id="tab:model4-table">Table 4.8: </span>Model 4 Result
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+s.e.
+</th>
+<th style="text-align:right;">
+t.rat.(0)
+</th>
+<th style="text-align:right;">
+Rob.s.e.
+</th>
+<th style="text-align:right;">
+Rob.t.rat.(0)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asc_car
+</td>
+<td style="text-align:right;">
+1.0256
+</td>
+<td style="text-align:right;">
+0.3303
+</td>
+<td style="text-align:right;">
+3.1049
+</td>
+<td style="text-align:right;">
+0.3100
+</td>
+<td style="text-align:right;">
+3.3089
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_train
+</td>
+<td style="text-align:right;">
+0.5826
+</td>
+<td style="text-align:right;">
+0.3096
+</td>
+<td style="text-align:right;">
+1.8820
+</td>
+<td style="text-align:right;">
+0.2864
+</td>
+<td style="text-align:right;">
+2.0345
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_air
+</td>
+<td style="text-align:right;">
+-0.6006
+</td>
+<td style="text-align:right;">
+0.5190
+</td>
+<td style="text-align:right;">
+-1.1572
+</td>
+<td style="text-align:right;">
+0.6654
+</td>
+<td style="text-align:right;">
+-0.9026
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_bus
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_gc_car
+</td>
+<td style="text-align:right;">
+-0.1445
+</td>
+<td style="text-align:right;">
+0.0581
+</td>
+<td style="text-align:right;">
+-2.4890
+</td>
+<td style="text-align:right;">
+0.0476
+</td>
+<td style="text-align:right;">
+-3.0376
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_gc_train
+</td>
+<td style="text-align:right;">
+0.0105
+</td>
+<td style="text-align:right;">
+0.0270
+</td>
+<td style="text-align:right;">
+0.3892
+</td>
+<td style="text-align:right;">
+0.0239
+</td>
+<td style="text-align:right;">
+0.4395
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_gc_air
+</td>
+<td style="text-align:right;">
+-0.1074
+</td>
+<td style="text-align:right;">
+0.0434
+</td>
+<td style="text-align:right;">
+-2.4726
+</td>
+<td style="text-align:right;">
+0.0605
+</td>
+<td style="text-align:right;">
+-1.7748
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_gc_bus
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_invt
+</td>
+<td style="text-align:right;">
+-0.0034
+</td>
+<td style="text-align:right;">
+0.0008
+</td>
+<td style="text-align:right;">
+-4.5673
+</td>
+<td style="text-align:right;">
+0.0010
+</td>
+<td style="text-align:right;">
+-3.5139
+</td>
+</tr>
+</tbody>
+</table>
+<p>Last, develop a model that can well predict the market share of each mode. Here, we use terminal waiting time (TTME), in-vehicle cost (INVC), in-vehicle travel time (INVT), and household income (HINC) to be the independent variable. Note that the household income is used to be as alternative-specific variables, while others are the generic variables. The model (<strong>Model 5</strong>) is formed as below.</p>
+<p><span class="math display">\[
+V_{mode}=\beta_{TTME}*TTME_{mode}+\beta_{INVC}*INVC_{mode}+\beta_{INVT}*INVT_{mode}+\beta_{HINC_{mode}}*HINC_{r}
+\]</span>
+, where <span class="math inline">\(r\)</span> is for every respondent (sample).</p>
+<p>Based on the formulation, the code of Model 5 is shown below. Note that only the vector of parameters are shown, and other settings by using <code>apollo</code> package are ignored.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="discrete-choice-modeling.html#cb6-1" aria-hidden="true" tabindex="-1"></a>apollo_beta<span class="ot">=</span><span class="fu">c</span>(<span class="at">asc_car=</span><span class="dv">0</span>,</span>
+<span id="cb6-2"><a href="discrete-choice-modeling.html#cb6-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_train=</span><span class="dv">0</span>,</span>
+<span id="cb6-3"><a href="discrete-choice-modeling.html#cb6-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_air=</span><span class="dv">0</span>,</span>
+<span id="cb6-4"><a href="discrete-choice-modeling.html#cb6-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">asc_bus=</span><span class="dv">0</span>,</span>
+<span id="cb6-5"><a href="discrete-choice-modeling.html#cb6-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_ttme=</span><span class="dv">0</span>,</span>
+<span id="cb6-6"><a href="discrete-choice-modeling.html#cb6-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_invt=</span><span class="dv">0</span>,</span>
+<span id="cb6-7"><a href="discrete-choice-modeling.html#cb6-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_invc=</span><span class="dv">0</span>,</span>
+<span id="cb6-8"><a href="discrete-choice-modeling.html#cb6-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_hinc_car=</span><span class="dv">0</span>,</span>
+<span id="cb6-9"><a href="discrete-choice-modeling.html#cb6-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_hinc_train=</span><span class="dv">0</span>,</span>
+<span id="cb6-10"><a href="discrete-choice-modeling.html#cb6-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_hinc_air=</span><span class="dv">0</span>,</span>
+<span id="cb6-11"><a href="discrete-choice-modeling.html#cb6-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">b_hinc_bus=</span><span class="dv">0</span>)</span>
+<span id="cb6-12"><a href="discrete-choice-modeling.html#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="discrete-choice-modeling.html#cb6-13" aria-hidden="true" tabindex="-1"></a>apollo_fixed<span class="ot">=</span><span class="fu">c</span>(<span class="st">&quot;asc_bus&quot;</span>,<span class="st">&quot;b_hinc_bus&quot;</span>)</span>
+<span id="cb6-14"><a href="discrete-choice-modeling.html#cb6-14" aria-hidden="true" tabindex="-1"></a>apollo_inputs <span class="ot">=</span> <span class="fu">apollo_validateInputs</span>(<span class="at">database=</span>clogit)</span>
+<span id="cb6-15"><a href="discrete-choice-modeling.html#cb6-15" aria-hidden="true" tabindex="-1"></a>apollo_probabilities<span class="ot">=</span><span class="cf">function</span>(apollo_beta, apollo_inputs, <span class="at">functionality=</span><span class="st">&quot;estimate&quot;</span>){</span>
+<span id="cb6-16"><a href="discrete-choice-modeling.html#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">apollo_attach</span>(apollo_beta, apollo_inputs)</span>
+<span id="cb6-17"><a href="discrete-choice-modeling.html#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">on.exit</span>(<span class="fu">apollo_detach</span>(apollo_beta, apollo_inputs))</span>
+<span id="cb6-18"><a href="discrete-choice-modeling.html#cb6-18" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb6-19"><a href="discrete-choice-modeling.html#cb6-19" aria-hidden="true" tabindex="-1"></a>  V <span class="ot">=</span> <span class="fu">list</span>()</span>
+<span id="cb6-20"><a href="discrete-choice-modeling.html#cb6-20" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Car&quot;</span>]]   <span class="ot">=</span> asc_car<span class="sc">+</span>    b_ttme   <span class="sc">*</span> TTME.Car    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Car    <span class="sc">+</span> b_invc <span class="sc">*</span> INVT.Car   <span class="sc">+</span> b_hinc_car   <span class="sc">*</span> HINC</span>
+<span id="cb6-21"><a href="discrete-choice-modeling.html#cb6-21" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Train&quot;</span>]] <span class="ot">=</span> asc_train<span class="sc">+</span>  b_ttme   <span class="sc">*</span> TTME.Train  <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Train  <span class="sc">+</span> b_invc <span class="sc">*</span> INVT.Car  <span class="sc">+</span> b_hinc_train <span class="sc">*</span> HINC</span>
+<span id="cb6-22"><a href="discrete-choice-modeling.html#cb6-22" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Air&quot;</span>]]   <span class="ot">=</span> asc_air<span class="sc">+</span>    b_ttme   <span class="sc">*</span> TTME.Air    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Air    <span class="sc">+</span> b_invc <span class="sc">*</span> INVT.Car <span class="sc">+</span> b_hinc_air   <span class="sc">*</span> HINC</span>
+<span id="cb6-23"><a href="discrete-choice-modeling.html#cb6-23" aria-hidden="true" tabindex="-1"></a>  V[[<span class="st">&quot;Bus&quot;</span>]]   <span class="ot">=</span> asc_bus<span class="sc">+</span>    b_ttme   <span class="sc">*</span> TTME.Bus    <span class="sc">+</span> b_invt <span class="sc">*</span> INVT.Bus    <span class="sc">+</span> b_invc <span class="sc">*</span> INVT.Car <span class="sc">+</span> b_hinc_bus   <span class="sc">*</span> HINC</span>
+<span id="cb6-24"><a href="discrete-choice-modeling.html#cb6-24" aria-hidden="true" tabindex="-1"></a>  mnl_settings <span class="ot">=</span> <span class="fu">list</span>(</span>
+<span id="cb6-25"><a href="discrete-choice-modeling.html#cb6-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">alternatives  =</span> <span class="fu">c</span>(<span class="at">Car=</span><span class="st">&quot;Car&quot;</span>, <span class="at">Train=</span><span class="st">&quot;Train&quot;</span>, <span class="at">Air=</span><span class="st">&quot;Air&quot;</span>, <span class="at">Bus=</span><span class="st">&quot;Bus&quot;</span>), </span>
+<span id="cb6-26"><a href="discrete-choice-modeling.html#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">avail         =</span> <span class="fu">list</span>(<span class="at">Car=</span>AV.Car, <span class="at">Train=</span>AV.Train, <span class="at">Air=</span>AV.Air, <span class="at">Bus=</span>AV.Bus),</span>
+<span id="cb6-27"><a href="discrete-choice-modeling.html#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">choiceVar     =</span> MODE,</span>
+<span id="cb6-28"><a href="discrete-choice-modeling.html#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">utilities     =</span> V</span>
+<span id="cb6-29"><a href="discrete-choice-modeling.html#cb6-29" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-30"><a href="discrete-choice-modeling.html#cb6-30" aria-hidden="true" tabindex="-1"></a>  P[[<span class="st">&quot;model&quot;</span>]] <span class="ot">=</span> <span class="fu">apollo_mnl</span>(mnl_settings, functionality)</span>
+<span id="cb6-31"><a href="discrete-choice-modeling.html#cb6-31" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">=</span> <span class="fu">apollo_prepareProb</span>(P, apollo_inputs, functionality)</span>
+<span id="cb6-32"><a href="discrete-choice-modeling.html#cb6-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(P)</span>
+<span id="cb6-33"><a href="discrete-choice-modeling.html#cb6-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The result of Model 5 is shown in Table <a href="discrete-choice-modeling.html#tab:model5-table">4.9</a> In Table <a href="discrete-choice-modeling.html#tab:model5-table">4.9</a>, first observe the alternative-specific constants, we can find that “Car” and “Train” have a significant difference compared to “Bus.” Under same conditions, the utility of “Car” is less than that of the “Bus,” while the utility of “Train” is higher. And the alternative-specific constants of “Air” seems to have no significant difference between that of “Bus.” As for the terminal waiting time, in-vehicle travel time, they are all significantly cause a negative impact on utility. And interestingly, the coefficient of terminal waiting time is more negative than that of in-vehicle travel time (-0.0957&lt;-0.0036, note that the unit of these two variables are the same). It does make sense, waiting time is much more unaffordable than staying in the vehicle, for the out of vehicle environment, which may influenced by the weather and the crowds, is definitely not comfortable relative to the one in the vehicle. As for the household income, we can find that only “Train” has a significant negative sign compared to “Bus,” which means that if the income is large, people would tend not to choose “Train.”</p>
+<p><span class="math inline">\(LL(0)\)</span> of Model 5 is -291.12, while <span class="math inline">\(LL(\beta)\)</span> is -182.41 and thus <span class="math inline">\(\rho^2=0.373\)</span>, which is hugely improved compared to all of the previous model. The contingency table and market share of prediction and real mode are illustrated in Table <a href="discrete-choice-modeling.html#tab:model5-contingency">4.10</a> From the table, we can find that the predictive market share is much closer to the real one, indicating that this model might have a good estimation on the mode choice. The overall accuracy of Model 5 is approximately 74.3 %, which is pretty well among all the models developed <strong><em><span style="color: red;">(3)</span></em></strong>.</p>
+<table>
+<caption>
+<span id="tab:model5-table">Table 4.9: </span>Model 5 Result
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Estimate
+</th>
+<th style="text-align:right;">
+s.e.
+</th>
+<th style="text-align:right;">
+t.rat.(0)
+</th>
+<th style="text-align:right;">
+Rob.s.e.
+</th>
+<th style="text-align:right;">
+Rob.t.rat.(0)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+asc_car
+</td>
+<td style="text-align:right;">
+-4.0296
+</td>
+<td style="text-align:right;">
+0.6830
+</td>
+<td style="text-align:right;">
+-5.8999
+</td>
+<td style="text-align:right;">
+0.6440
+</td>
+<td style="text-align:right;">
+-6.2570
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_train
+</td>
+<td style="text-align:right;">
+1.4113
+</td>
+<td style="text-align:right;">
+0.5554
+</td>
+<td style="text-align:right;">
+2.5410
+</td>
+<td style="text-align:right;">
+0.4922
+</td>
+<td style="text-align:right;">
+2.8673
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_air
+</td>
+<td style="text-align:right;">
+-0.0401
+</td>
+<td style="text-align:right;">
+0.8223
+</td>
+<td style="text-align:right;">
+-0.0488
+</td>
+<td style="text-align:right;">
+0.9132
+</td>
+<td style="text-align:right;">
+-0.0439
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+asc_bus
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_ttme
+</td>
+<td style="text-align:right;">
+-0.0957
+</td>
+<td style="text-align:right;">
+0.0104
+</td>
+<td style="text-align:right;">
+-9.2386
+</td>
+<td style="text-align:right;">
+0.0141
+</td>
+<td style="text-align:right;">
+-6.8071
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_invt
+</td>
+<td style="text-align:right;">
+-0.0036
+</td>
+<td style="text-align:right;">
+0.0009
+</td>
+<td style="text-align:right;">
+-4.1686
+</td>
+<td style="text-align:right;">
+0.0011
+</td>
+<td style="text-align:right;">
+-3.2719
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_invc
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+0.0236
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+0.0015
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_hinc_car
+</td>
+<td style="text-align:right;">
+0.0253
+</td>
+<td style="text-align:right;">
+0.0156
+</td>
+<td style="text-align:right;">
+1.6252
+</td>
+<td style="text-align:right;">
+0.0128
+</td>
+<td style="text-align:right;">
+1.9748
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_hinc_train
+</td>
+<td style="text-align:right;">
+-0.0349
+</td>
+<td style="text-align:right;">
+0.0167
+</td>
+<td style="text-align:right;">
+-2.0878
+</td>
+<td style="text-align:right;">
+0.0154
+</td>
+<td style="text-align:right;">
+-2.2724
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_hinc_air
+</td>
+<td style="text-align:right;">
+0.0233
+</td>
+<td style="text-align:right;">
+0.0164
+</td>
+<td style="text-align:right;">
+1.4186
+</td>
+<td style="text-align:right;">
+0.0139
+</td>
+<td style="text-align:right;">
+1.6764
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+b_hinc_bus
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+<table>
+<caption>
+<span id="tab:model5-contingency">Table 4.10: </span>Contigency Table of Model 5
+</caption>
+<thead>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="6">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Prediction
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Air
+</th>
+<th style="text-align:left;">
+Bus
+</th>
+<th style="text-align:left;">
+Car
+</th>
+<th style="text-align:left;">
+Train
+</th>
+<th style="text-align:left;">
+Percentage
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;vertical-align: middle !important;" rowspan="5">
+REAL
+</td>
+<td style="text-align:left;">
+Air
+</td>
+<td style="text-align:left;">
+40
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+27.6 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bus
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+23
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+14.3 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Car
+</td>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:left;">
+43
+</td>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+28.1 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Train
+</td>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+50
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+30 %
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+Percentage
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+25.7 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+11.4 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+31.4 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;">
+31.4 %
+</td>
+<td style="text-align:left;font-weight: bold;background-color: #E0E0E0 !important;font-weight: bold;background-color: #E0E0E0 !important;">
+100 %
+</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="multilevel-model.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "serif",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/ChiaJung-Yeh/Travel-Demand-Analysis/tree/master/04-Exercise_4.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["series.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+},
+"toolbar": {
+"position": "fixed",
+"download": "series.pdf",
+"search": true
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
