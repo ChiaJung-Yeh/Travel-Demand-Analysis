@@ -23,7 +23,7 @@
 <meta name="author" content="Chia Jung, Yeh///n National Yang Ming Chiao Tung University (NYCU), Taiwan" />
 
 
-<meta name="date" content="2022-05-09" />
+<meta name="date" content="2022-05-10" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -231,7 +231,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="data-transformation" class="section level2 hasAnchor" number="4.1">
 <h2><span class="header-section-number">4.1</span> Data Transformation<a href="discrete-choice-modeling.html#data-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Note that the provided data (download <a href="https://github.com/ChiaJung-Yeh/Travel-Demand-Analysis/raw/master/docs/data_out/clogit.csv"><strong>here</strong></a>) is long format, which the attributes of each alternative are listed in different rows. However, the required format for developing model by using <code>apollo</code> package is wide, and thus, the data should first be transformed. Also, ID variable is required in the model, to identify each of the respondent.</p>
+<p>Note that the provided data (download <a href="https://raw.githubusercontent.com/ChiaJung-Yeh/Travel-Demand-Analysis/master/data_out/clogit.csv"><strong>here</strong></a>) is long format, which the attributes of each alternative are listed in different rows. However, the required format for developing model by using <code>apollo</code> package is wide, and thus, the data should first be transformed. Also, ID variable is required in the model, to identify each of the respondent.</p>
 <p>Before transforming the data, it is better to observe the original data in advance. Table <a href="discrete-choice-modeling.html#tab:long-data">4.1</a> shows the long data format (original) of a respondent, the column “MODE” represents Air, Train, Bus, and Car respectively. If it is coded as 1, it means that the respondent chooses that mode. Thus, every 4 rows belongs to a respondent, and there must exists only one “1” in “MODE” column. Take Table <a href="discrete-choice-modeling.html#tab:long-data">4.1</a> for instance, the first row records the attributes of mode “Air,” and its terminal waiting time (TTME) is 69 minutes, while the second row records the attributes of “Train,” and its in vehicle cost (INVC) is 31 dollars, and so forth. Also, note that terminal waiting time (TTME), vehicle cost (INVC), in vehicle travel time (INVT), generalized cost (GC) are often regarded as generic variables, which have identical impacts on the utility for different modes. Conversely, household income (HINC) is often considered to be alternative specific variable, which has a different impact on utility by modes. Note that Table <a href="discrete-choice-modeling.html#tab:long-data">4.1</a> shows the first 8 rows, which indicates that there are 2 respondents.</p>
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
