@@ -368,7 +368,7 @@ $$
 \frac{-0.0022}{-0.0117}=0.1880
 $$
 
-, which means the willingness to pay is \$0.1880 per minute (\$11.28 per hour). It may not be reasonable for the time the data collected, since the current minimum wage for most of states in the U.S is $7.25 per hour, and $11.28 per hour is too high ***<span style="color: red;">(2)</span>***.  
+, which means the willingness to pay is \$0.1880 per minute (\$11.28 per hour). It may be reasonable, since the current [minimum wage](https://www.citizenscount.org/news/how-does-nh-compare-minimum-wage?gclid=Cj0KCQjwmuiTBhDoARIsAPiv6L-o1rsoWn_ODQg45QWkPDqNaiNeDelpW76U7CjlGO9jGflkXlVbWYIaArRoEALw_wcB) for most of states in the U.S is around \$7.25 per hour to \$15 per hour, and \$11.28 per hour is in the range ***<span style="color: red;">(2)</span>*** (BUT unfortunately, we have no clue to prove that the wage is reasonable at the time data collected).  
 
 
 
@@ -519,10 +519,10 @@ apollo_probabilities=function(apollo_beta, apollo_inputs, functionality="estimat
   on.exit(apollo_detach(apollo_beta, apollo_inputs))
   P = list()
   V = list()
-  V[["Car"]]   = asc_car+    b_gc_car     * GC.Car_I    + b_invt * INVT.Car  
-  V[["Train"]] = asc_train+  b_gc_train   * GC.Train_I  + b_invt * INVT.Train  
-  V[["Air"]]   = asc_air+    b_gc_air     * GC.Air_I    + b_invt * INVT.Air
-  V[["Bus"]]   = asc_bus+    b_gc_bus     * GC.Bus_I    + b_invt * INVT.Bus
+  V[["Car"]]   = asc_car+    b_gc_car     * GC.Car    + b_invt * INVT.Car  
+  V[["Train"]] = asc_train+  b_gc_train   * GC.Train  + b_invt * INVT.Train  
+  V[["Air"]]   = asc_air+    b_gc_air     * GC.Air    + b_invt * INVT.Air
+  V[["Bus"]]   = asc_bus+    b_gc_bus     * GC.Bus    + b_invt * INVT.Bus
   mnl_settings = list(
     alternatives  = c(Car="Car", Train="Train", Air="Air", Bus="Bus"), 
     avail         = list(Car=AV.Car, Train=AV.Train, Air=AV.Air, Bus=AV.Bus),
@@ -580,7 +580,7 @@ model_result=apollo_modelOutput(model)
 ```
 
 
-The result of Model 4 is shown in Table \@ref(tab:model4-table) Note that the constant term and generalized cost coefficient of bus is regarded as base (0). We can find that the impact of generalized cost are indeed significant different between "Car" and "Bus", as well as "Air" and "Bus" ***<span style="color: red;">(2)</span>***. It implies that the utility of "Car" and "Air" modes are more likely to be influenced due to the change of cost. It is quite reasonable, for they are more sensitive to the cost than other modes. As for "Train" and "Bus", they are all pubic transport system, people are not easily to change the modes, which might result from the users' sociodemographic features.  
+The result of Model 4 is shown in Table \@ref(tab:model4-table) Note that the constant term and generalized cost coefficient of bus is regarded as base (0). We can find that the generalized cost coefficients are not significantly different from 0, that is, the impact of generalized cost on utility are not different among modes ***<span style="color: red;">(2)</span>***. It implies that taking generalized cost as alternative-specific variable might not be a good choice, instead, regarding it as the generic variable is appropriate.  
 
 
 ```{r model4-table, echo=F, eval=T, warning=F}
