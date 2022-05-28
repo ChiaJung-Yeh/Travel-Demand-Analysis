@@ -1,0 +1,49 @@
+--- 
+title: "Travel Demand Analysis Exercise"
+author: "Chia Jung, Yeh\\\n National Yang Ming Chiao Tung University (NYCU), Taiwan"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output:
+  bookdown::html_document2: default
+  bookdown::pdf_document2: default
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: ChiaJung-Yeh/Travel-Demand-Analysis
+description: "Travel Demand Analysis Exercise"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(kableExtra)
+library(dplyr)
+```
+
+
+# Term Project {-}  
+The topic of the term project is to conduct the research on the factors of patronages of different bike sharing
+systems (YouBike 1.0 & YouBike 2.0) in Taipei City.  
+
+YouBike 1.0 has been operated for about 10 years, and it has been boast for its first mile and last mile service, which significantly increases the accessibility in the city. In order to enhance the service density, Taipei City Government launched a new system called YouBike 2.0 since 2020, and set up the stations in many corner of the city for people's convenience. However, the old system is still under operation, and some of area exists both YouBike 1.0 and YouBike 2.0, resulting in a system choice for the decision maker. In this term project, we would first find out the factors that is vital to the amount of rent and return for each bike sharing system. And then, determine the key factors that influence on the flow of the OD pair that can be served by both YouBike 1.0 as well as YouBike 2.0.  
+
+The paper, slides and code of the term project is summarized below.  
+  
+
+```{r project_table, echo=F, eval=T}
+project_table=data.frame(Items=c("Paper", "Slides", rep("Code", 3)),
+                     Download=c(rep("必填參數", 3), rep("選填參數", 2)))
+
+kable(project_table, booktabs=T)%>%
+  kable_styling(bootstrap_options=c("striped", "hover"), font_size=14)%>%
+  column_spec(1, bold=T)%>%
+  column_spec(1:4, background="white")%>%
+  row_spec(0, bold=T, color="white", background="#8E8E8E")%>%
+  collapse_rows(columns=c(1:3))
+```
+
+
+
+
+

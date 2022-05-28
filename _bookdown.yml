@@ -7,6 +7,7 @@ rmd_files: [
   "01-Exercise_1.Rmd",
   "02-Exercise_2.Rmd",
   "03-Exercise_3.Rmd",
-  "04-Exercise_4.Rmd"]
+  "04-Exercise_4.Rmd",
+  "Term_Project.Rmd"]
 delete_merged_file: true 
 output_dir: "docs"
