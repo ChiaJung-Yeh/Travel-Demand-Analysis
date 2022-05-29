@@ -28,7 +28,7 @@ systems (YouBike 1.0 & YouBike 2.0) in Taipei City.
 
 YouBike 1.0 has been operated for about 10 years, and it has been boast for its first mile and last mile service, which significantly increases the accessibility in the city. In order to enhance the service density, Taipei City Government launched a new system called YouBike 2.0 since 2020, and set up the stations in many corner of the city for people's convenience. However, the old system is still under operation, and some of area exists both YouBike 1.0 and YouBike 2.0, resulting in a system choice for the decision maker. In this term project, we would first find out the factors that is vital to the amount of rent and return for each bike sharing system. And then, determine the key factors that influence on the flow of the OD pair that can be served by both YouBike 1.0 as well as YouBike 2.0.  
 
-The paper, slides and code of the term project is summarized below.  
+The paper, slides and code of the term project are summarized below.  
   
 
 ```{r project_table, echo=F, eval=T}
