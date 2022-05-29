@@ -6,6 +6,8 @@ library(httr)
 library(TDX)
 library(data.table)
 library(stringr)
+library(utils)
+library(filesstrings)
 
 windowsFonts(A=windowsFont("標楷體"))
 windowsFonts(B=windowsFont("Times New Roman"))
@@ -142,6 +144,23 @@ dev.off()
 
 
 
+
+# 自政府資料開放平臺下載 臺北市公共自行車租借紀錄資料
+# YouBike 1.0 https://data.gov.tw/dataset/139301
+# YouBike 2.0 https://data.gov.tw/dataset/150635
+
+ubike1_list=fread("https://tcgbusfs.blob.core.windows.net/dotapp/youbike_ticket_opendata/YouBikeHis.csv", encoding="UTF-8")
+ubike1_list$fileinfo=paste0(substr(ubike1_list$fileinfo, 1, 4), str_pad(gsub("月", "", substr(ubike1_list$fileinfo, 6, 10)), 2, "left", 0))
+
+for (i in c(4:nrow(ubike1_list))){
+  download.file(URLencode(ubike1_list$fileURL[i]), "./temp.zip")
+  unzip("./temp.zip")
+  move_files(paste0(ubike1_list$fileinfo[i], ".csv"), "./YouBike1")
+  file.rename(from=paste0("YouBike1/", ubike1_list$fileinfo[i], ".csv"), to=paste0("YouBike1/YouBike1_", ubike1_list$fileinfo[i], ".csv"))
+  file.remove("./temp.zip")
+  
+  print(paste0(i, " / ", nrow(ubike1_list)))
+}
 
 
 
